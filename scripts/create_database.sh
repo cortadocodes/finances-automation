@@ -13,3 +13,6 @@ createdb $user
 
 # Create the required database
 createdb $database
+
+# Disconnect from server
+pg_ctl -D $database_storage_area stop
