@@ -2,9 +2,9 @@
 
 # Create a new PostgreSQL database storage cluster, start up a server for it and create a database there.
 
-database=$1
-database_storage_area=$2
-user=$3
+database="finances"
+database_storage_area="data/database_cluster"
+user="Marcus1"
 
 # Create database storage area and start server
 initdb -D $database_storage_area
