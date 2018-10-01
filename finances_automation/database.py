@@ -4,34 +4,35 @@ import psycopg2
 FINANCES_DATABASE_NAME = 'finances'
 
 
-def connect_to_database(dbname):
-    connection = psycopg2.connect(dbname=dbname)
-    cursor = connection.cursor()
-    return connection, cursor
+class Database:
+    def __init__(self, name):
+        self.check_types(name)
+
+        self.name = name
+        self.connection = None
+        self.cursor = None
+
+    def check_types(self, name):
+        if not isinstance(name, str):
+            raise TypeError('name must be a string.')
+
+    def connect(self):
+        self.connection = psycopg2.connect(dbname=self.name)
+        self.cursor = self.connection.cursor()
+
+    def disconnect(self):
+        if self.connection is not None:
+            self.cursor.close()
+            self.connection.close()
+
+    def create_table(self, schema):
+        if not isinstance(schema, str):
+            raise TypeError('schema must be a string.')
+
+        self.cursor.execute(schema)
+        self.connection.commit()
 
 
-def create_transactions_table(connection, cursor):
-    cursor.execute(
-        """
-        CREATE TABLE transactions (
-            id serial PRIMARY KEY,
-            date DATE NOT NULL,
-            card VARCHAR,
-            description VARCHAR,
-            money_in DECIMAL,
-            money_out DECIMAL,
-            balance DECIMAL NOT NULL
-        );
-        """
-    )
-    connection.commit()
-
-
-def disconnect_from_database(cursor, connection):
-    cursor.close()
-    connection.close()
-
-
-connection, cursor = connect_to_database(FINANCES_DATABASE_NAME)
-create_transactions_table(connection, cursor)
-disconnect_from_database(cursor, connection)
+database = Database(FINANCES_DATABASE_NAME)
+database.connect()
+database.disconnect()
