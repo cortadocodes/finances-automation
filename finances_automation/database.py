@@ -1,9 +1,6 @@
 import psycopg2
 
 
-FINANCES_DATABASE_NAME = 'finances'
-
-
 class Database:
     def __init__(self, name):
         self.check_types(name)
@@ -25,14 +22,28 @@ class Database:
             self.cursor.close()
             self.connection.close()
 
-    def create_table(self, schema):
-        if not isinstance(schema, str):
-            raise TypeError('schema must be a string.')
-
-        self.cursor.execute(schema)
+    def execute_statement(self, statement):
+        if not isinstance(statement, str):
+            raise TypeError('statement must be a string.')
+        self.cursor.execute(statement)
         self.connection.commit()
 
 
+FINANCES_DATABASE_NAME = 'finances'
+
+create_transactions_table = """
+    CREATE TABLE transactions (
+         id serial PRIMARY KEY,
+         date DATE NOT NULL,
+         card VARCHAR,
+         description VARCHAR,
+         money_in DECIMAL,
+         money_out DECIMAL,
+         balance DECIMAL NOT NULL
+    );
+"""
+
 database = Database(FINANCES_DATABASE_NAME)
 database.connect()
+database.execute_statement(create_transactions_table)
 database.disconnect()
