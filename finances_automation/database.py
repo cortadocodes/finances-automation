@@ -22,8 +22,13 @@ class Database:
             self.cursor.close()
             self.connection.close()
 
-    def execute_statement(self, statement):
+    def execute_statement(self, statement, output_required=False):
         if not isinstance(statement, str):
             raise TypeError('statement must be a string.')
         self.cursor.execute(statement)
+        if output_required:
+            output = self.cursor.fetchall()
+        else:
+            output = None
         self.connection.commit()
+        return output
