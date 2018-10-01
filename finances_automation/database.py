@@ -32,3 +32,8 @@ class Database:
             output = None
         self.connection.commit()
         return output
+
+    def describe(self):
+        describe_statement = "SELECT * FROM information_schema.tables where table_schema = 'public'"
+        tables = self.execute_statement(describe_statement, output_required=True)
+        return tables
