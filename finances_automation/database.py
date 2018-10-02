@@ -14,30 +14,35 @@ class Database:
     out.
 
     :param str name: pre-existing database name
+    :param str data_location: path to database cluster
     :param psycopg2.extensions.connection connection: connection to database
     :param psycopg2.extenstions.cursor cursor: cursor for executing SQL queries
     """
-    def __init__(self, name):
-        self.check_types(name)
+    def __init__(self, name, data_location):
+        self.check_types(name, data_location)
 
         self.name = name
+        self.data_location = data_location
         self.connection = None
         self.cursor = None
 
-    def check_types(self, name):
+    def check_types(self, name, data_location):
         """
         Check initialisation inputs are of correct type.
 
         :param any name: database name
+        :param any database_location: path to database cluster
         """
         if not isinstance(name, str):
             raise TypeError('name must be a string.')
+        if not isinstance(data_location, str):
+            raise TypeError('data_location must be a string.')
 
     def start(self):
-        subprocess.call(START_SERVER_PATH, shell=True)
+        subprocess.run(['pg_ctl', '-D', self.data_location, 'start'])
 
     def stop(self):
-        subprocess.call(STOP_SERVER_PATH, shell=True)
+        subprocess.run(['pg_ctl', '-D', self.data_location, 'stop'])
 
     def connect(self):
         """
