@@ -39,9 +39,15 @@ class Database:
             raise TypeError('data_location must be a string.')
 
     def start(self):
+        """
+        Start PostgreSQL server.
+        """
         subprocess.run(['pg_ctl', '-D', self.data_location, 'start'])
 
     def stop(self):
+        """
+        Start PostgreSQL server.
+        """
         subprocess.run(['pg_ctl', '-D', self.data_location, 'stop'])
 
     def connect(self):
