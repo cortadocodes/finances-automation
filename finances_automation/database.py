@@ -46,7 +46,7 @@ class Database:
 
     def stop(self):
         """
-        Start PostgreSQL server.
+        Stop PostgreSQL server.
         """
         subprocess.run(['pg_ctl', '-D', self.data_location, 'stop'])
 
