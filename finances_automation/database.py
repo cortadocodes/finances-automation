@@ -1,4 +1,11 @@
+import os
+import subprocess
+
 import psycopg2
+
+
+START_SERVER_PATH = os.path.join('..', 'scripts', 'start_psql_server.sh')
+STOP_SERVER_PATH = os.path.join('..', 'scripts', 'stop_psql_server.sh')
 
 
 class Database:
@@ -25,6 +32,12 @@ class Database:
         """
         if not isinstance(name, str):
             raise TypeError('name must be a string.')
+
+    def start(self):
+        subprocess.call(START_SERVER_PATH, shell=True)
+
+    def stop(self):
+        subprocess.call(STOP_SERVER_PATH, shell=True)
 
     def connect(self):
         """
