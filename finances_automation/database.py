@@ -35,7 +35,7 @@ class Database:
         Check initialisation inputs are of correct type.
 
         :param any name: database name
-        :param any database_location: path to database cluster
+        :param any data_location: path to database cluster
         """
         if not isinstance(name, str):
             raise TypeError('name must be a string.')
@@ -55,6 +55,7 @@ class Database:
         else:
             raise TypeError("overwrite should be boolean")
 
+        # Run database creation bash script
         subprocess.run(['bash', Database.creation_script, self.name, self.data_location, self.user, overwrite])
 
     def start(self):
@@ -101,6 +102,8 @@ class Database:
         """
         if not isinstance(statement, str):
             raise TypeError('statement must be a string.')
+        if not isinstance(output_required, bool):
+            raise TypeError('output_required must be boolean.')
 
         self.cursor.execute(statement)
 
