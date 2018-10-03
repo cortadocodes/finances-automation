@@ -30,7 +30,8 @@ class Database:
         repr = '{} database at {}: server_started = {}'.format(self.name, self.data_location, self.server_started)
         return repr
 
-    def check_types(self, name, data_location):
+    @staticmethod
+    def check_types(name, data_location):
         """
         Check initialisation inputs are of correct type.
 
