@@ -4,10 +4,6 @@ import subprocess
 import psycopg2
 
 
-START_SERVER_PATH = os.path.join('..', 'scripts', 'start_psql_server.sh')
-STOP_SERVER_PATH = os.path.join('..', 'scripts', 'stop_psql_server.sh')
-
-
 class Database:
     """
     Create a PostgreSQL database wrapper object, allowing queries and commands to be passed in and data to be passed
@@ -23,6 +19,7 @@ class Database:
 
         self.name = name
         self.data_location = data_location
+        self.server_started = False
         self.connection = None
         self.cursor = None
 
@@ -43,12 +40,18 @@ class Database:
         Start PostgreSQL server.
         """
         subprocess.run(['pg_ctl', '-D', self.data_location, 'start'])
+        server_status = subprocess.run(['pg_isready'], stdout=subprocess.PIPE).stdout
+        if b'accepting connections' in server_status:
+            self.server_started = True
 
     def stop(self):
         """
         Stop PostgreSQL server.
         """
         subprocess.run(['pg_ctl', '-D', self.data_location, 'stop'])
+        server_status = subprocess.run(['pg_isready'], stdout=subprocess.PIPE).stdout
+        if b'no response' in server_status:
+            self.server_started = False
 
     def connect(self):
         """
