@@ -14,7 +14,7 @@ class Database:
     :param psycopg2.extensions.connection connection: connection to database
     :param psycopg2.extenstions.cursor cursor: cursor for executing SQL queries
     """
-    creation_script = os.path.join('..', 'scripts', 'create_finances_database.sh')
+    creation_script = os.path.join('..', 'scripts', 'create_database.sh')
 
     def __init__(self, name, data_location, user):
         self.check_types(name, data_location)
