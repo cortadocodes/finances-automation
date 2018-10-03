@@ -10,6 +10,25 @@ DATABASE_CLUSTER = os.path.join('..', '..', 'data', 'database_cluster')
 USER = 'Marcus1'
 
 
+def test_start():
+    db = Database(FINANCES_DATABASE, DATABASE_CLUSTER, USER)
+    db.create(overwrite=True)
+    db.start()
+
+    assert db.server_started is True
+
+    db.stop()
+
+
+def test_stop():
+    db = Database(FINANCES_DATABASE, DATABASE_CLUSTER, USER)
+    db.create(overwrite=True)
+    db.start()
+    db.stop()
+
+    assert db.server_started is False
+
+
 def test_connect():
     db = Database(FINANCES_DATABASE, DATABASE_CLUSTER, USER)
     db.create(overwrite=True)
