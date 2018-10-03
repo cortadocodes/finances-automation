@@ -14,11 +14,14 @@ class Database:
     :param psycopg2.extensions.connection connection: connection to database
     :param psycopg2.extenstions.cursor cursor: cursor for executing SQL queries
     """
-    def __init__(self, name, data_location):
+    creation_script = os.path.join('..', 'scripts', 'create_finances_database.sh')
+
+    def __init__(self, name, data_location, user):
         self.check_types(name, data_location)
 
         self.name = name
         self.data_location = data_location
+        self.user = user
         self.server_started = False
         self.connection = None
         self.cursor = None
@@ -38,6 +41,21 @@ class Database:
             raise TypeError('name must be a string.')
         if not isinstance(data_location, str):
             raise TypeError('data_location must be a string.')
+
+    def create(self, overwrite=False):
+        """
+        Create a PostgreSQL database at self.data_location for self.user.
+
+        :param bool overwrite: overwrite existing data in pre-existing data_location if True
+        """
+        if overwrite is True:
+            overwrite = 'y'
+        elif overwrite is False:
+            overwrite = 'n'
+        else:
+            raise TypeError("overwrite should be boolean")
+
+        subprocess.run(['bash', Database.creation_script, self.name, self.data_location, self.user, overwrite])
 
     def start(self):
         """
