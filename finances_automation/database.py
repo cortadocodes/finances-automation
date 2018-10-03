@@ -23,6 +23,10 @@ class Database:
         self.connection = None
         self.cursor = None
 
+    def __repr__(self):
+        repr = '{} database at {}: server_started = {}'.format(self.name, self.data_location, self.server_started)
+        return repr
+
     def check_types(self, name, data_location):
         """
         Check initialisation inputs are of correct type.
