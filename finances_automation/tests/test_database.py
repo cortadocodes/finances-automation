@@ -6,11 +6,13 @@ from finances_automation.database import Database
 
 
 FINANCES_DATABASE = 'finances'
-DATABASE_CLUSTER = os.path.join('..', 'data', 'database_cluster')
+DATABASE_CLUSTER = os.path.join('..', '..', 'data', 'database_cluster')
+USER = 'Marcus1'
 
 
 def test_connect():
-    db = Database(FINANCES_DATABASE, DATABASE_CLUSTER)
+    db = Database(FINANCES_DATABASE, DATABASE_CLUSTER, USER)
+    db.create(overwrite=True)
     db.start()
     db.connect()
 
@@ -24,7 +26,8 @@ def test_connect():
 
 
 def test_disconnect():
-    db = Database(FINANCES_DATABASE, DATABASE_CLUSTER)
+    db = Database(FINANCES_DATABASE, DATABASE_CLUSTER, USER)
+    db.create(overwrite=True)
     db.start()
     db.connect()
     db.disconnect()
