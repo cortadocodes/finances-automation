@@ -1,4 +1,5 @@
 import os
+import re
 import subprocess
 
 import psycopg2
@@ -23,6 +24,7 @@ class Database:
         self.data_location = data_location
         self.user = user
         self.server_started = False
+        self.verified = False
         self.connection = None
         self.cursor = None
 
@@ -116,12 +118,26 @@ class Database:
         self.connection.commit()
         return output
 
-    def describe(self):
+    def verify_existence(self):
         """
-        Describe the database's structure (tables).
+        Verify the database has actually been created.
 
         :return list: table names and metadata
         """
-        describe_statement = "SELECT * FROM information_schema.tables where table_schema = 'public'"
-        tables = self.execute_statement(describe_statement, output_required=True)
-        return tables
+        initially_started = self.server_started
+        if not initially_started:
+            self.start()
+
+        raw_existing_dbs = subprocess.run(['psql', '-l'], stdout=subprocess.PIPE).stdout
+
+        pattern = r'^\s+(\w+)\s+\|'
+        existing_dbs = re.findall(pattern, raw_existing_dbs.decode('ascii'), flags=re.MULTILINE)
+        existing_dbs.remove('Name')
+
+        if self.name in existing_dbs:
+            self.verified = True
+        else:
+            self.verified = False
+
+        if not initially_started:
+            self.stop()
