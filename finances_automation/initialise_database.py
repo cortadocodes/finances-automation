@@ -1,9 +1,14 @@
+import os
+
 from finances_automation.database import Database
 
 
-FINANCES_DATABASE_NAME = 'finances'
+DATABASE_NAME = 'finances'
+DATABASE_CLUSTER = os.path.join('..', 'data', 'database_cluster')
+USER = 'Marcus1'
+OVERWRITE = True
 
-create_transactions_table = """
+CREATE_TRANSACTIONS_TABLE = """
     CREATE TABLE transactions (
          id serial PRIMARY KEY,
          date DATE NOT NULL,
@@ -15,7 +20,19 @@ create_transactions_table = """
     );
 """
 
-database = Database(FINANCES_DATABASE_NAME)
-database.connect()
-database.execute_statement(create_transactions_table)
-database.disconnect()
+
+def initialise_finances_database():
+    """
+    Create and initialise finances database with empty transactions table.
+    """
+    database = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
+    database.create(overwrite=True)
+    database.start()
+    database.connect()
+    database.execute_statement(CREATE_TRANSACTIONS_TABLE)
+    database.disconnect()
+    database.stop()
+
+
+if __name__ == '__main__':
+    initialise_finances_database()
