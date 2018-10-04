@@ -12,23 +12,33 @@ class Database:
 
     :param str name: pre-existing database name
     :param str data_location: path to database cluster
+    :param str user: name of database user
+    :param bool server_started: indicates if psql server has been started
+    :param bool verified: indicates that psql database does, in fact, exist
+    :param bool connected: indicates Database object is connected to psql database
+    :param bool cursor_connected: indicates cursor is connected to psql database
     :param psycopg2.extensions.connection connection: connection to database
-    :param psycopg2.extenstions.cursor cursor: cursor for executing SQL queries
+    :param psycopg2.extensions.cursor cursor: cursor for executing SQL queries
     """
+
+    # Location of bash script for creating psql database to connect to with Database object
     creation_script = os.path.join('..', 'scripts', 'create_database.sh')
 
     def __init__(self, name, data_location, user):
         self.check_types(name, data_location, user)
 
+        # Database properties
         self.name = name
         self.data_location = data_location
         self.user = user
 
+        # Database status indicators (relating to actual psql database and the connection to it)
         self.server_started = False
         self.verified = False
         self.connected = False
         self.cursor_connected = False
 
+        # Python <-> psql connection objects
         self.connection = None
         self.cursor = None
 
@@ -90,38 +100,6 @@ class Database:
         if self.is_started():
             raise ConnectionError('Failed to stop PostgreSQL server.')
 
-    def is_started(self):
-        server_status = subprocess.run(['pg_isready'], stdout=subprocess.PIPE).stdout
-
-        if b'accepting connections' in server_status:
-            self.server_started = True
-        elif b'no response' in server_status:
-            self.server_started = False
-
-        return self.server_started
-
-    def is_connected(self):
-        if hasattr(self.connection, 'closed'):
-            if self.connection.closed == 0:
-                self.connected = True
-            else:
-                self.connected = False
-        else:
-            self.connected = False
-
-        return self.connected
-
-    def is_cursor_connected(self):
-        if hasattr(self.cursor, 'closed'):
-            if self.cursor.closed == False:
-                self.cursor_connected = True
-            else:
-                self.cursor_connected = False
-        else:
-            self.cursor_connected = False
-
-        return self.cursor_connected
-
     def connect(self):
         """
         Connect to the database.
@@ -174,6 +152,53 @@ class Database:
 
         self.connection.commit()
         return output
+
+    def is_started(self):
+        """
+        Check database has been started.
+
+        :return bool: True if started
+        """
+        server_status = subprocess.run(['pg_isready'], stdout=subprocess.PIPE).stdout
+
+        if b'accepting connections' in server_status:
+            self.server_started = True
+        elif b'no response' in server_status:
+            self.server_started = False
+
+        return self.server_started
+
+    def is_connected(self):
+        """
+        Check database is connected to Database object.
+
+        :return bool: True if connected
+        """
+        if hasattr(self.connection, 'closed'):
+            if self.connection.closed == 0:
+                self.connected = True
+            else:
+                self.connected = False
+        else:
+            self.connected = False
+
+        return self.connected
+
+    def is_cursor_connected(self):
+        """
+        Check cursor is connected to database.
+
+        :return bool: True if connected.
+        """
+        if hasattr(self.cursor, 'closed'):
+            if self.cursor.closed == False:
+                self.cursor_connected = True
+            else:
+                self.cursor_connected = False
+        else:
+            self.cursor_connected = False
+
+        return self.cursor_connected
 
     def verify_existence(self):
         """
