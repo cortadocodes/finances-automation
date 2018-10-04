@@ -61,6 +61,11 @@ class Database:
         # Run database creation bash script
         subprocess.run(['bash', Database.creation_script, self.name, self.data_location, self.user, overwrite])
 
+        self.verify_existence()
+        if not self.verified:
+            raise FileNotFoundError("Database creation not verified.")
+
+
     def start(self):
         """
         Start PostgreSQL server.
