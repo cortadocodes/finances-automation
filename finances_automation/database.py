@@ -97,16 +97,25 @@ class Database:
 
         return self.server_started
 
+    def is_connected(self):
+        if hasattr(self.connection, 'closed'):
+            if self.connection.closed == 0:
+                self.connected = True
+            else:
+                self.connected = False
+        else:
+            self.connected = False
+
+        return self.connected
+
     def connect(self):
         """
         Connect to the database.
         """
-        if not self.connected:
+        if not self.is_connected():
             self.connection = psycopg2.connect(dbname=self.name)
 
-            if self.connection.closed == 0:
-                self.connected = True
-            else:
+            if not self.is_connected():
                 raise ConnectionError("Database connection unsuccessful.")
 
         if not self.cursor_connected:
@@ -128,11 +137,10 @@ class Database:
             else:
                 raise ConnectionError("Cursor disconnection unsuccessful.")
 
-        if self.connected:
+        if self.is_connected():
             self.connection.close()
-            if self.connection.closed != 0:
-                self.connected = False
-            else:
+
+            if self.is_connected():
                 raise ConnectionError("Database disconnection unsuccessful.")
 
     def execute_statement(self, statement, output_required=False):
