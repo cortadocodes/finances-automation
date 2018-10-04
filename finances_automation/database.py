@@ -18,7 +18,7 @@ class Database:
     creation_script = os.path.join('..', 'scripts', 'create_database.sh')
 
     def __init__(self, name, data_location, user):
-        self.check_types(name, data_location)
+        self.check_types(name, data_location, user)
 
         self.name = name
         self.data_location = data_location
@@ -37,17 +37,20 @@ class Database:
         return repr
 
     @staticmethod
-    def check_types(name, data_location):
+    def check_types(name, data_location, user):
         """
         Check initialisation inputs are of correct type.
 
         :param any name: database name
         :param any data_location: path to database cluster
+        :param any user: name of database user
         """
         if not isinstance(name, str):
             raise TypeError('name must be a string.')
         if not isinstance(data_location, str):
             raise TypeError('data_location must be a string.')
+        if not isinstance(user, str):
+            raise TypeError('user must be a string.')
 
     def create(self, overwrite=False):
         """
