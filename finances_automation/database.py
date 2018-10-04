@@ -210,11 +210,12 @@ class Database:
         if not initially_started:
             self.start()
 
-        raw_existing_dbs = subprocess.run(['psql', '-l'], stdout=subprocess.PIPE).stdout
+        # Find names of existing database (`psql -l`) and remove the headers (`-t`)
+        raw_existing_dbs = subprocess.run(['psql', '-l', '-t'], stdout=subprocess.PIPE).stdout
 
+        # Extract just the names into a list
         pattern = r'^\s+(\w+)\s+\|'
         existing_dbs = re.findall(pattern, raw_existing_dbs.decode('ascii'), flags=re.MULTILINE)
-        existing_dbs.remove('Name')
 
         if self.name in existing_dbs:
             self.verified = True
