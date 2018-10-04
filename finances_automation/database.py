@@ -106,12 +106,12 @@ class Database:
         """
         if self.cursor is not None:
             self.cursor.close()
-            if self.cursor.closed is not False:
+            if self.cursor.closed is False:
                 raise ConnectionError("Cursor disconnection unsuccessful.")
 
         if self.connection is not None:
             self.connection.close()
-            if self.connection.closed != 0:
+            if self.connection.closed == 0:
                 raise ConnectionError("Database disconnection unsuccessful.")
 
     def execute_statement(self, statement, output_required=False):
