@@ -23,8 +23,12 @@ class Database:
         self.name = name
         self.data_location = data_location
         self.user = user
+
         self.server_started = False
         self.verified = False
+        self.connected = False
+        self.cursor_connected = False
+
         self.connection = None
         self.cursor = None
 
@@ -98,26 +102,38 @@ class Database:
         """
         Connect to the database.
         """
-        self.connection = psycopg2.connect(dbname=self.name)
-        self.cursor = self.connection.cursor()
+        if not self.connected:
+            self.connection = psycopg2.connect(dbname=self.name)
 
-        if self.connection is None:
-            raise ConnectionError("Database connection unsuccessful.")
-        if self.cursor is None:
-            raise ConnectionError("Cursor connection unsuccessful.")
+            if self.connection.closed == 0:
+                self.connected = True
+            else:
+                raise ConnectionError("Database connection unsuccessful.")
+
+        if not self.cursor_connected:
+            self.cursor = self.connection.cursor()
+
+            if not self.cursor.closed:
+                self.cursor_connected = True
+            else:
+                raise ConnectionError("Cursor connection unsuccessful.")
 
     def disconnect(self):
         """
-        Disconnect from the database.
+        Disconnect from the database; if already disconnected, do nothing.
         """
-        if self.cursor is not None:
+        if self.cursor_connected:
             self.cursor.close()
-            if self.cursor.closed is False:
+            if self.cursor.closed:
+                self.cursor_connected = False
+            else:
                 raise ConnectionError("Cursor disconnection unsuccessful.")
 
-        if self.connection is not None:
+        if self.connected:
             self.connection.close()
-            if self.connection.closed == 0:
+            if self.connection.closed != 0:
+                self.connected = False
+            else:
                 raise ConnectionError("Database disconnection unsuccessful.")
 
     def execute_statement(self, statement, output_required=False):
