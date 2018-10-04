@@ -52,3 +52,13 @@ def test_disconnect():
     assert db.cursor.closed is True
 
     db.stop()
+
+
+def test_create():
+    db = Database(FINANCES_DATABASE, DATABASE_CLUSTER, USER)
+    db.create()
+    db.verify_existence()
+
+    assert db.verified
+
+    db.stop()
