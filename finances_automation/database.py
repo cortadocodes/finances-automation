@@ -72,17 +72,23 @@ class Database:
         """
         subprocess.run(['pg_ctl', '-D', self.data_location, 'start'])
         server_status = subprocess.run(['pg_isready'], stdout=subprocess.PIPE).stdout
+
         if b'accepting connections' in server_status:
             self.server_started = True
         else:
             raise ConnectionError('Failed to start PostgreSQL server.')
 
+        self.connect()
+
     def stop(self):
         """
         Stop PostgreSQL server.
         """
+        self.disconnect()
+
         subprocess.run(['pg_ctl', '-D', self.data_location, 'stop'])
         server_status = subprocess.run(['pg_isready'], stdout=subprocess.PIPE).stdout
+
         if b'no response' in server_status:
             self.server_started = False
         else:
