@@ -74,6 +74,8 @@ class Database:
         server_status = subprocess.run(['pg_isready'], stdout=subprocess.PIPE).stdout
         if b'accepting connections' in server_status:
             self.server_started = True
+        else:
+            raise ConnectionError('Failed to start PostgreSQL server.')
 
     def stop(self):
         """
@@ -83,6 +85,8 @@ class Database:
         server_status = subprocess.run(['pg_isready'], stdout=subprocess.PIPE).stdout
         if b'no response' in server_status:
             self.server_started = False
+        else:
+            raise ConnectionError('Failed to stop PostgreSQL server.')
 
     def connect(self):
         """
@@ -91,13 +95,24 @@ class Database:
         self.connection = psycopg2.connect(dbname=self.name)
         self.cursor = self.connection.cursor()
 
+        if self.connection is None:
+            raise ConnectionError("Database connection unsuccessful.")
+        if self.cursor is None:
+            raise ConnectionError("Cursor connection unsuccessful.")
+
     def disconnect(self):
         """
         Disconnect from the database.
         """
-        if self.connection is not None:
+        if self.cursor is not None:
             self.cursor.close()
+            if self.cursor.closed is not False:
+                raise ConnectionError("Cursor disconnection unsuccessful.")
+
+        if self.connection is not None:
             self.connection.close()
+            if self.connection.closed != 0:
+                raise ConnectionError("Database disconnection unsuccessful.")
 
     def execute_statement(self, statement, output_required=False):
         """
