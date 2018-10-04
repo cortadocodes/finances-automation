@@ -22,6 +22,11 @@ check_overwrite() {
 }
 
 
+database_exists() {
+    check_database_exists="$(psql -l -t | grep "$1" | wc -l)"
+}
+
+
 overwrite_cluster() {
     pg_ctl -D "$database_storage_area" stop
     rm -r "$database_storage_area"
@@ -36,8 +41,7 @@ create_database() {
     pg_ctl -D "$database_storage_area" start
 
     # If necessary, create user database so future psql commands can be executed by them
-    user_database_exists="$(psql -l -t | grep "$database" | wc -l)"
-    if [ ! $user_database_exists ] ; then
+    if [ ! database_exists ] ; then
         createdb "$user"
     fi
 
