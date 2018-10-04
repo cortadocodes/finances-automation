@@ -5,13 +5,13 @@ import psycopg2
 from finances_automation.database import Database
 
 
-FINANCES_DATABASE = 'finances'
-DATABASE_CLUSTER = os.path.join('..', '..', 'data', 'database_cluster')
+DATABASE_NAME = 'test_database'
+DATABASE_CLUSTER = os.path.join('..', '..', 'data', 'test_database_cluster')
 USER = 'Marcus1'
 
 
 def test_start():
-    db = Database(FINANCES_DATABASE, DATABASE_CLUSTER, USER)
+    db = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
     db.create(overwrite=True)
     db.start()
 
@@ -21,7 +21,7 @@ def test_start():
 
 
 def test_stop():
-    db = Database(FINANCES_DATABASE, DATABASE_CLUSTER, USER)
+    db = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
     db.create(overwrite=True)
     db.start()
     db.stop()
@@ -30,7 +30,7 @@ def test_stop():
 
 
 def test_connect():
-    db = Database(FINANCES_DATABASE, DATABASE_CLUSTER, USER)
+    db = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
     db.create(overwrite=True)
     db.start()
 
@@ -43,7 +43,7 @@ def test_connect():
 
 
 def test_disconnect():
-    db = Database(FINANCES_DATABASE, DATABASE_CLUSTER, USER)
+    db = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
     db.create(overwrite=True)
     db.start()
     db.disconnect()
@@ -55,7 +55,7 @@ def test_disconnect():
 
 
 def test_create():
-    db = Database(FINANCES_DATABASE, DATABASE_CLUSTER, USER)
+    db = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
     db.create(overwrite=True)
     db.verify_existence()
 
