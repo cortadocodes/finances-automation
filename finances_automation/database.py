@@ -68,9 +68,9 @@ class Database:
 
         :param bool overwrite: overwrite existing data in pre-existing data_location if True
         """
-        if overwrite is True:
+        if overwrite:
             overwrite = 'y'
-        elif overwrite is False:
+        elif not overwrite:
             overwrite = 'n'
         else:
             raise TypeError("overwrite should be boolean")
@@ -191,7 +191,7 @@ class Database:
         :return bool: True if connected.
         """
         if hasattr(self.cursor, 'closed'):
-            if self.cursor.closed == False:
+            if not self.cursor.closed:
                 self.cursor_connected = True
             else:
                 self.cursor_connected = False
