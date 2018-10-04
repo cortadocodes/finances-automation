@@ -56,7 +56,7 @@ def test_disconnect():
 
 def test_create():
     db = Database(FINANCES_DATABASE, DATABASE_CLUSTER, USER)
-    db.create()
+    db.create(overwrite=True)
     db.verify_existence()
 
     assert db.verified
