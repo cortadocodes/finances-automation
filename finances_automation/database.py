@@ -69,19 +69,13 @@ class Database:
         if not self.verified:
             raise FileNotFoundError("Database creation not verified.")
 
-
     def start(self):
         """
         Start PostgreSQL server.
         """
         subprocess.run(['pg_ctl', '-D', self.data_location, 'start'])
-        server_status = subprocess.run(['pg_isready'], stdout=subprocess.PIPE).stdout
-
-        if b'accepting connections' in server_status:
-            self.server_started = True
-        else:
+        if not self.is_started():
             raise ConnectionError('Failed to start PostgreSQL server.')
-
         self.connect()
 
     def stop(self):
@@ -89,14 +83,19 @@ class Database:
         Stop PostgreSQL server.
         """
         self.disconnect()
-
         subprocess.run(['pg_ctl', '-D', self.data_location, 'stop'])
+        if self.is_started():
+            raise ConnectionError('Failed to stop PostgreSQL server.')
+
+    def is_started(self):
         server_status = subprocess.run(['pg_isready'], stdout=subprocess.PIPE).stdout
 
-        if b'no response' in server_status:
+        if b'accepting connections' in server_status:
+            self.server_started = True
+        elif b'no response' in server_status:
             self.server_started = False
-        else:
-            raise ConnectionError('Failed to stop PostgreSQL server.')
+
+        return self.server_started
 
     def connect(self):
         """
