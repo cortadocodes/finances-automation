@@ -15,7 +15,7 @@ def test_start():
     db.create(overwrite=True)
     db.start()
 
-    assert db.server_started is True
+    assert db.server_started
 
     db.stop()
 
@@ -26,7 +26,7 @@ def test_stop():
     db.start()
     db.stop()
 
-    assert db.server_started is False
+    assert not db.server_started
 
 
 def test_connect():
@@ -37,7 +37,7 @@ def test_connect():
     assert isinstance(db.connection, psycopg2.extensions.connection)
     assert db.connection.closed == 0
     assert isinstance(db.cursor, psycopg2.extensions.cursor)
-    assert db.cursor.closed is False
+    assert not db.cursor.closed
 
     db.stop()
 
@@ -49,7 +49,7 @@ def test_disconnect():
     db.disconnect()
 
     assert db.connection.closed != 0
-    assert db.cursor.closed is True
+    assert db.cursor.closed
 
     db.stop()
 
