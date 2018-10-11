@@ -28,9 +28,7 @@ def initialise_finances_database():
     database = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
     database.create(overwrite=True)
     database.start()
-    database.connect()
     database.execute_statement(CREATE_TRANSACTIONS_TABLE)
-    database.disconnect()
     database.stop()
 
 
