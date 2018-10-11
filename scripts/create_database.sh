@@ -41,7 +41,7 @@ create_database() {
     pg_ctl -D "$database_storage_area" start
 
     # If necessary, create user database so future psql commands can be executed by them
-    if [ ! database_exists ] ; then
+    if [[ ! $(database_exists $user) ]] ; then
         createdb "$user"
     fi
 
