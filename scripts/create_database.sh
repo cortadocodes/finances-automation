@@ -11,7 +11,7 @@ overwrite="$4"
 
 check_overwrite() {
     # If the cluster exists already, ask the user if they want to overwrite it
-    if [ -d "$database_storage_area" ] ; then
+    if [[ -d "$database_storage_area" ]] ; then
         case "$overwrite" in
             [Yy]* )
                 overwrite_cluster;;
