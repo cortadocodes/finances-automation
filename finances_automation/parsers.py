@@ -29,8 +29,12 @@ class Parser:
         self.data.dropna(axis=0, how='all', inplace=True)
         self.data.dropna(axis=1, how='all', inplace=True)
         self.data.drop_duplicates(inplace=True)
+        self.convert_column_names()
         self.remove_unwanted_characters(monetary_columns)
         self.convert_negative_values(monetary_columns)
+
+    def convert_column_names(self):
+        self.data.columns = self.data.columns.str.lower().str.replace(' ', '_')
 
     def remove_unwanted_characters(self, monetary_columns):
         for column in monetary_columns:
@@ -45,8 +49,9 @@ class Parser:
 
 DB_LOCATION = os.path.join('..', 'data', 'database_cluster')
 STATEMENT_LOCATION = os.path.join('..', 'data', 'example_statement.csv')
+MONETARY_COLUMNS = ['money_in', 'money_out', 'balance']
 
 
 p = Parser('finances', 'Marcus1', DB_LOCATION, STATEMENT_LOCATION)
 p.read(header=3)
-p.clean(monetary_columns=['Money in', 'Money Out', 'Balance'])
+p.clean(monetary_columns=MONETARY_COLUMNS)
