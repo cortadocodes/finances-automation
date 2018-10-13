@@ -5,7 +5,7 @@ import pandas as pd
 from finances_automation.database import Database
 
 
-class parser:
+class Parser:
 
     def __init__(self, db_name, db_location, db_user, file):
         self.check_types(file)
@@ -38,6 +38,6 @@ DB_LOCATION = os.path.join('..', 'data', 'database_cluster')
 STATEMENT_LOCATION = os.path.join('..', 'data', 'example_statement.csv')
 
 
-p = parser('finances', 'Marcus1', DB_LOCATION, STATEMENT_LOCATION)
+p = Parser('finances', 'Marcus1', DB_LOCATION, STATEMENT_LOCATION)
 p.read(header=3)
 p.clean()
