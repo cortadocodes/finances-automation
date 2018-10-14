@@ -25,11 +25,13 @@ class Parser:
     def read(self, delimiter=',', header=0):
         self.data = pd.read_csv(self.file, delimiter=delimiter, header=header)
 
-    def clean(self, monetary_columns):
+    def clean(self, monetary_columns, date_column):
         self.data.dropna(axis=0, how='all', inplace=True)
         self.data.dropna(axis=1, how='all', inplace=True)
         self.data.drop_duplicates(inplace=True)
+
         self.convert_column_names()
+        self.convert_dates(date_column)
         self.remove_unwanted_characters(monetary_columns)
         self.convert_negative_values(monetary_columns)
 
@@ -45,6 +47,12 @@ class Parser:
         replacement = r'-\1'
         for column in monetary_columns:
             self.data[column] = self.data[column].str.replace(negatives_values, replacement)
+
+    def convert_dates(self, date_column):
+        self.data[date_column] = pd.to_datetime(
+            self.data[date_column],
+            format='%d/%m/%Y'
+        )
 
     def store_in_database(self, table_name):
         self.db.start()
@@ -67,9 +75,10 @@ class Parser:
 DB_LOCATION = os.path.join('..', 'data', 'database_cluster')
 STATEMENT_LOCATION = os.path.join('..', 'data', 'example_statement.csv')
 MONETARY_COLUMNS = ['money_in', 'money_out', 'balance']
+DATE_COLUMN = 'date'
 
 
 p = Parser('finances', DB_LOCATION, 'Marcus1', STATEMENT_LOCATION)
 p.read(header=3)
-p.clean(monetary_columns=MONETARY_COLUMNS)
+p.clean(MONETARY_COLUMNS, DATE_COLUMN)
 p.store_in_database('transactions')
