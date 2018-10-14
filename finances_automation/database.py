@@ -132,11 +132,12 @@ class Database:
             if self.is_connected():
                 raise ConnectionError("Database disconnection unsuccessful.")
 
-    def execute_statement(self, statement, output_required=False):
+    def execute_statement(self, statement, values, output_required=False):
         """
         Execute a SQL statement.
 
         :param str statement: valid SQL statement, command or query
+        :param tuple values: values to pass to SQL statement or database
         :param bool output_required: True if data is expected to be returned
 
         :return list: output from database due to statement
@@ -146,7 +147,7 @@ class Database:
         if not isinstance(output_required, bool):
             raise TypeError('output_required must be boolean.')
 
-        self.cursor.execute(statement)
+        self.cursor.execute(statement, values)
 
         if output_required:
             output = self.cursor.fetchall()
