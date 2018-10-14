@@ -71,6 +71,8 @@ class Parser:
 
             self.db.execute_statement(operation, values)
 
+        self.db.stop()
+
 
 DB_LOCATION = os.path.join('..', 'data', 'database_cluster')
 STATEMENT_LOCATION = os.path.join('..', 'data', 'example_statement.csv')
