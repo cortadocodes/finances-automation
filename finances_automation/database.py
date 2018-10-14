@@ -25,7 +25,7 @@ class Database:
     raw_repository_root = subprocess.run( ['git', 'rev-parse', '--show-toplevel'], stdout=subprocess.PIPE).stdout
     repository_root = raw_repository_root.decode('ascii').strip()
 
-    creation_script = os.path.join(repository_root, 'scripts', 'create_database.sh')
+    creation_script = os.path.join(repository_root, 'finances_automation', 'scripts', 'create_database.sh')
 
     def __init__(self, name, data_location, user):
         self.check_types(name, data_location, user)
