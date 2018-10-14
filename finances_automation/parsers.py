@@ -72,15 +72,3 @@ class Parser:
             self.db.execute_statement(operation, values)
 
         self.db.stop()
-
-
-DB_LOCATION = os.path.join('..', 'data', 'database_cluster')
-STATEMENT_LOCATION = os.path.join('..', 'data', 'example_statement.csv')
-MONETARY_COLUMNS = ['money_in', 'money_out', 'balance']
-DATE_COLUMN = 'date'
-
-
-p = Parser('finances', DB_LOCATION, 'Marcus1', STATEMENT_LOCATION)
-p.read(header=3)
-p.clean(MONETARY_COLUMNS, DATE_COLUMN)
-p.store_in_database('transactions')
