@@ -16,7 +16,7 @@ def test_start():
         shutil.rmtree(DATABASE_CLUSTER)
 
     db = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
-    db.create(overwrite=True)
+    db.create()
     db.start()
 
     assert db.server_started
@@ -29,7 +29,7 @@ def test_stop():
         shutil.rmtree(DATABASE_CLUSTER)
 
     db = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
-    db.create(overwrite=True)
+    db.create()
     db.start()
     db.stop()
 
@@ -41,7 +41,7 @@ def test_connect():
         shutil.rmtree(DATABASE_CLUSTER)
 
     db = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
-    db.create(overwrite=True)
+    db.create()
     db.start()
 
     assert isinstance(db.connection, psycopg2.extensions.connection)
@@ -57,7 +57,7 @@ def test_disconnect():
         shutil.rmtree(DATABASE_CLUSTER)
 
     db = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
-    db.create(overwrite=True)
+    db.create()
     db.start()
     db.disconnect()
 
@@ -72,7 +72,7 @@ def test_create():
         shutil.rmtree(DATABASE_CLUSTER)
 
     db = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
-    db.create(overwrite=True)
+    db.create()
     db.verify_existence()
 
     assert db.verified
