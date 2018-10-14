@@ -46,12 +46,30 @@ class Parser:
         for column in monetary_columns:
             self.data[column] = self.data[column].str.replace(negatives_values, replacement)
 
+    def store_in_database(self, table_name):
+        self.db.start()
+
+        for i in range(len(self.data)):
+            columns = list(self.data.columns)
+            data = list(self.data.iloc[i])
+            values = (data[0], data[1], data[2], data[3], data[4])
+
+            operation = (
+                """INSERT INTO {} ({}, {}, {}, {}, {})
+                VALUES
+                (%s, %s, %s, %s, %s);"""
+                .format(table_name, columns[0], columns[1], columns[2], columns[3], columns[4])
+            )
+
+            self.db.execute_statement(operation, values)
+
 
 DB_LOCATION = os.path.join('..', 'data', 'database_cluster')
 STATEMENT_LOCATION = os.path.join('..', 'data', 'example_statement.csv')
 MONETARY_COLUMNS = ['money_in', 'money_out', 'balance']
 
 
-p = Parser('finances', 'Marcus1', DB_LOCATION, STATEMENT_LOCATION)
+p = Parser('finances', DB_LOCATION, 'Marcus1', STATEMENT_LOCATION)
 p.read(header=3)
 p.clean(monetary_columns=MONETARY_COLUMNS)
+p.store_in_database('transactions')
