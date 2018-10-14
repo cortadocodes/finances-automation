@@ -1,4 +1,5 @@
 import os
+import shutil
 
 import psycopg2
 
@@ -11,6 +12,9 @@ USER = 'Marcus1'
 
 
 def test_start():
+    if os.path.isdir(DATABASE_CLUSTER):
+        shutil.rmtree(DATABASE_CLUSTER)
+
     db = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
     db.create(overwrite=True)
     db.start()
@@ -21,6 +25,9 @@ def test_start():
 
 
 def test_stop():
+    if os.path.isdir(DATABASE_CLUSTER):
+        shutil.rmtree(DATABASE_CLUSTER)
+
     db = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
     db.create(overwrite=True)
     db.start()
@@ -30,6 +37,9 @@ def test_stop():
 
 
 def test_connect():
+    if os.path.isdir(DATABASE_CLUSTER):
+        shutil.rmtree(DATABASE_CLUSTER)
+
     db = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
     db.create(overwrite=True)
     db.start()
@@ -43,6 +53,9 @@ def test_connect():
 
 
 def test_disconnect():
+    if os.path.isdir(DATABASE_CLUSTER):
+        shutil.rmtree(DATABASE_CLUSTER)
+
     db = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
     db.create(overwrite=True)
     db.start()
@@ -55,6 +68,9 @@ def test_disconnect():
 
 
 def test_create():
+    if os.path.isdir(DATABASE_CLUSTER):
+        shutil.rmtree(DATABASE_CLUSTER)
+
     db = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
     db.create(overwrite=True)
     db.verify_existence()
