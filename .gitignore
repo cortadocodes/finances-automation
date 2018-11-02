@@ -1,7 +1,9 @@
-.idea
-.DS_Store
+api-docs/
 data/
 venv/
+
+.DS_Store
+.idea
 .ipynb_checkpoints/
-*__pycache__/
 *.pytest_cache/
+*__pycache__/
