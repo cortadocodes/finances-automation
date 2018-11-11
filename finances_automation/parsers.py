@@ -1,5 +1,3 @@
-import os
-
 import pandas as pd
 
 from finances_automation.database import Database
