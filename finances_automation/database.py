@@ -132,7 +132,7 @@ class Database:
             if self.is_connected():
                 raise ConnectionError("Database disconnection unsuccessful.")
 
-    def execute_statement(self, statement, values, output_required=False):
+    def execute_statement(self, statement, values=None, output_required=False):
         """
         Execute a SQL statement.
 
