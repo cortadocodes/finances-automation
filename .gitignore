@@ -3,6 +3,7 @@ data/
 venv/
 
 .DS_Store
+*.egg-info/
 .idea
 .ipynb_checkpoints/
 *.pytest_cache/
