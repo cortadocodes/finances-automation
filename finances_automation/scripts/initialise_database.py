@@ -12,21 +12,15 @@ CREATE_TABLE = (
 )
 
 
-def initialise_database(db_name, db_cluster, user, table_creation_query, require_overwrite):
+def initialise_database():
     """ Create and initialise a database with an empty table.
     """
-    database = Database(db_name, db_cluster, user)
-    database.create(overwrite=require_overwrite)
+    database = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
+    database.create(overwrite=REQUIRE_OVERWRITE)
     database.start()
-    database.execute_statement(table_creation_query)
+    database.execute_statement(CREATE_TABLE)
     database.stop()
 
 
 if __name__ == '__main__':
-    initialise_database(
-        conf.DB_NAME,
-        conf.DB_CLUSTER,
-        conf.USER,
-        CREATE_TABLE,
-        REQUIRE_OVERWRITE
-    )
+    initialise_database()
