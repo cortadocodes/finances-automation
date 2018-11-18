@@ -58,6 +58,16 @@ class Parser:
         """
         self.data.columns = self.data.columns.str.lower().str.replace(' ', '_')
 
+    def convert_dates(self, date_column):
+        """ Convert dates to the format specified in the configuration.
+
+        :param str date_column: name of date column
+        """
+        self.data[date_column] = pd.to_datetime(
+            self.data[date_column],
+            format=conf.DATE_FORMAT
+        )
+
     def remove_unwanted_characters(self, monetary_columns):
         """ Removing unwanted characters from monetary_columns.
 
@@ -75,16 +85,6 @@ class Parser:
         replacement = r'-\1'
         for column in monetary_columns:
             self.data[column] = self.data[column].str.replace(negatives_values, replacement)
-
-    def convert_dates(self, date_column):
-        """ Convert dates to the format specified in the configuration.
-
-        :param str date_column: name of date column
-        """
-        self.data[date_column] = pd.to_datetime(
-            self.data[date_column],
-            format=conf.DATE_FORMAT
-        )
 
     def store_in_database(self, table_name):
         """ Store the parsed transactions in a database table.
