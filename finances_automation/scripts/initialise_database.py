@@ -1,29 +1,8 @@
-import os
-
 from finances_automation.database import Database
+from finances_automation.scripts import configuration as conf
 
-
-PACKAGE_ROOT = os.path.abspath('..')
-USER = 'Marcus1'
-
-DB_NAME = 'finances'
-DB_CLUSTER = os.path.join(PACKAGE_ROOT, '..', 'data', 'database_cluster')
-
-TABLE_NAME = 'transactions'
 
 OVERWRITE = True
-
-TABLE_HEADERS = [
-    'id',
-    'date',
-    'card',
-    'description',
-    'money_in',
-    'money_out',
-    'balance',
-    'category_code',
-    'category'
-]
 
 CREATE_TRANSACTIONS_TABLE = (
     """
@@ -39,7 +18,7 @@ CREATE_TRANSACTIONS_TABLE = (
              {} VARCHAR
         );
     """
-    .format(DB_NAME, *TABLE_HEADERS)
+    .format(conf.DB_NAME, *conf.TABLE_HEADERS)
 )
 
 
@@ -54,4 +33,9 @@ def initialise_finances_database(db_name, db_cluster, user, table_creation_query
 
 
 if __name__ == '__main__':
-    initialise_finances_database(DB_NAME, DB_CLUSTER, USER, CREATE_TRANSACTIONS_TABLE)
+    initialise_finances_database(
+        conf.DB_NAME,
+        conf.DB_CLUSTER,
+        conf.USER,
+        CREATE_TRANSACTIONS_TABLE
+    )

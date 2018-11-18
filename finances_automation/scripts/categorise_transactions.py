@@ -1,51 +1,5 @@
-import os
 from finances_automation.categorise import Categoriser
-
-
-PACKAGE_ROOT = os.path.abspath('..')
-USER = 'Marcus1'
-
-DB_NAME = 'finances'
-DB_LOCATION = os.path.join(PACKAGE_ROOT, '..', 'data', 'database_cluster')
-
-TABLE_NAME = 'transactions'
-TABLE_HEADERS = [
-    'id',
-    'date',
-    'card',
-    'description',
-    'money_in',
-    'money_out',
-    'balance',
-    'category_code',
-    'category'
-]
-
-INCOME_CATEGORIES = [
-    'Job',
-    'Bursaries/scholarships',
-    'Transfers in',
-    'Other income',
-]
-
-EXPENSE_CATEGORIES = [
-    'Rent',
-    'Utility bills',
-    'Essentials',
-    'Health',
-    'Clothes',
-    'Subscriptions',
-    'Cash',
-    'Fun',
-    'Coffee',
-    'Holidays',
-    'Travel',
-    'Credit card',
-    'Savings/investments',
-    'Loan repayments',
-    'Charity',
-    'Other expenses'
-]
+from finances_automation.scripts import configuration as conf
 
 
 def categorise_transactions(db_name,
@@ -63,11 +17,11 @@ def categorise_transactions(db_name,
 
 if __name__ == '__main__':
     categorise_transactions(
-        DB_NAME,
-        DB_LOCATION,
-        USER,
-        INCOME_CATEGORIES,
-        EXPENSE_CATEGORIES,
-        TABLE_NAME,
-        TABLE_HEADERS
+        conf.DB_NAME,
+        conf.DB_CLUSTER,
+        conf.USER,
+        conf.INCOME_CATEGORIES,
+        conf.EXPENSE_CATEGORIES,
+        conf.TABLE_NAME,
+        conf.TABLE_HEADERS
     )

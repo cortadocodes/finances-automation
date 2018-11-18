@@ -1,21 +1,10 @@
-import os
 import sys
 
 from finances_automation.parsers import Parser
+from finances_automation.scripts import configuration as conf
 
 
 STATEMENT_LOCATION = sys.argv[1]
-
-PACKAGE_ROOT = os.path.abspath('..')
-USER = 'Marcus1'
-
-DB_NAME = 'finances'
-DB_LOCATION = os.path.join(PACKAGE_ROOT, '..', 'data', 'database_cluster')
-
-TABLE_NAME = 'transactions'
-
-MONETARY_COLUMNS = ['money_in', 'money_out', 'balance']
-DATE_COLUMN = 'date'
 
 
 def parse_statement(db_name,
@@ -33,11 +22,11 @@ def parse_statement(db_name,
 
 if __name__ == '__main__':
     parse_statement(
-        DB_NAME,
-        DB_LOCATION,
-        TABLE_NAME,
-        USER,
+        conf.DB_NAME,
+        conf.DB_CLUSTER,
+        conf.TABLE_NAME,
+        conf.USER,
         STATEMENT_LOCATION,
-        MONETARY_COLUMNS,
-        DATE_COLUMN
+        conf.MONETARY_COLUMNS,
+        conf.DATE_COLUMN
     )
