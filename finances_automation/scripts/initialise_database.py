@@ -5,10 +5,19 @@ from finances_automation.scripts import configuration as conf
 REQUIRE_OVERWRITE = False
 
 CREATE_TABLE = (
-    """CREATE TABLE {} ({});"""
-    .format(conf.DB_NAME, '{} ' * len(conf.TABLE_HEADERS))
-    .format(*[header + ' {},\n' for header in conf.TABLE_HEADERS.keys()])
-    .format(*[variable_type for variable_type in conf.TABLE_HEADERS.values()])
+    """
+    CREATE TABLE transactions (
+          id serial PRIMARY KEY,
+          date DATE NOT NULL,
+          card VARCHAR,
+          description VARCHAR,
+          money_in DECIMAL,
+          money_out DECIMAL,
+          balance DECIMAL NOT NULL,
+          category_code INT,
+          category VARCHAR
+     );
+     """
 )
 
 
