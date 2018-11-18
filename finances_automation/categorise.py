@@ -5,25 +5,47 @@ from finances_automation.database import Database
 
 class Categoriser:
 
-    def __init__(self, db_name, db_location, db_user, income_categories, expense_categories):
+    def __init__(self,
+                 db_name,
+                 db_location,
+                 db_user,
+                 table_name,
+                 table_headers,
+                 income_categories,
+                 expense_categories,
+                 category_columns,
+                 date_column,
+                 start_date,
+                 end_date):
+
         self.db = Database(db_name, db_location, db_user)
         self.data = None
+
+        self.table_name = table_name
+        self.table_headers = table_headers
 
         self.income_categories = income_categories
         self.expense_categories = expense_categories
 
-    def load_from_database(self, table_name, table_headers, date_column, start_date, end_date):
+        self.category_columns = category_columns
+
+        self.date_column = date_column
+        self.start_date = start_date
+        self.end_date = end_date
+
+
+    def load_from_database(self):
         self.db.start()
 
         data_query = (
             """ SELECT * FROM {0}
             WHERE {1} > {2} AND {1} < {3};
             """
-            .format(table_name, date_column, start_date, end_date)
+            .format(self.table_name, self.date_column, self.start_date, self.end_date)
         )
 
         data = self.db.execute_statement(data_query, output_required=True)
-        self.data = pd.DataFrame(data, columns=table_headers)
+        self.data = pd.DataFrame(data, columns=self.table_headers)
 
     def select_categories(self):
         self.data['category_code'] = self.data.apply(self.select_category, axis=1)
@@ -64,14 +86,12 @@ class Categoriser:
 
         return category
 
-    def store_in_database(self, table_name):
+    def store_in_database(self):
         self.db.start()
-
-        category_columns = ['category_code', 'category']
 
         for i in range(len(self.data)):
             id = int(self.data.iloc[i, 0])
-            data = tuple([int(self.data.iloc[i][category_columns[0]]), self.data.iloc[i][category_columns[1]]])
+            data = tuple([int(self.data.iloc[i][self.category_columns[0]]), self.data.iloc[i][self.category_columns[1]]])
 
             operation = (
                 """
@@ -79,7 +99,7 @@ class Categoriser:
                 SET {1} = %s, {2} = %s
                 WHERE {0}.id = {3}
                 """
-                .format(table_name, category_columns[0], category_columns[1], id)
+                .format(self.table_name, self.category_columns[0], self.category_columns[1], id)
             )
 
             self.db.execute_statement(operation, data)
