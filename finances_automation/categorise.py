@@ -21,7 +21,7 @@ class Categoriser:
 
         self.data = pd.DataFrame(
             self.db.execute_statement(data_query, output_required=True),
-            columns = table_headers
+            columns=table_headers
         )
 
     def select_categories(self):
@@ -47,11 +47,12 @@ class Categoriser:
 
         print('Income categories:')
         for i, category in enumerate(self.income_categories):
-            print('{}: {}'.format(i, category), end='\n\n')
+            print('{}: {}'.format(i, category))
 
-        print('Expense categories:')
+        print('\nExpense categories:')
         for j, category in enumerate(self.expense_categories):
-            print('{}: {}'.format(i + j + 1, category), end='\n\n')
+            print('{}: {}'.format(i + j + 1, category))
+        print('\n')
 
     def convert_category_code(self, row):
         code = int(row['category_code'])
@@ -71,18 +72,21 @@ class Categoriser:
     def store_in_database(self, table_name):
         self.db.start()
 
+        category_columns = ['category_code', 'category']
+
         for i in range(len(self.data)):
-            category_columns = ['id', 'category_code', 'category']
-            data = list(self.data.iloc[i][category_columns])
-            values = (data)
+            id = int(self.data.iloc[i, 0])
+            data = tuple([int(self.data.iloc[i][category_columns[0]]), self.data.iloc[i][category_columns[1]]])
 
             operation = (
-                """UPDATE {0}
-                SET {2} = %s, {3} = %s
                 """
-                .format([table_name, category_columns[0], category_columns[1], category_columns[2]])
+                UPDATE {0}
+                SET {1} = %s, {2} = %s
+                WHERE {0}.id = {3}
+                """
+                .format(table_name, category_columns[0], category_columns[1], id)
             )
 
-            self.db.execute_statement(operation, values)
+            self.db.execute_statement(operation, data)
 
         self.db.stop()
