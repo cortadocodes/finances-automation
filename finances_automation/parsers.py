@@ -100,13 +100,13 @@ class Parser:
         for i in range(len(self.data)):
             columns = list(self.data.columns)
             data = list(self.data.iloc[i])
-            values = (data[0], data[1], data[2], data[3], data[4])
+            values = tuple(data)
 
             operation = (
                 """INSERT INTO {} ({}, {}, {}, {}, {})
                 VALUES
                 (%s, %s, %s, %s, %s);"""
-                .format(self.table_name, columns[0], columns[1], columns[2], columns[3], columns[4])
+                .format(self.table_name, *columns)
             )
 
             self.db.execute_statement(operation, values)
