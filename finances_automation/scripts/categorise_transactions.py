@@ -9,6 +9,8 @@ END_DATE = sys.argv[2]
 
 
 def categorise_transactions():
+    """ Load transactions from the database, categorise them, and update the database with these categories.
+    """
     categoriser = Categoriser(
         conf.DB_NAME,
         conf.DB_CLUSTER,
