@@ -4,7 +4,8 @@ from finances_automation.database import Database
 
 
 DATABASE_NAME = 'finances'
-DATABASE_CLUSTER = os.path.join('..', 'data', 'database_cluster')
+PACKAGE_ROOT = os.path.abspath('..')
+DATABASE_CLUSTER= os.path.join(PACKAGE_ROOT, '..', 'data', 'database_cluster')
 USER = 'Marcus1'
 OVERWRITE = True
 
