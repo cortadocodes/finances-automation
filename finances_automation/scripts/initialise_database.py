@@ -4,7 +4,7 @@ from finances_automation.scripts import configuration as conf
 
 OVERWRITE = True
 
-CREATE_TRANSACTIONS_TABLE = (
+CREATE_TABLE = (
     """CREATE TABLE {} ({});"""
     .format(conf.DB_NAME, '{} ' * len(conf.TABLE_HEADERS))
     .format(*[header + ' {},\n' for header in conf.TABLE_HEADERS.keys()])
@@ -12,8 +12,8 @@ CREATE_TRANSACTIONS_TABLE = (
 )
 
 
-def initialise_finances_database(db_name, db_cluster, user, table_creation_query):
-    """ Create and initialise finances database with empty transactions table.
+def initialise_database(db_name, db_cluster, user, table_creation_query):
+    """ Create and initialise a database with an empty table.
     """
     database = Database(db_name, db_cluster, user)
     database.create(overwrite=True)
@@ -23,9 +23,9 @@ def initialise_finances_database(db_name, db_cluster, user, table_creation_query
 
 
 if __name__ == '__main__':
-    initialise_finances_database(
+    initialise_database(
         conf.DB_NAME,
         conf.DB_CLUSTER,
         conf.USER,
-        CREATE_TRANSACTIONS_TABLE
+        CREATE_TABLE
     )
