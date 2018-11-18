@@ -1,5 +1,3 @@
-import os
-
 import pandas as pd
 
 from finances_automation.database import Database
@@ -14,25 +12,22 @@ class Categoriser:
         self.income_categories = income_categories
         self.expense_categories = expense_categories
 
-    def load_from_database(self, table_name, table_headers):
+    def load_from_database(self, table_name, table_headers, date_column, start_date, end_date):
         self.db.start()
 
-        data_query = """SELECT * FROM {};""".format(table_name)
-
-        self.data = pd.DataFrame(
-            self.db.execute_statement(data_query, output_required=True),
-            columns=table_headers
+        data_query = (
+            """ SELECT * FROM {0}
+            WHERE {1} > {2} AND {1} < {3};
+            """
+            .format(table_name, date_column, start_date, end_date)
         )
+
+        data = self.db.execute_statement(data_query, output_required=True)
+        self.data = pd.DataFrame(data, columns=table_headers)
 
     def select_categories(self):
-        self.data['category_code'] = self.data.apply(
-            self.select_category,
-            axis=1
-        )
-        self.data['category'] = self.data.apply(
-            self.convert_category_code,
-            axis=1
-        )
+        self.data['category_code'] = self.data.apply(self.select_category, axis=1)
+        self.data['category'] = self.data.apply(self.convert_category_code, axis=1)
 
     def select_category(self, row):
         self.print_categories()
