@@ -16,14 +16,15 @@ CREATE_TRANSACTIONS_TABLE = """
          description VARCHAR,
          money_in DECIMAL,
          money_out DECIMAL,
-         balance DECIMAL NOT NULL
+         balance DECIMAL NOT NULL,
+         category_code INT,
+         category VARCHAR
     );
 """
 
 
 def initialise_finances_database():
-    """
-    Create and initialise finances database with empty transactions table.
+    """ Create and initialise finances database with empty transactions table.
     """
     database = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
     database.create(overwrite=True)
