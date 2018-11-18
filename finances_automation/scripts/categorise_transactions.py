@@ -48,10 +48,26 @@ EXPENSE_CATEGORIES = [
 ]
 
 
-c = Categoriser(DB_NAME, DB_LOCATION, USER, INCOME_CATEGORIES, EXPENSE_CATEGORIES)
-c.load_from_database(TABLE_NAME, TABLE_HEADERS)
-c.select_categories()
+def categorise_transactions(db_name,
+                            db_location,
+                            user,
+                            income_categories,
+                            expense_categories,
+                            table_name,
+                            table_headers):
+    categoriser = Categoriser(db_name, db_location, user, income_categories, expense_categories)
+    categoriser.load_from_database(table_name, table_headers)
+    categoriser.select_categories()
+    categoriser.store_in_database(table_name)
 
-c.store_in_database(TABLE_NAME)
 
-pass
+if __name__ == '__main__':
+    categorise_transactions(
+        DB_NAME,
+        DB_LOCATION,
+        USER,
+        INCOME_CATEGORIES,
+        EXPENSE_CATEGORIES,
+        TABLE_NAME,
+        TABLE_HEADERS
+    )
