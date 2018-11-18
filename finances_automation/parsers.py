@@ -1,5 +1,6 @@
 import pandas as pd
 
+from finances_automation.scripts import configuration as conf
 from finances_automation.database import Database
 
 
@@ -49,7 +50,7 @@ class Parser:
     def convert_dates(self, date_column):
         self.data[date_column] = pd.to_datetime(
             self.data[date_column],
-            format='%d/%m/%Y'
+            format=conf.DATE_FORMAT
         )
 
     def store_in_database(self, table_name):

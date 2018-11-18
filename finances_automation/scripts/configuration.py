@@ -22,7 +22,10 @@ TABLE_HEADERS = {
 }
 
 MONETARY_COLUMNS = ['money_in', 'money_out', 'balance']
+
 DATE_COLUMN = 'date'
+DATE_FORMAT = '%d/%m/%Y'
+
 CATEGORY_COLUMNS = ['category_code', 'category']
 
 INCOME_CATEGORIES = [
