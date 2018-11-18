@@ -9,20 +9,24 @@ from finances_automation.database import Database
 
 class Parser:
 
-    def __init__(self, db_name, db_location, db_user, file):
+    def __init__(self, db_name, db_location, db_user, table_name, file):
         self.check_types(file)
 
         self.db = Database(db_name, db_location, db_user)
         self.file = file
         self.data = None
 
+        self.table_name = table_name
+
         self.clean_successful = None
         self.storage_successful = None
 
     @staticmethod
-    def check_types(file):
+    def check_types(file, table_name):
         if not isinstance(file, str):
             raise TypeError('file should be a string.')
+        if not isinstance(table_name):
+            raise TypeError('table_name should be a string.')
 
     def read(self, delimiter=',', header=0):
         """ Read the statement at self.file into a pd.DataFrame object, and store it in self.data.
@@ -86,7 +90,7 @@ class Parser:
         for column in monetary_columns:
             self.data[column] = self.data[column].str.replace(negatives_values, replacement)
 
-    def store_in_database(self, table_name):
+    def store_in_database(self):
         """ Store the parsed transactions in a database table.
 
         :param str table_name: name of table to store in
@@ -102,7 +106,7 @@ class Parser:
                 """INSERT INTO {} ({}, {}, {}, {}, {})
                 VALUES
                 (%s, %s, %s, %s, %s);"""
-                .format(table_name, columns[0], columns[1], columns[2], columns[3], columns[4])
+                .format(self.table_name, columns[0], columns[1], columns[2], columns[3], columns[4])
             )
 
             self.db.execute_statement(operation, values)
