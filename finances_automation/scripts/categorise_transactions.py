@@ -2,14 +2,24 @@ import os
 from finances_automation.categorise import Categoriser
 
 
-DB_NAME = 'finances'
 PACKAGE_ROOT = os.path.abspath('..')
-DB_LOCATION = os.path.join(PACKAGE_ROOT, '..', 'data', 'database_cluster')
-DB_TABLE = 'transactions'
 USER = 'Marcus1'
 
-DB_TABLE = 'transactions'
-DB_TABLE_HEADERS = ['id', 'date', 'card', 'description', 'money_in', 'money_out', 'balance']
+DB_NAME = 'finances'
+DB_LOCATION = os.path.join(PACKAGE_ROOT, '..', 'data', 'database_cluster')
+
+TABLE_NAME = 'transactions'
+TABLE_HEADERS = [
+    'id',
+    'date',
+    'card',
+    'description',
+    'money_in',
+    'money_out',
+    'balance',
+    'category_code',
+    'category'
+]
 
 INCOME_CATEGORIES = [
     'Job',
@@ -39,8 +49,9 @@ EXPENSE_CATEGORIES = [
 
 
 c = Categoriser(DB_NAME, DB_LOCATION, USER, INCOME_CATEGORIES, EXPENSE_CATEGORIES)
-c.load_from_database(DB_TABLE, DB_TABLE_HEADERS)
+c.load_from_database(TABLE_NAME, TABLE_HEADERS)
 c.select_categories()
-c.store_in_database(DB_TABLE)
+
+c.store_in_database(TABLE_NAME)
 
 pass
