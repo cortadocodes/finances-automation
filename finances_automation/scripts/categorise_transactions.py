@@ -14,6 +14,7 @@ def categorise_transactions(db_name,
                             table_name,
                             table_headers,
                             date_column,
+                            date_format,
                             start_date,
                             end_date,
                             income_categories,
@@ -30,6 +31,7 @@ def categorise_transactions(db_name,
         expense_categories,
         category_columns,
         date_column,
+        date_format,
         start_date,
         end_date
     )
@@ -49,6 +51,7 @@ if __name__ == '__main__':
         conf.EXPENSE_CATEGORIES,
         conf.CATEGORY_COLUMNS,
         conf.DATE_COLUMN,
+        conf.DATE_FORMAT,
         START_DATE,
         END_DATE
     )
