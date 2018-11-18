@@ -1,3 +1,5 @@
+import datetime
+
 import pandas as pd
 
 from finances_automation.database import Database
@@ -15,6 +17,7 @@ class Categoriser:
                  expense_categories,
                  category_columns,
                  date_column,
+                 date_format,
                  start_date,
                  end_date):
 
@@ -30,8 +33,9 @@ class Categoriser:
         self.category_columns = category_columns
 
         self.date_column = date_column
-        self.start_date = start_date
-        self.end_date = end_date
+        self.date_format = date_format
+        self.start_date = datetime.datetime.strptime(start_date, self.date_format)
+        self.end_date = datetime.datetime.strptime(end_date, self.date_format) + datetime.timedelta(1)
 
 
     def load_from_database(self):
