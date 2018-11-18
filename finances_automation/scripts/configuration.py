@@ -9,17 +9,17 @@ DB_CLUSTER = os.path.join(PACKAGE_ROOT, '..', 'data', 'database_cluster')
 
 TABLE_NAME = 'transactions'
 
-TABLE_HEADERS = [
-    'id',
-    'date',
-    'card',
-    'description',
-    'money_in',
-    'money_out',
-    'balance',
-    'category_code',
-    'category'
-]
+TABLE_HEADERS = {
+    'id': 'serial PRIMARY KEY',
+    'date': 'DATE NOT NULL',
+    'card': 'VARCHAR',
+    'description': 'VARCHAR',
+    'money_in': 'VARCHAR',
+    'money_out': 'VARCHAR',
+    'balance': 'DECIMAL NOT NULL',
+    'category_code': 'INT',
+    'category': 'VARCHAR'
+}
 
 MONETARY_COLUMNS = ['money_in', 'money_out', 'balance']
 DATE_COLUMN = 'date'
