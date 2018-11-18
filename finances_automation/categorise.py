@@ -1,4 +1,4 @@
-import datetime
+import datetime as dt
 
 import pandas as pd
 
@@ -34,8 +34,8 @@ class Categoriser:
 
         self.date_column = date_column
         self.date_format = date_format
-        self.start_date = datetime.datetime.strptime(start_date, self.date_format)
-        self.end_date = datetime.datetime.strptime(end_date, self.date_format) + datetime.timedelta(1)
+        self.start_date = dt.datetime.strptime(start_date, self.date_format).date()
+        self.end_date = dt.datetime.strptime(end_date, self.date_format).date() + dt.timedelta(1)
 
 
     def load_from_database(self):
@@ -43,12 +43,14 @@ class Categoriser:
 
         data_query = (
             """ SELECT * FROM {0}
-            WHERE {1} > {2} AND {1} < {3};
+            WHERE {1} > %s AND {1} < %s;
             """
-            .format(self.table_name, self.date_column, self.start_date, self.end_date)
+            .format(self.table_name, self.date_column)
         )
 
-        data = self.db.execute_statement(data_query, output_required=True)
+        dates = (self.start_date, self.end_date)
+
+        data = self.db.execute_statement(data_query, dates, output_required=True)
         self.data = pd.DataFrame(data, columns=self.table_headers)
 
     def select_categories(self):
