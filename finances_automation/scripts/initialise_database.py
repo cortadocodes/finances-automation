@@ -1,22 +1,26 @@
+import itertools
+
 from finances_automation.database import Database
+from finances_automation.scripts import configuration as conf
 
 
 REQUIRE_OVERWRITE = False
 
+transactions_schema_list = list(
+    itertools.chain(*zip(conf.TRANSACTIONS_TABLE['headers'].keys(), conf.TRANSACTIONS_TABLE['headers'].values()))
+)
+
+transactions_schema = ',\n'.join(
+    ['{} {}' for header in conf.TRANSACTIONS_TABLE['headers']]
+).format(*transactions_schema_list)
+
 CREATE_TABLE = (
     """
-    CREATE TABLE transactions (
-          id serial PRIMARY KEY,
-          date DATE NOT NULL,
-          card VARCHAR,
-          description VARCHAR,
-          money_in DECIMAL,
-          money_out DECIMAL,
-          balance DECIMAL NOT NULL,
-          category_code INT,
-          category VARCHAR
-     );
-     """
+    CREATE TABLE {} (
+        {}
+    );
+    """
+    .format(conf.TRANSACTIONS_TABLE['name'], transactions_schema)
 )
 
 
