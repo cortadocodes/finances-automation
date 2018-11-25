@@ -24,7 +24,7 @@ class BaseParser:
         """
         self.check_types(file)
 
-        self.db = Database()
+        self.db = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
         self.file = file
         self.data = None
 

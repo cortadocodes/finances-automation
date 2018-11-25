@@ -12,7 +12,7 @@ class Categoriser:
 
         self.check_types(start_date, end_date)
 
-        self.db = Database()
+        self.db = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
         self.data = None
 
         self.table_name = conf.TRANSACTIONS_TABLE['name']
