@@ -135,6 +135,13 @@ class Database:
                 raise ConnectionError("Database disconnection unsuccessful.")
 
     def create_table(self, table_name, schema):
+        """ Create a table from a table name and schema.
+
+        :param str table_name: name of table to be created
+        :param dict(str, str) schema: mapping of column names to column schema specifications
+
+        :raise TypeError: if the arguments are not of the correct type
+        """
         if not isinstance(table_name, str):
             raise TypeError('table_name must be a string.')
         if not isinstance(schema, dict):
