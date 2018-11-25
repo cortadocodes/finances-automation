@@ -27,9 +27,6 @@ class BaseParser:
         self.table_name = table_name
         self.date_format = conf.TRANSACTIONS_TABLE['date_format']
 
-        self.clean_successful = None
-        self.storage_successful = None
-
     @staticmethod
     def check_types(file, table_name):
         """ Check the variables passed in are of the correct type for BaseParser initialisation.
