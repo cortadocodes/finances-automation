@@ -7,9 +7,17 @@ from finances_automation.scripts import configuration as conf
 from finances_automation.database import Database
 
 
-class Parser:
+class BaseParser:
 
     def __init__(self, db_name, db_location, db_user, table_name, file):
+        """ Initialise a BaseParser that reads a .csv file, cleans it and stores the result in a database.
+
+        :param str db_name: name of database to store output in
+        :param str db_location: location of that database
+        :param st db_user: user to be used to access the database
+        :param str table_name: table name to store the output in within the database
+        :param str file: path to file to read in
+        """
         self.check_types(file)
 
         self.db = Database(db_name, db_location, db_user)
@@ -23,6 +31,13 @@ class Parser:
 
     @staticmethod
     def check_types(file, table_name):
+        """ Check the variables passed in are of the correct type for BaseParser initialisation.
+
+        :param any file: variable passed in as file argument
+        :param any table_name: variable passed in as table_name argument
+
+        :raise: TypeError if any of the arguments are of the wrong type
+        """
         if not isinstance(file, str):
             raise TypeError('file should be a string.')
         if not isinstance(table_name):
@@ -93,8 +108,6 @@ class Parser:
 
     def store_in_database(self):
         """ Store the parsed transactions in a database table.
-
-        :param str table_name: name of table to store in
         """
         self.db.start()
 
