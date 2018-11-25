@@ -13,7 +13,7 @@ author="Marcus Lugg"
 sphinx-apidoc -F -H "$project" -V "$version" -A "$author" -o "$docs" "$package_root"
 
 # Change theme to ReadTheDocs theme
-sed -i 's/alabaster/sphinx_rtd_theme/' "$docs/conf.py"
+sed -i.bu 's/alabaster/sphinx_rtd_theme/' "$docs/conf.py"
 
 # Generate html files from the outlines
 cd "$docs"
