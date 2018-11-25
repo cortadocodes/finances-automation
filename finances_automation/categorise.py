@@ -10,6 +10,8 @@ class Categoriser:
 
     def __init__(self, start_date, end_date):
 
+        self.check_types(start_date, end_date)
+
         self.db = Database()
         self.data = None
 
@@ -25,6 +27,10 @@ class Categoriser:
         self.start_date = dt.datetime.strptime(start_date, self.date_format).date()
         self.end_date = dt.datetime.strptime(end_date, self.date_format).date() + dt.timedelta(1)
 
+    @staticmethod
+    def check_types(start_date, end_date):
+        if not isinstance(start_date, dt.datetime) or not isinstance(end_date, dt.datetime):
+            raise TypeError('dates should be of type datetime.datetime.')
 
     def load_from_database(self):
         self.db.start()
