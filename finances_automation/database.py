@@ -148,6 +148,7 @@ class Database:
         if not isinstance(output_required, bool):
             raise TypeError('output_required must be boolean.')
 
+        self.start()
         self.cursor.execute(statement, values)
 
         if output_required:
@@ -156,6 +157,8 @@ class Database:
             output = None
 
         self.connection.commit()
+        self.stop()
+
         return output
 
     def is_started(self):

@@ -29,10 +29,7 @@ def initialise_database():
     """
     database = Database()
     database.create(overwrite=REQUIRE_OVERWRITE)
-    database.start()
     database.execute_statement(CREATE_TABLE)
-    database.stop()
-
 
 if __name__ == '__main__':
     initialise_database()
