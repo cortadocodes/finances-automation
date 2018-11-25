@@ -10,8 +10,9 @@ def initialise_database():
     """
     database = Database()
     database.create(overwrite=REQUIRE_OVERWRITE)
+    database.start()
     database.create_table(conf.TRANSACTIONS_TABLE['name'], conf.TRANSACTIONS_TABLE['headers'])
-
+    database.stop()
 
 if __name__ == '__main__':
     initialise_database()
