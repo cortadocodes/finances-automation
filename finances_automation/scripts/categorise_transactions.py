@@ -15,13 +15,13 @@ def categorise_transactions():
         conf.DB_NAME,
         conf.DB_CLUSTER,
         conf.USER,
-        conf.TABLE_NAME,
-        conf.TABLE_HEADERS,
+        conf.TRANSACTIONS_TABLE['name'],
+        conf.TRANSACTIONS_TABLE['headers'],
         conf.INCOME_CATEGORIES,
         conf.EXPENSE_CATEGORIES,
-        conf.CATEGORY_COLUMNS,
-        conf.DATE_COLUMN,
-        conf.DATE_FORMAT,
+        conf.TRANSACTIONS_TABLE['category_columns'],
+        conf.TRANSACTIONS_TABLE['date_column'],
+        conf.TRANSACTIONS_TABLE['date_format'],
         START_DATE,
         END_DATE
     )

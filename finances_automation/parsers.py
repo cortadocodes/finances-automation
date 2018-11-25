@@ -25,6 +25,7 @@ class BaseParser:
         self.data = None
 
         self.table_name = table_name
+        self.date_format = conf.TRANSACTIONS_TABLE['date_format']
 
         self.clean_successful = None
         self.storage_successful = None
@@ -119,7 +120,7 @@ class CSVCleaner(BaseParser):
         """
         self.data[date_column] = pd.to_datetime(
             self.data[date_column],
-            format=conf.DATE_FORMAT
+            format=self.date_format
         )
 
     def _remove_unwanted_characters(self, monetary_columns):

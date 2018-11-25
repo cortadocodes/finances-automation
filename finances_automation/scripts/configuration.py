@@ -11,26 +11,24 @@ USER = 'Marcus1'
 DB_NAME = 'finances'
 DB_CLUSTER = os.path.join(PACKAGE_ROOT, '..', 'data', 'database_cluster')
 
-TABLE_NAME = 'transactions'
-
-TABLE_HEADERS = {
-    'id': 'serial PRIMARY KEY',
-    'date': 'DATE NOT NULL',
-    'card': 'VARCHAR',
-    'description': 'VARCHAR',
-    'money_in': 'VARCHAR',
-    'money_out': 'VARCHAR',
-    'balance': 'DECIMAL NOT NULL',
-    'category_code': 'INT',
-    'category': 'VARCHAR'
+TRANSACTIONS_TABLE = {
+    'name': 'transactions',
+    'headers': {
+        'id': 'serial PRIMARY KEY',
+        'date': 'DATE NOT NULL',
+        'card': 'VARCHAR',
+        'description': 'VARCHAR',
+        'money_in': 'VARCHAR',
+        'money_out': 'VARCHAR',
+        'balance': 'DECIMAL NOT NULL',
+        'category_code': 'INT',
+        'category': 'VARCHAR'
+    },
+    'monetary_columns': ['money_in', 'money_out', 'balance'],
+    'date_column': 'date',
+    'date_format': '%d/%m/%Y',
+    'category_columns': ['category_code', 'category']
 }
-
-MONETARY_COLUMNS = ['money_in', 'money_out', 'balance']
-
-DATE_COLUMN = 'date'
-DATE_FORMAT = '%d/%m/%Y'
-
-CATEGORY_COLUMNS = ['category_code', 'category']
 
 INCOME_CATEGORIES = [
     'Job',
