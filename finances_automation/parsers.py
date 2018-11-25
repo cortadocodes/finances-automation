@@ -38,6 +38,7 @@ class Parser:
 
     def clean(self, monetary_columns, date_column):
         """ Clean the statement's data by:
+
         * Dropping all-NaN rows and columns
         * Dropping duplicate rows
         * Converting column names to snake_case
@@ -52,17 +53,17 @@ class Parser:
         self.data.dropna(axis=1, how='all', inplace=True)
         self.data.drop_duplicates(inplace=True)
 
-        self.convert_column_names()
-        self.convert_dates(date_column)
-        self.remove_unwanted_characters(monetary_columns)
-        self.convert_negative_values(monetary_columns)
+        self._convert_column_names()
+        self._convert_dates(date_column)
+        self._remove_unwanted_characters(monetary_columns)
+        self._convert_negative_values(monetary_columns)
 
-    def convert_column_names(self):
+    def _convert_column_names(self):
         """ Convert column names to snake_case.
         """
         self.data.columns = self.data.columns.str.lower().str.replace(' ', '_')
 
-    def convert_dates(self, date_column):
+    def _convert_dates(self, date_column):
         """ Convert dates to the format specified in the configuration.
 
         :param str date_column: name of date column
@@ -72,7 +73,7 @@ class Parser:
             format=conf.DATE_FORMAT
         )
 
-    def remove_unwanted_characters(self, monetary_columns):
+    def _remove_unwanted_characters(self, monetary_columns):
         """ Removing unwanted characters from monetary_columns.
 
         :param list(str) monetary_columns: names of columns containing monetary amounts
@@ -80,7 +81,7 @@ class Parser:
         for column in monetary_columns:
             self.data[column] = self.data[column].str.replace('£', '').str.replace(',', '')
 
-    def convert_negative_values(self, monetary_columns):
+    def _convert_negative_values(self, monetary_columns):
         """ Convert (numbers) to standard negative notation.
 
         :param list(str) monetary_columns: names of columns containing monetary amounts
