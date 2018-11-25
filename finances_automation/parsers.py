@@ -18,7 +18,7 @@ class BaseParser:
         :param str table_name: table name to store the output in within the database
         :param str file: path to file to read in
         """
-        self.check_types(file)
+        self.check_types(file, table_name)
 
         self.db = Database(db_name, db_location, db_user)
         self.file = file
@@ -40,7 +40,7 @@ class BaseParser:
         """
         if not isinstance(file, str):
             raise TypeError('file should be a string.')
-        if not isinstance(table_name):
+        if not isinstance(table_name, str):
             raise TypeError('table_name should be a string.')
 
     def read(self, delimiter=',', header=0):
