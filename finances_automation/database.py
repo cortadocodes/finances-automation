@@ -149,15 +149,15 @@ class Database:
 
         columns = schema.keys()
         column_schema_specifications = schema.values()
-        transactions_schema_list = list(itertools.chain(columns, column_schema_specifications))
+        schema_list = list(itertools.chain(*list(zip(columns, column_schema_specifications))))
 
-        transactions_schema = ',\n'.join(['{} {}' for _ in schema.keys()]).format(*transactions_schema_list)
+        schema = ',\n'.join(['{} {}' for _ in schema.keys()]).format(*schema_list)
 
         table_creation_statement = """
             CREATE TABLE {} (
                 {}
             );
-        """.format(table_name, transactions_schema)
+        """.format(table_name, schema)
 
         self.execute_statement(table_creation_statement)
 
