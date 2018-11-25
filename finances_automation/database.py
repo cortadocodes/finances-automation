@@ -1,3 +1,4 @@
+import itertools
 import os
 import re
 import subprocess
@@ -132,6 +133,26 @@ class Database:
 
             if self.is_connected():
                 raise ConnectionError("Database disconnection unsuccessful.")
+
+    def create_table(self, table_name, schema):
+        if not isinstance(table_name, str):
+            raise TypeError('table_name must be a string.')
+        if not isinstance(schema, dict):
+            raise TypeError('table_name must be a dictionary mapping column name to column schema specification.')
+
+        columns = schema.keys()
+        column_schema_specifications = schema.values()
+        transactions_schema_list = list(itertools.chain(columns, column_schema_specifications))
+
+        transactions_schema = ',\n'.join(['{} {}' for _ in schema.keys()]).format(*transactions_schema_list)
+
+        table_creation_statement = """
+            CREATE TABLE {} (
+                {}
+            );
+        """.format(table_name, transactions_schema)
+
+        self.execute_statement(table_creation_statement)
 
     def execute_statement(self, statement, values=None, output_required=False):
         """
