@@ -29,15 +29,15 @@ class Categoriser:
 
     @staticmethod
     def check_types(start_date, end_date):
-        if not isinstance(start_date, dt.datetime) or not isinstance(end_date, dt.datetime):
-            raise TypeError('dates should be of type datetime.datetime.')
+        if not isinstance(start_date, str) or not isinstance(end_date, str):
+            raise TypeError('dates should be of type str.')
 
     def load_from_database(self):
         self.db.start()
 
         data_query = (
             """ SELECT * FROM {0}
-            WHERE {1} > %s AND {1} < %s;
+            WHERE {1} >= %s AND {1} < %s;0
             """
             .format(self.table_name, self.date_column)
         )
