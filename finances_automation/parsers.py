@@ -43,8 +43,42 @@ class BaseParser:
         if not isinstance(table_name, str):
             raise TypeError('table_name should be a string.')
 
+    def read(self):
+        """ Read a statement at self.file, perform some operations and store it in self.data. This method should be
+        overridden in inheriting classes.
+
+        :raise NotImplementedError: if method not overridden by inheriting class
+        """
+        raise NotImplementedError
+
+    def store_in_database(self):
+        """ Store the parsed transactions in a database table.
+        """
+        self.db.start()
+
+        for i in range(len(self.data)):
+            columns = list(self.data.columns)
+            data = list(self.data.iloc[i])
+            values = tuple(data)
+
+            operation = (
+                """INSERT INTO {} ({}, {}, {}, {}, {})
+                VALUES
+                (%s, %s, %s, %s, %s);"""
+                .format(self.table_name, *columns)
+            )
+
+            self.db.execute_statement(operation, values)
+
+        self.db.stop()
+
+
+class CSVCleaner(BaseParser):
+    """ A parser that loads a .csv statement and cleans the data before storing it in the database.
+    """
+
     def read(self, delimiter=',', header=0):
-        """ Read the statement at self.file into a pd.DataFrame object, and store it in self.data.
+        """ Read the .csv statement at self.file into a pd.DataFrame object, and store it in self.data.
 
         :param str delimiter: column delimiter in self.file
         :param int header: row number that headers are on
@@ -105,24 +139,3 @@ class BaseParser:
         replacement = r'-\1'
         for column in monetary_columns:
             self.data[column] = self.data[column].str.replace(negatives_values, replacement)
-
-    def store_in_database(self):
-        """ Store the parsed transactions in a database table.
-        """
-        self.db.start()
-
-        for i in range(len(self.data)):
-            columns = list(self.data.columns)
-            data = list(self.data.iloc[i])
-            values = tuple(data)
-
-            operation = (
-                """INSERT INTO {} ({}, {}, {}, {}, {})
-                VALUES
-                (%s, %s, %s, %s, %s);"""
-                .format(self.table_name, *columns)
-            )
-
-            self.db.execute_statement(operation, values)
-
-        self.db.stop()
