@@ -3,37 +3,25 @@ import datetime as dt
 import pandas as pd
 
 from finances_automation.database import Database
+from finances_automation.scripts import configuration as conf
 
 
 class Categoriser:
 
-    def __init__(self,
-                 db_name,
-                 db_location,
-                 db_user,
-                 table_name,
-                 table_headers,
-                 income_categories,
-                 expense_categories,
-                 category_columns,
-                 date_column,
-                 date_format,
-                 start_date,
-                 end_date):
+    def __init__(self, start_date, end_date):
 
-        self.db = Database(db_name, db_location, db_user)
+        self.db = Database()
         self.data = None
 
-        self.table_name = table_name
-        self.table_headers = table_headers
+        self.table_name = conf.TRANSACTIONS_TABLE['name']
+        self.table_headers = conf.TRANSACTIONS_TABLE['headers']
+        self.category_columns = conf.TRANSACTIONS_TABLE['category_columns']
+        self.date_column = conf.TRANSACTIONS_TABLE['date_column']
+        self.date_format = conf.TRANSACTIONS_TABLE['date_format']
 
-        self.income_categories = income_categories
-        self.expense_categories = expense_categories
+        self.income_categories = conf.INCOME_CATEGORIES
+        self.expense_categories = conf.EXPENSE_CATEGORIES
 
-        self.category_columns = category_columns
-
-        self.date_column = date_column
-        self.date_format = date_format
         self.start_date = dt.datetime.strptime(start_date, self.date_format).date()
         self.end_date = dt.datetime.strptime(end_date, self.date_format).date() + dt.timedelta(1)
 

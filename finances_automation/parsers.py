@@ -9,37 +9,40 @@ from finances_automation.database import Database
 
 class BaseParser:
 
-    def __init__(self, db_name, db_location, db_user, table_name, file):
+    def __init__(self, file):
         """ Initialise a BaseParser that reads a .csv file, cleans it and stores the result in a database.
 
-        :param str db_name: name of database to store output in
-        :param str db_location: location of that database
-        :param st db_user: user to be used to access the database
-        :param str table_name: table name to store the output in within the database
         :param str file: path to file to read in
-        """
-        self.check_types(file, table_name)
 
-        self.db = Database(db_name, db_location, db_user)
+        :var str db_name: name of database to store output in
+        :var str db_location: location of that database
+        :var st db_user: user to be used to access the database
+        :var str table_name: table name to store the output in within the database
+        :var list(str) monetary_columns: names of columns containing monetary amounts
+        :var str date_column: name of date column
+        :var str date_format: date format of date column
+        """
+        self.check_types(file)
+
+        self.db = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
         self.file = file
         self.data = None
 
-        self.table_name = table_name
+        self.table_name = conf.TRANSACTIONS_TABLE['name']
+        self.monetary_columns = conf.TRANSACTIONS_TABLE['monetary_columns']
+        self.date_column = conf.TRANSACTIONS_TABLE['date_column']
         self.date_format = conf.TRANSACTIONS_TABLE['date_format']
 
     @staticmethod
-    def check_types(file, table_name):
+    def check_types(file):
         """ Check the variables passed in are of the correct type for BaseParser initialisation.
 
         :param any file: variable passed in as file argument
-        :param any table_name: variable passed in as table_name argument
 
         :raise: TypeError if any of the arguments are of the wrong type
         """
         if not isinstance(file, str):
             raise TypeError('file should be a string.')
-        if not isinstance(table_name, str):
-            raise TypeError('table_name should be a string.')
 
     def read(self):
         """ Read a statement at self.file, perform some operations and store it in self.data. This method should be
@@ -83,7 +86,7 @@ class CSVCleaner(BaseParser):
         """
         self.data = pd.read_csv(self.file, delimiter=delimiter, header=header)
 
-    def clean(self, monetary_columns, date_column):
+    def clean(self):
         """ Clean the statement's data by:
 
         * Dropping all-NaN rows and columns
@@ -92,48 +95,39 @@ class CSVCleaner(BaseParser):
         * Converting dates to the format specified in the configuration
         * Removing unwanted characters from monetary_columns
         * Converting the statement's notation for negative numbers to a standard minus sign
-
-        :param list(str) monetary_columns: names of columns containing monetary amounts
-        :param str date_column: name of date column
         """
         self.data.dropna(axis=0, how='all', inplace=True)
         self.data.dropna(axis=1, how='all', inplace=True)
         self.data.drop_duplicates(inplace=True)
 
         self._convert_column_names()
-        self._convert_dates(date_column)
-        self._remove_unwanted_characters(monetary_columns)
-        self._convert_negative_values(monetary_columns)
+        self._convert_dates()
+        self._remove_unwanted_characters()
+        self._convert_negative_values()
 
     def _convert_column_names(self):
         """ Convert column names to snake_case.
         """
         self.data.columns = self.data.columns.str.lower().str.replace(' ', '_')
 
-    def _convert_dates(self, date_column):
+    def _convert_dates(self):
         """ Convert dates to the format specified in the configuration.
-
-        :param str date_column: name of date column
         """
-        self.data[date_column] = pd.to_datetime(
-            self.data[date_column],
+        self.data[self.date_column] = pd.to_datetime(
+            self.data[self.date_column],
             format=self.date_format
         )
 
-    def _remove_unwanted_characters(self, monetary_columns):
+    def _remove_unwanted_characters(self):
         """ Removing unwanted characters from monetary_columns.
-
-        :param list(str) monetary_columns: names of columns containing monetary amounts
         """
-        for column in monetary_columns:
+        for column in self.monetary_columns:
             self.data[column] = self.data[column].str.replace('£', '').str.replace(',', '')
 
-    def _convert_negative_values(self, monetary_columns):
+    def _convert_negative_values(self):
         """ Convert (numbers) to standard negative notation.
-
-        :param list(str) monetary_columns: names of columns containing monetary amounts
         """
         negatives_values = r'\((\d*\.*\d*)\)'
         replacement = r'-\1'
-        for column in monetary_columns:
+        for column in self.monetary_columns:
             self.data[column] = self.data[column].str.replace(negatives_values, replacement)

@@ -4,21 +4,23 @@ import subprocess
 
 import psycopg2
 
+from finances_automation.scripts import configuration as conf
+
 
 class Database:
     """
     Create a PostgreSQL database wrapper object, allowing queries and commands to be passed in and data to be passed
     out.
 
-    :param str name: pre-existing database name
-    :param str data_location: path to database cluster
-    :param str user: name of database user
-    :param bool server_started: indicates if psql server has been started
-    :param bool verified: indicates that psql database does, in fact, exist
-    :param bool connected: indicates Database object is connected to psql database
-    :param bool cursor_connected: indicates cursor is connected to psql database
-    :param psycopg2.extensions.connection connection: connection to database
-    :param psycopg2.extensions.cursor cursor: cursor for executing SQL queries
+    :var str name: pre-existing database name
+    :var str data_location: path to database cluster
+    :var str user: name of database user
+    :var bool server_started: indicates if psql server has been started
+    :var bool verified: indicates that psql database does, in fact, exist
+    :var bool connected: indicates Database object is connected to psql database
+    :var bool cursor_connected: indicates cursor is connected to psql database
+    :var psycopg2.extensions.connection connection: connection to database
+    :var psycopg2.extensions.cursor cursor: cursor for executing SQL queries
     """
 
     # Location of bash script for creating psql database to connect to with Database object
@@ -27,13 +29,13 @@ class Database:
 
     creation_script = os.path.join(repository_root, 'finances_automation', 'scripts', 'create_database.sh')
 
-    def __init__(self, name, data_location, user):
-        self.check_types(name, data_location, user)
-
+    def __init__(self):
         # Database properties
-        self.name = name
-        self.data_location = data_location
-        self.user = user
+        self.name = conf.DB_NAME
+        self.data_location = conf.DB_CLUSTER
+        self.user = conf.USER
+
+        self.check_types()
 
         # Database status indicators (relating to actual psql database and the connection to it)
         self.server_started = False
@@ -49,8 +51,7 @@ class Database:
         repr = '{} database at {}: server_started = {}'.format(self.name, self.data_location, self.server_started)
         return repr
 
-    @staticmethod
-    def check_types(name, data_location, user):
+    def check_types(self):
         """
         Check initialisation inputs are of correct type.
 
@@ -58,12 +59,12 @@ class Database:
         :param any data_location: path to database cluster
         :param any user: name of database user
         """
-        if not isinstance(name, str):
-            raise TypeError('name must be a string.')
-        if not isinstance(data_location, str):
-            raise TypeError('data_location must be a string.')
-        if not isinstance(user, str):
-            raise TypeError('user must be a string.')
+        if not isinstance(self.name, str):
+            raise TypeError('self.name must be a string.')
+        if not isinstance(self.data_location, str):
+            raise TypeError('self.data_location must be a string.')
+        if not isinstance(self.user, str):
+            raise TypeError('self.user must be a string.')
 
     def create(self, overwrite=False):
         """
