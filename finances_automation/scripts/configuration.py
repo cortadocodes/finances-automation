@@ -11,25 +11,6 @@ USER = 'Marcus1'
 DB_NAME = 'finances'
 DB_CLUSTER = os.path.join(PACKAGE_ROOT, '..', 'data', 'database_cluster')
 
-TRANSACTIONS_TABLE = {
-    'name': 'transactions',
-    'headers': {
-        'id': 'serial PRIMARY KEY',
-        'date': 'DATE NOT NULL',
-        'card': 'VARCHAR',
-        'description': 'VARCHAR',
-        'money_in': 'VARCHAR',
-        'money_out': 'VARCHAR',
-        'balance': 'DECIMAL NOT NULL',
-        'category_code': 'INT',
-        'category': 'VARCHAR'
-    },
-    'monetary_columns': ['money_in', 'money_out', 'balance'],
-    'date_column': 'date',
-    'date_format': '%d/%m/%Y',
-    'category_columns': ['category_code', 'category']
-}
-
 INCOME_CATEGORIES = [
     'Job',
     'Bursaries/scholarships',
@@ -55,3 +36,31 @@ EXPENSE_CATEGORIES = [
     'Charity',
     'Other expenses'
 ]
+
+TRANSACTIONS_TABLE = {
+    'name': 'transactions',
+    'headers': {
+        'id': 'serial PRIMARY KEY',
+        'date': 'DATE NOT NULL',
+        'card': 'VARCHAR',
+        'description': 'VARCHAR',
+        'money_in': 'VARCHAR',
+        'money_out': 'VARCHAR',
+        'balance': 'DECIMAL NOT NULL',
+        'category_code': 'INT',
+        'category': 'VARCHAR'
+    },
+    'monetary_columns': ['money_in', 'money_out', 'balance'],
+    'date_column': 'date',
+    'date_format': '%d/%m/%Y',
+    'category_columns': ['category_code', 'category']
+}
+
+MONTHLY_TOTALS_TABLE = {
+    'name': 'monthly_totals',
+    'headers': {
+        'id': 'serial PRIMARY KEY',
+        'month': 'DATE NOT NULL',
+        **{category: 'DECIMAL' for category in [*INCOME_CATEGORIES, *EXPENSE_CATEGORIES]}
+    }
+}
