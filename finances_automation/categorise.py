@@ -45,6 +45,8 @@ class Categoriser:
         dates = (self.start_date, self.end_date)
 
         data = self.db.execute_statement(data_query, dates, output_required=True)
+        self.db.stop()
+
         self.data = pd.DataFrame(data, columns=self.table_headers)
 
     def select_categories(self):
