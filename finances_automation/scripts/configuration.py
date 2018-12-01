@@ -5,11 +5,11 @@ which columns are relevant in statements, how dates are parsed, and which catego
 import os
 
 
-PACKAGE_ROOT = os.path.abspath('..')
+PACKAGE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
 USER = 'Marcus1'
 
 DB_NAME = 'finances'
-DB_CLUSTER = os.path.join(PACKAGE_ROOT, '..', 'data', 'database_cluster')
+DB_CLUSTER = os.path.join(PACKAGE_ROOT, 'data', 'database_cluster')
 
 INCOME_CATEGORIES = [
     'Job',
