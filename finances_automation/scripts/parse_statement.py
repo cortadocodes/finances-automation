@@ -1,9 +1,10 @@
+import os
 import sys
 
 from finances_automation.parsers import CSVCleaner
 
 
-STATEMENT_LOCATION = sys.argv[1]
+STATEMENT_LOCATION = os.path.abspath(sys.argv[1])
 
 
 def parse_statement():
