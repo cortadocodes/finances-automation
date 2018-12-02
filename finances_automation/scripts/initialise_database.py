@@ -11,7 +11,17 @@ def initialise_database():
     database = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
     database.create(overwrite=REQUIRE_OVERWRITE)
     database.start()
-    database.create_table(conf.TRANSACTIONS_TABLE['name'], conf.TRANSACTIONS_TABLE['headers'])
+
+    database.create_table(
+        conf.TRANSACTIONS_TABLE['name'], conf.TRANSACTIONS_TABLE['headers']
+    )
+    database.create_table(
+        conf.CREDIT_TRANSACTIONS_TABLE['name'], conf.CREDIT_TRANSACTIONS_TABLE['headers']
+    )
+    database.create_table(
+        conf.MONTHLY_TOTALS_TABLE['name'], conf.MONTHLY_TOTALS_TABLE['headers']
+    )
+
     database.stop()
 
 if __name__ == '__main__':
