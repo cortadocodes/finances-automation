@@ -46,8 +46,8 @@ TRANSACTIONS_TABLE = {
         'description': 'VARCHAR',
         'money_in': 'VARCHAR',
         'money_out': 'VARCHAR',
-        'balance': 'DECIMAL NOT NULL',
-        'category_code': 'INT',
+        'balance': 'DECIMAL',
+        'category_code': 'DECIMAL',
         'category': 'VARCHAR'
     },
     'monetary_columns': ['money_in', 'money_out', 'balance'],
