@@ -9,7 +9,7 @@ from finances_automation.database import Database
 
 class BaseParser:
 
-    def __init__(self, file):
+    def __init__(self, table_name, file):
         """ Initialise a BaseParser that reads a .csv file, cleans it and stores the result in a database.
 
         :param str file: path to file to read in
@@ -28,11 +28,15 @@ class BaseParser:
         self.file = file
         self.data = None
 
-        self.table_name = conf.TRANSACTIONS_TABLE['name']
-        self.table_columns = conf.TRANSACTIONS_TABLE['headers']
-        self.monetary_columns = conf.TRANSACTIONS_TABLE['monetary_columns']
-        self.date_column = conf.TRANSACTIONS_TABLE['date_column']
-        self.date_format = conf.TRANSACTIONS_TABLE['date_format']
+        if hasattr(conf, table_name):
+            self.table = conf.__dict__['table_name']
+        else:
+            raise ValueError('No table with name {}.'.format(table_name))
+
+        self.table_columns = self.table['headers']
+        self.monetary_columns = self.table['monetary_columns']
+        self.date_column = self.table['date_column']
+        self.date_format = self.table['date_format']
 
     @staticmethod
     def check_types(file):
