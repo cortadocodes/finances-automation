@@ -1,5 +1,6 @@
 from finances_automation.database import Database
 from finances_automation.scripts import configuration as conf
+from finances_automation.table import Table
 
 
 REQUIRE_OVERWRITE = False
@@ -12,15 +13,16 @@ def initialise_database():
     database.create(overwrite=REQUIRE_OVERWRITE)
     database.start()
 
-    database.create_table(
-        conf.CURRENT_TRANSACTIONS_TABLE['name'], conf.CURRENT_TRANSACTIONS_TABLE['headers']
-    )
-    database.create_table(
-        conf.CREDIT_TRANSACTIONS_TABLE['name'], conf.CREDIT_TRANSACTIONS_TABLE['headers']
-    )
-    database.create_table(
-        conf.MONTHLY_TOTALS_TABLE['name'], conf.MONTHLY_TOTALS_TABLE['headers']
-    )
+    tables = [
+        Table(**config) for config in
+        (
+            conf.CURRENT_TRANSACTIONS_TABLE,
+            conf.CREDIT_TRANSACTIONS_TABLE,
+            conf.MONTHLY_TOTALS_TABLE
+        )
+    ]
+
+    yield (database.create_table(table) for table in tables)
 
     database.stop()
 

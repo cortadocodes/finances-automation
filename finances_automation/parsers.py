@@ -5,47 +5,40 @@ import pandas as pd
 
 from finances_automation.scripts import configuration as conf
 from finances_automation.database import Database
+from finances_automation.table import Table
 
 
 class BaseParser:
 
-    def __init__(self, table_name, file):
+    def __init__(self, table, file):
         """ Initialise a BaseParser that reads a .csv file, cleans it and stores the result in a database.
 
+        :param Table table: table to store data in
         :param str file: path to file to read in
 
         :var str db_name: name of database to store output in
         :var str db_location: location of that database
         :var st db_user: user to be used to access the database
-        :var str table_name: table name to store the output in within the database
-        :var list(str) monetary_columns: names of columns containing monetary amounts
-        :var str date_column: name of date column
-        :var str date_format: date format of date column
         """
-        self.check_types(file)
+        self.check_types(table, file)
 
         self.db = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
+        self.table = table
         self.file = file
         self.data = None
 
-        if hasattr(conf, table_name):
-            self.table = conf.__dict__['table_name']
-        else:
-            raise ValueError('No table with name {}.'.format(table_name))
-
-        self.table_columns = self.table['headers']
-        self.monetary_columns = self.table['monetary_columns']
-        self.date_column = self.table['date_column']
-        self.date_format = self.table['date_format']
 
     @staticmethod
-    def check_types(file):
+    def check_types(table, file):
         """ Check the variables passed in are of the correct type for BaseParser initialisation.
 
         :param any file: variable passed in as file argument
+        :param Table table: table to store data in
 
         :raise: TypeError if any of the arguments are of the wrong type
         """
+        if not isinstance(table, Table):
+            raise TypeError('table must be a Table.')
         if not isinstance(file, str):
             raise TypeError('file should be a string.')
 
@@ -69,7 +62,7 @@ class BaseParser:
             operation = (
                 """INSERT INTO {} ({}) VALUES ({});"""
                 .format(
-                    self.table_name,
+                    self.table.name,
                     ', '.join(['{}'] * len(columns)),
                     ', '.join(['%s'] * len(columns))
                 )
@@ -121,22 +114,22 @@ class CSVCleaner(BaseParser):
     def _add_missing_database_table_columns(self):
         """ Add columns in the database table that are missing from the read-in file.
         """
-        for column in self.table_columns:
+        for column in self.table.schema.keys():
             if column not in self.data.columns and column != 'id':
                 self.data[column] = 'NaN'
 
     def _convert_dates(self):
         """ Convert dates to the format specified in the configuration.
         """
-        self.data[self.date_column] = pd.to_datetime(
-            self.data[self.date_column],
-            format=self.date_format
+        self.data[self.table.date_column] = pd.to_datetime(
+            self.data[self.table.date_column],
+            format=self.table.date_format
         )
 
     def _remove_unwanted_characters(self):
         """ Removing unwanted characters from monetary_columns.
         """
-        for column in self.monetary_columns:
+        for column in self.table.monetary_columns:
             self.data[column] = self.data[column].str.replace('£', '').str.replace(',', '')
 
     def _convert_negative_values(self):
@@ -144,5 +137,5 @@ class CSVCleaner(BaseParser):
         """
         negatives_values = r'\((\d*\.*\d*)\)'
         replacement = r'-\1'
-        for column in self.monetary_columns:
+        for column in self.table.monetary_columns:
             self.data[column] = self.data[column].str.replace(negatives_values, replacement)

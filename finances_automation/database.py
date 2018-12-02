@@ -5,6 +5,7 @@ import subprocess
 
 import psycopg2
 
+from finances_automation.table import Table
 
 class Database:
     """ Create a PostgreSQL database wrapper object, allowing queries and commands to be passed in and data to be passed
@@ -137,7 +138,7 @@ class Database:
             if self.is_connected():
                 raise ConnectionError("Database disconnection unsuccessful.")
 
-    def create_table(self, table_name, schema):
+    def create_table(self, table):
         """ Create a table from a table name and schema.
 
         :param str table_name: name of table to be created
@@ -145,22 +146,21 @@ class Database:
 
         :raise TypeError: if the arguments are not of the correct type
         """
-        if not isinstance(table_name, str):
-            raise TypeError('table_name must be a string.')
-        if not isinstance(schema, dict):
-            raise TypeError('table_name must be a dictionary mapping column name to column schema specification.')
+        if not isinstance(table, Table):
+            raise TypeError('table must be a Table.')
 
-        columns = schema.keys()
-        column_schema_specifications = schema.values()
+
+        columns = table.schema.keys()
+        column_schema_specifications = table.schema.values()
         schema_list = list(itertools.chain(*list(zip(columns, column_schema_specifications))))
 
-        schema = ',\n'.join(['{} {}' for _ in schema.keys()]).format(*schema_list)
+        schema = ',\n'.join(['{} {}' for _ in columns]).format(*schema_list)
 
         table_creation_statement = """
             CREATE TABLE {} (
                 {}
             );
-        """.format(table_name, schema)
+        """.format(table.name, schema)
 
         self.execute_statement(table_creation_statement)
 

@@ -4,31 +4,33 @@ import pandas as pd
 
 from finances_automation.database import Database
 from finances_automation.scripts import configuration as conf
+from finances_automation.table import Table
 
 
 class Categoriser:
 
-    def __init__(self, start_date, end_date):
+    def __init__(self, table, start_date, end_date):
 
-        self.check_types(start_date, end_date)
+        self.check_types(table, start_date, end_date)
 
         self.db = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
         self.data = None
 
-        self.table_name = conf.CURRENT_TRANSACTIONS_TABLE['name']
-        self.table_headers = conf.CURRENT_TRANSACTIONS_TABLE['headers']
-        self.category_columns = conf.CURRENT_TRANSACTIONS_TABLE['category_columns']
-        self.date_column = conf.CURRENT_TRANSACTIONS_TABLE['date_column']
-        self.date_format = conf.CURRENT_TRANSACTIONS_TABLE['date_format']
+        self.table = table
 
         self.income_categories = conf.INCOME_CATEGORIES
         self.expense_categories = conf.EXPENSE_CATEGORIES
 
-        self.start_date = dt.datetime.strptime(start_date, self.date_format).date()
-        self.end_date = dt.datetime.strptime(end_date, self.date_format).date() + dt.timedelta(1)
+        self.start_date = dt.datetime.strptime(start_date, self.table.date_format).date()
+        self.end_date = (
+            dt.datetime.strptime(end_date, self.table.date_format).date()
+            + dt.timedelta(1)
+        )
 
     @staticmethod
-    def check_types(start_date, end_date):
+    def check_types(table, start_date, end_date):
+        if not isinstance(table, Table):
+            raise TypeError('table must be a Table.')
         if not isinstance(start_date, str) or not isinstance(end_date, str):
             raise TypeError('dates should be of type str.')
 
@@ -39,7 +41,7 @@ class Categoriser:
             """ SELECT * FROM {0}
             WHERE {1} >= %s AND {1} < %s;0
             """
-            .format(self.table_name, self.date_column)
+            .format(self.table.name, self.table.date_column)
         )
 
         dates = (self.start_date, self.end_date)
@@ -47,7 +49,7 @@ class Categoriser:
         data = self.db.execute_statement(data_query, dates, output_required=True)
         self.db.stop()
 
-        self.data = pd.DataFrame(data, columns=self.table_headers)
+        self.data = pd.DataFrame(data, columns=self.table.schema.keys())
 
     def select_categories(self):
         self.data['category_code'] = self.data.apply(self.select_category, axis=1)
@@ -93,7 +95,10 @@ class Categoriser:
 
         for i in range(len(self.data)):
             id = int(self.data.iloc[i, 0])
-            data = tuple([int(self.data.iloc[i][self.category_columns[0]]), self.data.iloc[i][self.category_columns[1]]])
+            data = tuple([
+                int(self.data.iloc[i][self.table.category_columns[0]]),
+                self.data.iloc[i][self.table.category_columns[1]]]
+            )
 
             operation = (
                 """
@@ -101,7 +106,12 @@ class Categoriser:
                 SET {1} = %s, {2} = %s
                 WHERE {0}.id = {3}
                 """
-                .format(self.table_name, self.category_columns[0], self.category_columns[1], id)
+                .format(
+                    self.table.name,
+                    self.table.category_columns[0],
+                    self.table.category_columns[1],
+                    id
+                )
             )
 
             self.db.execute_statement(operation, data)
