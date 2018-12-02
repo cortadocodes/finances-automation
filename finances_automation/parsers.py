@@ -29,6 +29,7 @@ class BaseParser:
         self.data = None
 
         self.table_name = conf.TRANSACTIONS_TABLE['name']
+        self.table_columns = conf.TRANSACTIONS_TABLE['headers']
         self.monetary_columns = conf.TRANSACTIONS_TABLE['monetary_columns']
         self.date_column = conf.TRANSACTIONS_TABLE['date_column']
         self.date_format = conf.TRANSACTIONS_TABLE['date_format']
@@ -59,14 +60,16 @@ class BaseParser:
 
         for i in range(len(self.data)):
             columns = list(self.data.columns)
-            data = list(self.data.iloc[i])
-            values = tuple(data)
+            values = tuple(self.data.iloc[i])
 
             operation = (
-                """INSERT INTO {} ({}, {}, {}, {}, {})
-                VALUES
-                (%s, %s, %s, %s, %s);"""
-                .format(self.table_name, *columns)
+                """INSERT INTO {} ({}) VALUES ({});"""
+                .format(
+                    self.table_name,
+                    ', '.join(['{}'] * len(columns)),
+                    ', '.join(['%s'] * len(columns))
+                )
+                .format(*columns)
             )
 
             self.db.execute_statement(operation, values)
@@ -101,6 +104,7 @@ class CSVCleaner(BaseParser):
         self.data.drop_duplicates(inplace=True)
 
         self._convert_column_names()
+        self._add_missing_database_table_columns()
         self._convert_dates()
         self._remove_unwanted_characters()
         self._convert_negative_values()
@@ -109,6 +113,13 @@ class CSVCleaner(BaseParser):
         """ Convert column names to snake_case.
         """
         self.data.columns = self.data.columns.str.lower().str.replace(' ', '_')
+
+    def _add_missing_database_table_columns(self):
+        """ Add columns in the database table that are missing from the read-in file.
+        """
+        for column in self.table_columns:
+            if column not in self.data.columns and column != 'id':
+                self.data[column] = 'NaN'
 
     def _convert_dates(self):
         """ Convert dates to the format specified in the configuration.
