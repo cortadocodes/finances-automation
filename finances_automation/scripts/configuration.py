@@ -13,7 +13,7 @@ DB_CLUSTER = os.path.join(PACKAGE_ROOT, 'data', 'database_cluster')
 
 INCOME_CATEGORIES = [
     'Job',
-    'Bursaries/scholarships',
+    'Bursaries and scholarships',
     'Transfers in',
     'Other income',
 ]
@@ -31,7 +31,7 @@ EXPENSE_CATEGORIES = [
     'Holidays',
     'Travel',
     'Credit card',
-    'Savings/investments',
+    'Savings and investments',
     'Loan repayments',
     'Charity',
     'Other expenses'
@@ -80,6 +80,9 @@ MONTHLY_TOTALS_TABLE = {
     'headers': {
         'id': 'serial PRIMARY KEY',
         'month': 'DATE NOT NULL',
-        **{category: 'DECIMAL' for category in [*INCOME_CATEGORIES, *EXPENSE_CATEGORIES]}
+        **{
+            category.lower().replace(' ', '_'): 'DECIMAL'
+            for category in [*INCOME_CATEGORIES, *EXPENSE_CATEGORIES]
+        }
     }
 }
