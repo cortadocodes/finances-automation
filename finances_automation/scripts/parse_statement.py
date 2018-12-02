@@ -13,7 +13,7 @@ def parse_statement():
     """ Read in a statement, clean it up and store it in the database.
     """
     if TYPE == 'current' or None:
-        table_name = conf.TRANSACTIONS_TABLE
+        table_name = conf.CURRENT_TRANSACTIONS_TABLE
     elif TYPE == 'credit':
         table_name = conf.CREDIT_TRANSACTIONS_TABLE
 

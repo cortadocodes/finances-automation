@@ -15,11 +15,11 @@ class Categoriser:
         self.db = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
         self.data = None
 
-        self.table_name = conf.TRANSACTIONS_TABLE['name']
-        self.table_headers = conf.TRANSACTIONS_TABLE['headers']
-        self.category_columns = conf.TRANSACTIONS_TABLE['category_columns']
-        self.date_column = conf.TRANSACTIONS_TABLE['date_column']
-        self.date_format = conf.TRANSACTIONS_TABLE['date_format']
+        self.table_name = conf.CURRENT_TRANSACTIONS_TABLE['name']
+        self.table_headers = conf.CURRENT_TRANSACTIONS_TABLE['headers']
+        self.category_columns = conf.CURRENT_TRANSACTIONS_TABLE['category_columns']
+        self.date_column = conf.CURRENT_TRANSACTIONS_TABLE['date_column']
+        self.date_format = conf.CURRENT_TRANSACTIONS_TABLE['date_format']
 
         self.income_categories = conf.INCOME_CATEGORIES
         self.expense_categories = conf.EXPENSE_CATEGORIES

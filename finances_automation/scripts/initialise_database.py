@@ -13,7 +13,7 @@ def initialise_database():
     database.start()
 
     database.create_table(
-        conf.TRANSACTIONS_TABLE['name'], conf.TRANSACTIONS_TABLE['headers']
+        conf.CURRENT_TRANSACTIONS_TABLE['name'], conf.CURRENT_TRANSACTIONS_TABLE['headers']
     )
     database.create_table(
         conf.CREDIT_TRANSACTIONS_TABLE['name'], conf.CREDIT_TRANSACTIONS_TABLE['headers']

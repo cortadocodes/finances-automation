@@ -37,8 +37,8 @@ EXPENSE_CATEGORIES = [
     'Other expenses'
 ]
 
-TRANSACTIONS_TABLE = {
-    'name': 'transactions',
+CURRENT_TRANSACTIONS_TABLE = {
+    'name': 'current_transactions',
     'headers': {
         'id': 'serial PRIMARY KEY',
         'date': 'DATE NOT NULL',
