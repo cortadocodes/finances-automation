@@ -56,6 +56,25 @@ TRANSACTIONS_TABLE = {
     'category_columns': ['category_code', 'category']
 }
 
+CREDIT_TRANSACTIONS_TABLE = {
+    'name': 'credit_transactions',
+    'headers': {
+        'id': 'serial PRIMARY KEY',
+        'date': 'DATE NOT NULL',
+        'card': 'VARCHAR',
+        'description': 'VARCHAR',
+        'money_in': 'VARCHAR',
+        'money_out': 'VARCHAR',
+        'balance': 'DECIMAL',
+        'category_code': 'DECIMAL',
+        'category': 'VARCHAR'
+    },
+    'monetary_columns': ['money_in', 'money_out', 'balance'],
+    'date_column': 'date',
+    'date_format': '%d/%m/%Y',
+    'category_columns': ['category_code', 'category']
+}
+
 MONTHLY_TOTALS_TABLE = {
     'name': 'monthly_totals',
     'headers': {
