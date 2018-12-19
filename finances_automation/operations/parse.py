@@ -1,6 +1,7 @@
 """ Contains parsers for reading in bank or card statements to be stored in the finances database.
 """
 
+import numpy as np
 import pandas as pd
 
 from finances_automation import configuration as conf
@@ -105,6 +106,7 @@ class CSVCleaner(BaseParser):
         self._convert_dates()
         self._remove_unwanted_characters()
         self._convert_negative_values()
+        self._convert_nans()
 
     def _convert_column_names(self):
         """ Convert column names to snake_case.
@@ -116,7 +118,7 @@ class CSVCleaner(BaseParser):
         """
         for column in self.table.schema.keys():
             if column not in self.data.columns and column != 'id':
-                self.data[column] = 'NaN'
+                self.data[column] = np.nan
 
     def _convert_dates(self):
         """ Convert dates to the format specified in the configuration.
@@ -139,3 +141,9 @@ class CSVCleaner(BaseParser):
         replacement = r'-\1'
         for column in self.table.monetary_columns:
             self.data[column] = self.data[column].str.replace(negatives_values, replacement)
+
+    def _convert_monetary_nans(self, value=0):
+        """ Convert NaN values to a value.
+        """
+        for column in self.table.monetary_columns:
+            self.data[column].convert_na(value)
