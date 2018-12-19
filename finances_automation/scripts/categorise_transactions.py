@@ -2,7 +2,7 @@ import sys
 
 from finances_automation.operations.categorise import Categoriser
 from finances_automation.scripts import configuration as conf
-from finances_automation.table import Table
+from finances_automation.entities.table import Table
 
 
 table_name = sys.argv[1]

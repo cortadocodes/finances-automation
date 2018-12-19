@@ -5,7 +5,7 @@ import subprocess
 
 import psycopg2
 
-from finances_automation.table import Table
+from finances_automation.entities.table import Table
 
 class Database:
     """ Create a PostgreSQL database wrapper object, allowing queries and commands to be passed in and data to be passed

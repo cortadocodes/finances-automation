@@ -3,7 +3,7 @@ import shutil
 
 import psycopg2
 
-from finances_automation.database import Database
+from finances_automation.entities.database import Database
 
 
 DATABASE_NAME = 'test_database'
