@@ -3,7 +3,7 @@ import datetime as dt
 import pandas as pd
 
 from finances_automation.entities.database import Database
-from finances_automation.scripts import configuration as conf
+from finances_automation import configuration as conf
 from finances_automation.entities.table import Table
 
 
