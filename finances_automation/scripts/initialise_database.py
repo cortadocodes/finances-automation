@@ -7,7 +7,7 @@ REQUIRE_OVERWRITE = False
 
 
 def initialise_database():
-    """ Create and initialise a database with an empty table.
+    """ Create and initialise the database with an empty table.
     """
     database = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
     database.create(overwrite=REQUIRE_OVERWRITE)
@@ -22,7 +22,8 @@ def initialise_database():
         )
     ]
 
-    yield (database.create_table(table) for table in tables)
+    for table in tables:
+        database.create_table(table)
 
     database.stop()
 

@@ -17,6 +17,8 @@ def parse_statement():
         table = Table(conf.CURRENT_TRANSACTIONS_TABLE)
     elif TYPE == 'credit':
         table = Table(conf.CREDIT_TRANSACTIONS_TABLE)
+    else:
+        raise ValueError("TYPE should be 'current' or 'credit'")
 
     p = CSVCleaner(table, STATEMENT_LOCATION)
     p.read(header=3)
