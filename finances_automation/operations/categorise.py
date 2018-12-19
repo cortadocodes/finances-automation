@@ -39,7 +39,7 @@ class Categoriser:
 
         data_query = (
             """ SELECT * FROM {0}
-            WHERE {1} >= %s AND {1} < %s;0
+            WHERE {1} >= %s AND {1} < %s;
             """
             .format(self.table.name, self.table.date_column)
         )
