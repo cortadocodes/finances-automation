@@ -1,6 +1,6 @@
 import sys
 
-from finances_automation.categorise import Categoriser
+from finances_automation.operations.categorise import Categoriser
 from finances_automation.scripts import configuration as conf
 from finances_automation.table import Table
 

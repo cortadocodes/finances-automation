@@ -2,7 +2,7 @@ import os
 import sys
 
 from finances_automation.scripts import configuration as conf
-from finances_automation.parsers import CSVCleaner
+from finances_automation.operations.parsers import CSVCleaner
 from finances_automation.table import Table
 
 
