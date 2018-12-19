@@ -1,7 +1,7 @@
 class Table:
 
-    def __init__(self, name, schema, monetary_columns, date_column, date_format,
-                 category_columns):
+    def __init__(self, name, schema, monetary_columns=None, date_column=None, date_format=None,
+                 category_columns=None):
 
         self.name = name
         self.schema = schema
