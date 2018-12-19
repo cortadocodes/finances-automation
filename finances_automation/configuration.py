@@ -39,7 +39,7 @@ EXPENSE_CATEGORIES = [
 
 CURRENT_TRANSACTIONS_TABLE = {
     'name': 'current_transactions',
-    'headers': {
+    'schema': {
         'id': 'serial PRIMARY KEY',
         'date': 'DATE NOT NULL',
         'card': 'VARCHAR',
@@ -58,7 +58,7 @@ CURRENT_TRANSACTIONS_TABLE = {
 
 CREDIT_TRANSACTIONS_TABLE = {
     'name': 'credit_transactions',
-    'headers': {
+    'schema': {
         'id': 'serial PRIMARY KEY',
         'date': 'DATE NOT NULL',
         'card': 'VARCHAR',
@@ -77,7 +77,7 @@ CREDIT_TRANSACTIONS_TABLE = {
 
 MONTHLY_TOTALS_TABLE = {
     'name': 'monthly_totals',
-    'headers': {
+    'schema': {
         'id': 'serial PRIMARY KEY',
         'month': 'DATE NOT NULL',
         **{
