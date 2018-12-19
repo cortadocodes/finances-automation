@@ -7,6 +7,7 @@ import psycopg2
 
 from finances_automation.entities.table import Table
 
+
 class Database:
     """ Create a PostgreSQL database wrapper object, allowing queries and commands to be passed in and data to be passed
     out.
@@ -147,7 +148,6 @@ class Database:
         """
         if not isinstance(table, Table):
             raise TypeError('table must be a Table.')
-
 
         columns = table.schema.keys()
         column_schema_specifications = table.schema.values()

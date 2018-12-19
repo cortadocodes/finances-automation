@@ -1,7 +1,6 @@
 """ Configuration constants for users of finances_automation; these determine how the database is set up,
 which columns are relevant in statements, how dates are parsed, and which categories are applied to transactions.
 """
-
 import os
 
 
