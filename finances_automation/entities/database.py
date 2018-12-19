@@ -139,10 +139,9 @@ class Database:
                 raise ConnectionError("Database disconnection unsuccessful.")
 
     def create_table(self, table):
-        """ Create a table from a table name and schema.
+        """ Create a database table from a Table object.
 
-        :param str table_name: name of table to be created
-        :param dict(str, str) schema: mapping of column names to column schema specifications
+        :param finances_automation.entities.table.Table table: the table to create
 
         :raise TypeError: if the arguments are not of the correct type
         """
