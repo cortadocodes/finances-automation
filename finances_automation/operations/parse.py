@@ -1,6 +1,5 @@
 """ Contains parsers for reading in bank or card statements to be stored in the finances database.
 """
-
 import numpy as np
 import pandas as pd
 
@@ -78,7 +77,6 @@ class BaseParser:
 class CSVCleaner(BaseParser):
     """ A parser that loads a .csv statement and cleans the data before storing it in the database.
     """
-
     def read(self, delimiter=',', header=0):
         """ Read the .csv statement at self.file into a pd.DataFrame object, and store it in self.data.
 

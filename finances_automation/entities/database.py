@@ -9,8 +9,8 @@ from finances_automation.entities.table import Table
 
 
 class Database:
-    """ Create a PostgreSQL database wrapper object, allowing queries and commands to be passed in and data to be passed
-    out.
+    """ Create a PostgreSQL database wrapper object, allowing queries and commands to be passed in
+    and data to be passed out.
     """
 
     # Location of bash script for creating psql database to connect to with Database object
