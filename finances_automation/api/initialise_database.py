@@ -1,6 +1,6 @@
+from finances_automation.api import get_table
 from finances_automation.entities.database import Database
 from finances_automation import configuration as conf
-from finances_automation.entities.table import Table
 
 
 REQUIRE_OVERWRITE = False
@@ -13,19 +13,13 @@ def initialise_database():
     database.create(overwrite=REQUIRE_OVERWRITE)
     database.start()
 
-    tables = [
-        Table(**config) for config in
-        (
-            conf.CURRENT_TRANSACTIONS_TABLE,
-            conf.CREDIT_TRANSACTIONS_TABLE,
-            conf.MONTHLY_TOTALS_TABLE
-        )
-    ]
+    table_names = 'CURRENT_TRANSACTIONS_TABLE', 'CREDIT_TRANSACTIONS_TABLE', 'MONTHLY_TOTALS_TABLE'
 
-    for table in tables:
-        database.create_table(table)
+    for table_name in table_names:
+        database.create_table(get_table(table_name))
 
     database.stop()
+
 
 if __name__ == '__main__':
     initialise_database()
