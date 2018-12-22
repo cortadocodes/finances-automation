@@ -43,7 +43,9 @@ class Analyser:
         dates = (self.start_date, self.end_date)
 
         data = self.db.execute_statement(data_query, dates, output_required=True)
-        self.data = pd.DataFrame(data, columns=self.table_to_analyse.schema.keys())
+        self.data = pd.DataFrame(
+            data, columns=self.table_to_analyse.schema.keys()
+        ).astype(dtype={column: float for column in self.table_to_analyse.monetary_columns})
 
     def calculate_totals(self, positive_expenses=True):
         all_categories = self.income_categories + self.expense_categories
