@@ -106,7 +106,7 @@ class CSVCleaner(BaseParser):
         self._convert_dates()
         self._remove_unwanted_characters()
         self._convert_negative_values()
-        self._convert_nans()
+        self._convert_monetary_nans()
 
     def _convert_column_names(self):
         """ Convert column names to snake_case.
@@ -146,4 +146,4 @@ class CSVCleaner(BaseParser):
         """ Convert NaN values to a value.
         """
         for column in self.table.monetary_columns:
-            self.data[column].convert_na(value)
+            self.data[column].fill_na(value)
