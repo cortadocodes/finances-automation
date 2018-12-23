@@ -48,7 +48,10 @@ class Categoriser:
 
     def select_category(self, row):
         self.print_categories()
-        print(str(row), end='\n\n')
+
+        relevant_columns = [self.table.date_column, 'description'] + self.table.monetary_columns
+        print(row[relevant_columns], end='\n\n')
+
         category = int(input('Category code: '))
         print('\n\n')
 
