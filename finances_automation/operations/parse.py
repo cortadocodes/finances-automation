@@ -101,9 +101,9 @@ class CSVCleaner(BaseParser):
 
         self._convert_column_names()
         self._add_missing_database_table_columns()
-        self._convert_dates()
         self._remove_unwanted_characters()
         self._convert_negative_values()
+        self._enforce_column_types()
         self._convert_monetary_nans()
 
     def _convert_column_names(self):
@@ -118,30 +118,34 @@ class CSVCleaner(BaseParser):
             if column not in self.data.columns and column != 'id':
                 self.data[column] = np.nan
 
-    def _convert_dates(self):
-        """ Convert dates to the format specified in the configuration.
-        """
-        self.data[self.table.date_column] = pd.to_datetime(
-            self.data[self.table.date_column],
-            format=self.table.date_format
-        )
-
     def _remove_unwanted_characters(self):
         """ Removing unwanted characters from monetary_columns.
         """
         for column in self.table.monetary_columns:
-            self.data[column] = self.data[column].str.replace('£', '').str.replace(',', '')
+            self.data[column] = self.data[column].astype(str).str.replace('£', '').str.replace(',', '')
 
     def _convert_negative_values(self):
         """ Convert (numbers) to standard negative notation.
         """
         negatives_values = r'\((\d*\.*\d*)\)'
         replacement = r'-\1'
+
         for column in self.table.monetary_columns:
             self.data[column] = self.data[column].str.replace(negatives_values, replacement)
+
+    def _enforce_column_types(self):
+        """ Convert dates to the format specified in the configuration.
+        """
+        self.data[self.table.date_column] = pd.to_datetime(
+            self.data[self.table.date_column],
+            format=self.table.date_format
+        )
+        self.data = self.data.astype(
+            dtype={column: float for column in self.table.monetary_columns}
+        )
 
     def _convert_monetary_nans(self, value=0):
         """ Convert NaN values to a value.
         """
         for column in self.table.monetary_columns:
-            self.data[column].fill_na(value)
+            self.data[column].fill_na(value, inplace=True)
