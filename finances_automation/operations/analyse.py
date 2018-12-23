@@ -77,7 +77,7 @@ class Analyser:
         values = tuple(self.totals.iloc[0])
 
         operation = (
-            """INSERT INTO {} ({}) VALUES ({});"""
+            'INSERT INTO {} ({}) VALUES ({});'
             .format(
                 self.table_to_store.name,
                 ', '.join(['{}'] * len(rows)),

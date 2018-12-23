@@ -155,11 +155,7 @@ class Database:
 
         schema = ',\n'.join(['{} {}' for _ in columns]).format(*schema_list)
 
-        table_creation_statement = """
-            CREATE TABLE {} (
-                {}
-            );
-        """.format(table.name, schema)
+        table_creation_statement = 'CREATE TABLE {} ({});'.format(table.name, schema)
 
         self.start()
         self.execute_statement(table_creation_statement)
@@ -177,7 +173,7 @@ class Database:
         if not isinstance(table, Table):
             raise TypeError('table must be a Table.')
 
-        statement = """SELECT {} FROM {} WHERE {}""".format(
+        statement = 'SELECT {} FROM {} WHERE {}'.format(
             ','.join(columns),
             table.name,
             ' '.join(['{} %s'.format(condition[0]) for condition in conditions])
