@@ -4,7 +4,7 @@ which columns are relevant in statements, how dates are parsed, and which catego
 import os
 
 
-PACKAGE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..'))
+PACKAGE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
 USER = 'Marcus1'
 
 DB_NAME = 'finances'
