@@ -13,7 +13,7 @@ def initialise_database():
     database.create(overwrite=REQUIRE_OVERWRITE)
     database.start()
 
-    table_names = 'CURRENT_TRANSACTIONS_TABLE', 'CREDIT_TRANSACTIONS_TABLE', 'MONTHLY_TOTALS_TABLE'
+    table_names = 'CURRENT_TRANSACTIONS_TABLE', 'CREDIT_TRANSACTIONS_TABLE', 'TOTALS_TABLE'
 
     for table_name in table_names:
         database.create_table(get_table(table_name))

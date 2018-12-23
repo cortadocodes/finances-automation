@@ -74,11 +74,12 @@ CREDIT_TRANSACTIONS_TABLE = {
     'category_columns': ['category_code', 'category']
 }
 
-MONTHLY_TOTALS_TABLE = {
-    'name': 'monthly_totals',
+TOTALS_TABLE = {
+    'name': 'totals',
     'schema': {
         'id': 'serial PRIMARY KEY',
-        'month': 'DATE NOT NULL',
+        'start_date': 'DATE NOT NULL',
+        'end_date': 'DATE NOT NULL',
         **{
             category.lower().replace(' ', '_'): 'DECIMAL'
             for category in [*INCOME_CATEGORIES, *EXPENSE_CATEGORIES]
