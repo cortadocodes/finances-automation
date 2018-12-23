@@ -104,7 +104,6 @@ class CSVCleaner(BaseParser):
         self._remove_unwanted_characters()
         self._convert_negative_values()
         self._enforce_column_types()
-        self._convert_monetary_nans()
 
     def _convert_column_names(self):
         """ Convert column names to snake_case.
@@ -143,9 +142,3 @@ class CSVCleaner(BaseParser):
         self.data = self.data.astype(
             dtype={column: float for column in self.table.monetary_columns}
         )
-
-    def _convert_monetary_nans(self, value=0):
-        """ Convert NaN values to a value.
-        """
-        for column in self.table.monetary_columns:
-            self.data[column].fill_na(value, inplace=True)
