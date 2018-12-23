@@ -1,9 +1,10 @@
 import datetime as dt
+import os
 
 import pandas as pd
 
-from finances_automation.entities.database import Database
 from finances_automation import configuration as conf
+from finances_automation.entities.database import Database
 
 
 class Analyser:
@@ -17,7 +18,7 @@ class Analyser:
         """
         self.db = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
         self.data = None
-        self.totals = {}
+        self.totals = None
 
         self.table_to_analyse = table_to_analyse
         self.table_to_store = table_to_store
@@ -66,6 +67,13 @@ class Analyser:
 
             self.totals.loc[0, category] = round(category_total, 2)
 
+    def get_totals_as_csv(self, path):
+        if not self.totals:
+            raise ValueError('Totals must be calculated before being exported.')
+
+        filename = '_'.join(['totals', self.table_to_analyse.name, str(dt.datetime.now()), '.csv'])
+
+        self.totals.to_csv(os.path.join(path, filename), index=False)
 
     def store_in_database(self):
         self.db.start()

@@ -1,5 +1,7 @@
+import os
 import sys
 
+from finances_automation import configuration as conf
 from finances_automation.api import get_table
 from finances_automation.operations.analyse import Analyser
 
@@ -10,11 +12,14 @@ TABLE_TO_STORE = get_table(sys.argv[2].upper())
 START_DATE = sys.argv[3]
 END_DATE = sys.argv[4]
 
+OUTPUT_CSV_PATH = os.path.join(conf.PACKAGE_ROOT, 'data')
+
 
 def analyse_transactions():
     analyser = Analyser(TABLE_TO_ANALYSE, TABLE_TO_STORE, START_DATE, END_DATE)
     analyser.load_from_database()
     analyser.calculate_totals()
+    analyser.get_totals_as_csv(OUTPUT_CSV_PATH)
     analyser.store_in_database()
 
 
