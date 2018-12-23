@@ -165,6 +165,32 @@ class Database:
         self.execute_statement(table_creation_statement)
         self.stop()
 
+    def select_from(self, table, columns, conditions):
+        """ Select columns from a table according to conditions.
+
+        :param Table table:
+        :param list(str) columns:
+        :param list(tuple) conditions:
+
+        :return list(tuple): data from table
+        """
+        if not isinstance(table, Table):
+            raise TypeError('table must be a Table.')
+
+        statement = """SELECT {} FROM {} WHERE {}""".format(
+            ','.join(columns),
+            table.name,
+            ' '.join(['{} %s'.format(condition[0]) for condition in conditions])
+        )
+
+        condition_values = tuple(condition[1] for condition in conditions)
+
+        self.start()
+        data = self.execute_statement(statement, values=condition_values, output_required=True)
+        self.stop()
+
+        return data
+
     def execute_statement(self, statement, values=None, output_required=False):
         """
         Execute a SQL statement.

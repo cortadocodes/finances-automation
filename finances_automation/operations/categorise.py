@@ -35,19 +35,10 @@ class Categoriser:
             raise TypeError('dates should be of type str.')
 
     def load_from_database(self):
-        self.db.start()
-
-        data_query = (
-            """ SELECT * FROM {0}
-            WHERE {1} >= %s AND {1} < %s;
-            """
-            .format(self.table.name, self.table.date_column)
-        )
-
-        dates = (self.start_date, self.end_date)
-
-        data = self.db.execute_statement(data_query, dates, output_required=True)
-        self.db.stop()
+        data = self.db.select_from(self.table, columns=['*'], conditions=[
+            ('{} >='.format(self.table.date_column), self.start_date),
+            ('{} <'.format(self.table.date_column), self.end_date)
+        ])
 
         self.data = pd.DataFrame(data, columns=self.table.schema.keys())
 
