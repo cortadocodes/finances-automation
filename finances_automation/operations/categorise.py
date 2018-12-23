@@ -37,7 +37,7 @@ class Categoriser:
     def load_from_database(self):
         data = self.db.select_from(self.table, columns=['*'], conditions=[
             ('{} >='.format(self.table.date_column), self.start_date),
-            ('{} <'.format(self.table.date_column), self.end_date)
+            ('AND {} <'.format(self.table.date_column), self.end_date)
         ])
 
         self.data = pd.DataFrame(data, columns=self.table.schema.keys())
