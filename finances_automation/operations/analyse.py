@@ -33,18 +33,10 @@ class Analyser:
         )
 
     def load_from_database(self):
-        self.db.start()
-
-        data_query = (
-            """ SELECT * FROM {0}
-            WHERE {1} > %s AND {1} < %s;
-            """
-            .format(self.table_to_analyse.name, self.table_to_analyse.date_column)
-        )
-
-        dates = self.start_date, self.end_date
-
-        data = self.db.execute_statement(data_query, dates, output_required=True)
+        data = self.db.select_from(self.table_to_analyse, columns=['*'], conditions=[
+            ('{} >'.format(self.table_to_analyse.date_column), self.start_date),
+            ('AND {} <'.format(self.table_to_analyse.date_column), self.end_date),
+        ])
 
         self.data = pd.DataFrame(
             data, columns=self.table_to_analyse.schema.keys()
@@ -52,7 +44,10 @@ class Analyser:
 
     def calculate_totals(self, positive_expenses=True):
         all_categories = self.income_categories + self.expense_categories
-        self.totals = pd.DataFrame(columns=all_categories)
+        self.totals = pd.DataFrame(columns=['start_date', 'end_date'] + all_categories)
+
+        self.totals['start_date'] = self.start_date
+        self.totals['end_date'] = self.end_date
 
         for category in all_categories:
             condition = self.data['category'] == category
@@ -68,7 +63,7 @@ class Analyser:
             self.totals.loc[0, category] = round(category_total, 2)
 
     def get_totals_as_csv(self, path):
-        if not self.totals:
+        if self.totals is None:
             raise ValueError('Totals must be calculated before being exported.')
 
         filename = '_'.join(['totals', self.table_to_analyse.name, str(dt.datetime.now()), '.csv'])
