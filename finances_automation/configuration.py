@@ -11,29 +11,29 @@ DB_NAME = 'finances'
 DB_CLUSTER = os.path.join(PACKAGE_ROOT, 'data', 'database_cluster')
 
 INCOME_CATEGORIES = [
-    'Job',
-    'Bursaries and scholarships',
-    'Transfers in',
-    'Other income',
+    'job',
+    'bursaries_and_scholarships',
+    'transfers_in',
+    'other_income',
 ]
 
 EXPENSE_CATEGORIES = [
-    'Rent',
-    'Utility bills',
-    'Essentials',
-    'Health',
-    'Clothes',
-    'Subscriptions',
-    'Cash',
-    'Fun',
-    'Coffee',
-    'Holidays',
-    'Travel',
-    'Credit card',
-    'Savings and investments',
-    'Loan repayments',
-    'Charity',
-    'Other expenses'
+    'rent',
+    'utility_bills',
+    'essentials',
+    'health',
+    'clothes',
+    'subscriptions',
+    'cash',
+    'fun',
+    'coffee',
+    'holidays',
+    'travel',
+    'credit_card',
+    'savings_and_investments',
+    'loan_repayments',
+    'charity',
+    'other_expenses'
 ]
 
 CURRENT_TRANSACTIONS_TABLE = {
