@@ -11,14 +11,11 @@ def initialise_database():
     """
     database = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
     database.create(overwrite=REQUIRE_OVERWRITE)
-    database.start()
 
     table_names = 'CURRENT_TRANSACTIONS_TABLE', 'CREDIT_TRANSACTIONS_TABLE', 'TOTALS_TABLE'
 
     for table_name in table_names:
         database.create_table(get_table(table_name))
-
-    database.stop()
 
 
 if __name__ == '__main__':

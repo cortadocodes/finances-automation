@@ -161,7 +161,9 @@ class Database:
             );
         """.format(table.name, schema)
 
+        self.start()
         self.execute_statement(table_creation_statement)
+        self.stop()
 
     def execute_statement(self, statement, values=None, output_required=False):
         """
