@@ -17,6 +17,7 @@ class Analyser:
         """
         self.db = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
         self.data = None
+        self.totals = {}
 
         self.table_to_analyse = table_to_analyse
         self.table_to_store = table_to_store
@@ -40,19 +41,20 @@ class Analyser:
             .format(self.table_to_analyse.name, self.table_to_analyse.date_column)
         )
 
-        dates = (self.start_date, self.end_date)
+        dates = self.start_date, self.end_date
 
         data = self.db.execute_statement(data_query, dates, output_required=True)
+
         self.data = pd.DataFrame(
             data, columns=self.table_to_analyse.schema.keys()
         ).astype(dtype={column: float for column in self.table_to_analyse.monetary_columns})
 
     def calculate_totals(self, positive_expenses=True):
         all_categories = self.income_categories + self.expense_categories
-        totals = pd.DataFrame(index=[all_categories], columns=['Totals'])
+        self.totals = pd.DataFrame(columns=all_categories)
 
         for category in all_categories:
-            condition = (self.data['category'] == category)
+            condition = self.data['category'] == category
             category_total = (
                 self.data[condition][self.table_to_analyse.monetary_columns[0]].sum()
                 - self.data[condition][self.table_to_analyse.monetary_columns[1]].sum()
@@ -62,24 +64,25 @@ class Analyser:
                 if category in self.expense_categories:
                     category_total = - category_total
 
-            totals.loc[category] = round(category_total, 2)
+            self.totals.loc[0, category] = round(category_total, 2)
 
-        return totals
 
     def store_in_database(self):
         self.db.start()
 
-        for i in range(len(self.data)):
-            columns = list(self.data.columns)
-            values = tuple(self.data.iloc[i])
+        rows = list(self.totals.columns)
+        values = tuple(self.totals.iloc[0])
 
-            operation = (
-                """INSERT INTO {} ({}, {}, {}, {}, {})
-                VALUES
-                (%s, %s, %s, %s, %s);"""
-                .format(self.table_to_store.name, *columns)
+        operation = (
+            """INSERT INTO {} ({}) VALUES ({});"""
+            .format(
+                self.table_to_store.name,
+                ', '.join(['{}'] * len(rows)),
+                ', '.join(['%s'] * len(rows))
             )
+            .format(*rows)
+        )
 
-            self.db.execute_statement(operation, values)
+        self.db.execute_statement(operation, values)
 
         self.db.stop()
