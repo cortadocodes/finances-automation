@@ -89,5 +89,8 @@ TOTALS_TABLE = {
             category.lower().replace(' ', '_'): 'DECIMAL'
             for category in [*INCOME_CATEGORIES, *EXPENSE_CATEGORIES]
         }
-    }
+    },
+    'date_columns': ['start_date', 'end_date'],
+    'date_format': '%d/%m/%Y'
 }
+TOTALS_TABLE['monetary_columns'] = [TOTALS_TABLE['schema'].keys()]

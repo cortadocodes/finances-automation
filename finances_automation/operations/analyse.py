@@ -46,9 +46,6 @@ class Analyser:
         all_categories = self.income_categories + self.expense_categories
         self.totals = pd.DataFrame(columns=['start_date', 'end_date'] + all_categories)
 
-        self.totals['start_date'] = self.start_date
-        self.totals['end_date'] = self.end_date
-
         for category in all_categories:
             condition = self.data['category'] == category
             category_total = (
@@ -61,6 +58,18 @@ class Analyser:
                     category_total = - category_total
 
             self.totals.loc[0, category] = round(category_total, 2)
+
+        self.totals['start_date'] = pd.to_datetime(
+            self.totals['start_date'],
+            format=self.table_to_store.date_format
+        )
+        self.totals['end_date'] = pd.to_datetime(
+            self.totals['end_date'],
+            format=self.table_to_store.date_format
+        )
+
+        self.totals['start_date'] = self.start_date
+        self.totals['end_date'] = self.end_date
 
     def get_totals_as_csv(self, path):
         if self.totals is None:
