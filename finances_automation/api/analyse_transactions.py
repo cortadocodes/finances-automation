@@ -16,6 +16,8 @@ OUTPUT_CSV_PATH = os.path.join(conf.PACKAGE_ROOT, 'data')
 
 
 def analyse_transactions():
+    """ Analyse transactions stored in a given database table between the given dates.
+    """
     analyser = Analyser(TABLE_TO_ANALYSE, TABLE_TO_STORE, START_DATE, END_DATE)
     analyser.load_from_database()
     analyser.calculate_totals()
