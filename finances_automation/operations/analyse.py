@@ -71,21 +71,8 @@ class Analyser:
         self.totals.to_csv(os.path.join(path, filename), index=False)
 
     def store_in_database(self):
-        self.db.start()
-
-        rows = list(self.totals.columns)
-        values = tuple(self.totals.iloc[0])
-
-        operation = (
-            'INSERT INTO {} ({}) VALUES ({});'
-            .format(
-                self.table_to_store.name,
-                ', '.join(['{}'] * len(rows)),
-                ', '.join(['%s'] * len(rows))
-            )
-            .format(*rows)
+        self.db.insert_into(
+            self.table_to_store.name,
+            tuple(self.totals.columns),
+            self.totals.itertuples()
         )
-
-        self.db.execute_statement(operation, values)
-
-        self.db.stop()

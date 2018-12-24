@@ -187,6 +187,30 @@ class Database:
 
         return data
 
+    def insert_into(self, table, columns, values_group):
+        """Insert values into columns of a table.
+
+        :param Table table:
+        :param tuple(str) columns:
+        :param list(tuple) values_group:
+        """
+        self.start()
+
+        for values in values_group:
+
+            statement = (
+                'INSERT INTO {} ({}) VALUES ({});'.format(
+                    table.name,
+                    ', '.join(['{}'] * len(columns)),
+                    ', '.join(['%s'] * len(columns))
+                )
+                .format(*columns)
+            )
+
+            self.execute_statement(statement, values)
+
+        self.stop()
+
     def execute_statement(self, statement, values=None, output_required=False):
         """
         Execute a SQL statement.

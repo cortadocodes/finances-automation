@@ -53,25 +53,11 @@ class BaseParser:
     def store_in_database(self):
         """ Store the parsed transactions in a database table.
         """
-        self.db.start()
-
-        for i in range(len(self.data)):
-            columns = list(self.data.columns)
-            values = tuple(self.data.iloc[i])
-
-            operation = (
-                """INSERT INTO {} ({}) VALUES ({});"""
-                .format(
-                    self.table.name,
-                    ', '.join(['{}'] * len(columns)),
-                    ', '.join(['%s'] * len(columns))
-                )
-                .format(*columns)
-            )
-
-            self.db.execute_statement(operation, values)
-
-        self.db.stop()
+        self.db.insert_into(
+            table=self.table,
+            columns=tuple(self.data.columns),
+            values_group=self.data.itertuples()
+        )
 
 
 class CSVCleaner(BaseParser):
