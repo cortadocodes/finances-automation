@@ -161,7 +161,7 @@ class Database:
         self.execute_statement(table_creation_statement)
         self.stop()
 
-    def select_from(self, table, columns, conditions):
+    def select_from(self, table, columns, conditions=None):
         """ Select columns from a table according to conditions.
 
         :param Table table:
@@ -173,13 +173,18 @@ class Database:
         if not isinstance(table, Table):
             raise TypeError('table must be a Table.')
 
-        statement = 'SELECT {} FROM {} WHERE {}'.format(
-            ','.join(columns),
-            table.name,
-            ' '.join(['{} %s'.format(condition[0]) for condition in conditions])
-        )
+        if conditions:
+            statement = 'SELECT {} FROM {} WHERE {};'.format(
+                ','.join(columns),
+                table.name,
+                ' '.join(['{} %s'.format(condition[0]) for condition in conditions])
+            )
 
-        condition_values = tuple(condition[1] for condition in conditions)
+            condition_values = tuple(condition[1] for condition in conditions)
+
+        else:
+            statement = 'SELECT {} FROM {};'
+            condition_values = None
 
         self.start()
         data = self.execute_statement(statement, values=condition_values, output_required=True)
