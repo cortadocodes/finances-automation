@@ -56,7 +56,7 @@ class BaseParser:
         self.db.insert_into(
             table=self.table,
             columns=tuple(self.data.columns),
-            values_group=self.data.itertuples()
+            values_group=self.data.itertuples(index=False)
         )
 
 

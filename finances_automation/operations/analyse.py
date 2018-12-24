@@ -81,7 +81,7 @@ class Analyser:
 
     def store_in_database(self):
         self.db.insert_into(
-            self.table_to_store.name,
+            self.table_to_store,
             tuple(self.totals.columns),
-            self.totals.itertuples()
+            self.totals.itertuples(index=False)
         )
