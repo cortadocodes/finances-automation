@@ -42,8 +42,8 @@ class Categoriser:
 
     def load_from_database(self):
         data = self.db.select_from(self.table, columns=['*'], conditions=[
-            ('{} >='.format(self.table.date_column), self.start_date),
-            ('AND {} <'.format(self.table.date_column), self.end_date)
+            ('{} >='.format(self.table.date_columns[0]), self.start_date),
+            ('AND {} <'.format(self.table.date_columns[0]), self.end_date)
         ])
 
         self.data = pd.DataFrame(
@@ -67,7 +67,7 @@ class Categoriser:
 
         self.print_categories()
 
-        relevant_columns = [self.table.date_column, 'description'] + self.table.monetary_columns
+        relevant_columns = self.table.date_columns + ['description'] + self.table.monetary_columns
         print(row[relevant_columns], end='\n\n')
 
         category_code = int(input('Category code: '))

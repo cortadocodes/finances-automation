@@ -55,7 +55,7 @@ CURRENT_TRANSACTIONS_TABLE = {
         'category': 'VARCHAR'
     },
     'monetary_columns': ['money_in', 'money_out', 'balance'],
-    'date_column': 'date',
+    'date_columns': ['date'],
     'date_format': '%d/%m/%Y',
     'category_columns': ['category_code', 'category']
 }
@@ -74,7 +74,7 @@ CREDIT_TRANSACTIONS_TABLE = {
         'category': 'VARCHAR'
     },
     'monetary_columns': ['money_in', 'money_out', 'balance'],
-    'date_column': 'date',
+    'date_columns': ['date'],
     'date_format': '%d/%m/%Y',
     'category_columns': ['category_code', 'category']
 }

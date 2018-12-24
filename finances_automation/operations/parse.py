@@ -121,10 +121,12 @@ class CSVCleaner(BaseParser):
     def _enforce_column_types(self):
         """ Convert dates to the format specified in the configuration.
         """
-        self.data[self.table.date_column] = pd.to_datetime(
-            self.data[self.table.date_column],
-            format=self.table.date_format
-        )
+        for date_column in self.table.date_columns:
+            self.data[date_column] = pd.to_datetime(
+                self.data[date_column],
+                format=self.table.date_format
+            )
+
         self.data = self.data.astype(
             dtype={column: float for column in self.table.monetary_columns}
         )

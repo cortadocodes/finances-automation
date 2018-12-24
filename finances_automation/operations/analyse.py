@@ -34,8 +34,8 @@ class Analyser:
 
     def load_from_database(self):
         data = self.db.select_from(self.table_to_analyse, columns=['*'], conditions=[
-            ('{} >'.format(self.table_to_analyse.date_column), self.start_date),
-            ('AND {} <'.format(self.table_to_analyse.date_column), self.end_date),
+            ('{} >'.format(self.table_to_analyse.date_columns[0]), self.start_date),
+            ('AND {} <'.format(self.table_to_analyse.date_columns[0]), self.end_date),
         ])
 
         self.data = pd.DataFrame(
