@@ -183,7 +183,7 @@ class Database:
             condition_values = tuple(condition[1] for condition in conditions)
 
         else:
-            statement = 'SELECT {} FROM {};'
+            statement = 'SELECT {} FROM {};'.format(','.join(columns), table.name)
             condition_values = None
 
         self.start()
