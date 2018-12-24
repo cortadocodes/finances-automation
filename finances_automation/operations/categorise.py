@@ -10,9 +10,9 @@ from finances_automation.entities.table import Table
 
 class Categoriser:
 
-    def __init__(self, table, start_date, end_date):
+    def __init__(self, table, start_date, end_date, recategorise=False):
 
-        self.check_types(table, start_date, end_date)
+        self.check_types(table, start_date, end_date, recategorise)
 
         self.db = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
         self.data = None
@@ -28,12 +28,16 @@ class Categoriser:
             + dt.timedelta(1)
         )
 
+        self.recategorise = recategorise
+
     @staticmethod
-    def check_types(table, start_date, end_date):
+    def check_types(table, start_date, end_date, recategorise):
         if not isinstance(table, Table):
             raise TypeError('table must be a Table.')
         if not isinstance(start_date, str) or not isinstance(end_date, str):
             raise TypeError('dates should be of type str.')
+        if not isinstance(recategorise, bool):
+            raise TypeError('recategorise should be boolean.')
 
     def load_from_database(self):
         data = self.db.select_from(self.table, columns=['*'], conditions=[
@@ -56,8 +60,9 @@ class Categoriser:
         self.data['category'] = self.data.apply(self.convert_category_code, axis=1)
 
     def select_category(self, row):
-        if not np.isnan(row['category_code']):
-            return row['category_code']
+        if not self.recategorise:
+            if not np.isnan(row['category_code']):
+                return row['category_code']
 
         self.print_categories()
 
@@ -68,7 +73,6 @@ class Categoriser:
         print('\n\n')
 
         return category_code
-
 
     def print_categories(self):
         print('=' * 45, end='\n\n')
