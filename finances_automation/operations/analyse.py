@@ -56,17 +56,15 @@ class Analyser:
 
             self.totals.loc[0, category] = round(category_total, 2)
 
-        self.totals['start_date'] = pd.to_datetime(
-            self.totals['start_date'],
-            format=self.table_to_store.date_format
-        )
-        self.totals['end_date'] = pd.to_datetime(
-            self.totals['end_date'],
-            format=self.table_to_store.date_format
-        )
+        for date_column in self.table_to_store.date_columns:
+            self.totals[date_column] = pd.to_datetime(
+                self.totals[date_column],
+                format=self.table_to_store.date_format
+            )
 
         self.totals['start_date'] = self.start_date
         self.totals['end_date'] = self.end_date
+        self.totals['analysis_date'] = dt.datetime.now()
 
     def get_totals_as_csv(self, path):
         if self.totals is None:
