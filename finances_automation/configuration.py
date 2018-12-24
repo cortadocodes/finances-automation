@@ -36,6 +36,11 @@ EXPENSE_CATEGORIES = [
     'other_expenses'
 ]
 
+ADJUSTMENT_CATEGORIES = [
+    'make_balance',
+    'ignore'
+]
+
 CURRENT_TRANSACTIONS_TABLE = {
     'name': 'current_transactions',
     'schema': {
