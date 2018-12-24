@@ -1,3 +1,6 @@
+from finances_automation import configuration as conf
+
+
 class Table:
 
     def __init__(self, name, schema, monetary_columns=None, date_columns=None, date_format=None,
@@ -26,3 +29,18 @@ class Table:
             raise TypeError('date_format should be a string.')
         if not isinstance(category_columns, list):
             raise TypeError('category_columns should be a list of strings.')
+
+    @staticmethod
+    def get_table(table_name):
+        """ Get a Table object for table_name if its configuration exists in the configuration file.
+
+        :param str table_name: possible name of a table
+
+        :raise ValueError: if the a configuration doesn't exist for the table name
+        :return Table: table with the table name
+        """
+        if hasattr(conf, table_name):
+            table_conf = getattr(conf, table_name)
+            return Table(**table_conf)
+
+        raise ValueError('No such table: {}.'.format(table_name))

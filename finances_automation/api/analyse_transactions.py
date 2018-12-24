@@ -2,12 +2,12 @@ import os
 import sys
 
 from finances_automation import configuration as conf
-from finances_automation.api import get_table
+from finances_automation.entities.table import Table
 from finances_automation.operations.analyse import Analyser
 
 
-TABLE_TO_ANALYSE = get_table(sys.argv[1].upper())
-TABLE_TO_STORE = get_table(sys.argv[2].upper())
+TABLE_TO_ANALYSE = Table.get_table(sys.argv[1].upper())
+TABLE_TO_STORE = Table.get_table(sys.argv[2].upper())
 
 START_DATE = sys.argv[3]
 END_DATE = sys.argv[4]

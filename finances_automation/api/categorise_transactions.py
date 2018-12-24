@@ -1,10 +1,10 @@
 import sys
 
+from finances_automation.entities.table import Table
 from finances_automation.operations.categorise import Categoriser
-from finances_automation.api import get_table
 
 
-TABLE = get_table(sys.argv[1].upper())
+TABLE = Table.get_table(sys.argv[1].upper())
 START_DATE = sys.argv[2]
 END_DATE = sys.argv[3]
 
