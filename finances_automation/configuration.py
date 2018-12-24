@@ -4,7 +4,7 @@ which columns are relevant in statements, how dates are parsed, and which catego
 import os
 
 
-PACKAGE_ROOT = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+PACKAGE_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 USER = 'Marcus1'
 
 DB_NAME = 'finances'
@@ -95,4 +95,3 @@ TOTALS_TABLE = {
     'date_columns': ['start_date', 'end_date', 'analysis_date'],
     'date_format': '%d/%m/%Y'
 }
-
