@@ -24,10 +24,7 @@ class Categoriser:
         self.adjustment_categories = conf.ADJUSTMENT_CATEGORIES
 
         self.start_date = dt.datetime.strptime(start_date, self.table.date_format).date()
-        self.end_date = (
-            dt.datetime.strptime(end_date, self.table.date_format).date()
-            + dt.timedelta(1)
-        )
+        self.end_date = dt.datetime.strptime(end_date, self.table.date_format).date()
 
         self.recategorise = recategorise
 
@@ -43,7 +40,7 @@ class Categoriser:
     def load_from_database(self):
         data = self.db.select_from(self.table, columns=['*'], conditions=[
             ('{} >='.format(self.table.date_columns[0]), self.start_date),
-            ('AND {} <'.format(self.table.date_columns[0]), self.end_date)
+            ('AND {} <='.format(self.table.date_columns[0]), self.end_date)
         ])
 
         self.data = pd.DataFrame(

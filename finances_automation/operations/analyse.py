@@ -27,15 +27,12 @@ class Analyser:
         self.expense_categories = conf.EXPENSE_CATEGORIES
 
         self.start_date = dt.datetime.strptime(start_date, self.table_to_analyse.date_format).date()
-        self.end_date = (
-            dt.datetime.strptime(end_date, self.table_to_analyse.date_format).date()
-            + dt.timedelta(1)
-        )
+        self.end_date = dt.datetime.strptime(end_date, self.table_to_analyse.date_format).date()
 
     def load_from_database(self):
         data = self.db.select_from(self.table_to_analyse, columns=['*'], conditions=[
-            ('{} >'.format(self.table_to_analyse.date_columns[0]), self.start_date),
-            ('AND {} <'.format(self.table_to_analyse.date_columns[0]), self.end_date),
+            ('{} >='.format(self.table_to_analyse.date_columns[0]), self.start_date),
+            ('AND {} <='.format(self.table_to_analyse.date_columns[0]), self.end_date),
         ])
 
         self.data = pd.DataFrame(
