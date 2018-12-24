@@ -1,5 +1,6 @@
 import datetime as dt
 
+import numpy as np
 import pandas as pd
 
 from finances_automation.entities.database import Database
@@ -40,22 +41,34 @@ class Categoriser:
             ('AND {} <'.format(self.table.date_column), self.end_date)
         ])
 
-        self.data = pd.DataFrame(data, columns=self.table.schema.keys())
+        self.data = pd.DataFrame(
+            data, columns=self.table.schema.keys()
+        )
+
+        self.data = self.data.astype(
+            dtype={column: float for column in self.table.monetary_columns}
+        )
+
+        self.data = self.data.astype({'category_code': float})
 
     def select_categories(self):
         self.data['category_code'] = self.data.apply(self.select_category, axis=1)
         self.data['category'] = self.data.apply(self.convert_category_code, axis=1)
 
     def select_category(self, row):
+        if not np.isnan(row['category_code']):
+            return row['category_code']
+
         self.print_categories()
 
         relevant_columns = [self.table.date_column, 'description'] + self.table.monetary_columns
         print(row[relevant_columns], end='\n\n')
 
-        category = int(input('Category code: '))
+        category_code = int(input('Category code: '))
         print('\n\n')
 
-        return category
+        return category_code
+
 
     def print_categories(self):
         print('=' * 45, end='\n\n')
