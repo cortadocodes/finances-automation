@@ -6,6 +6,7 @@ import pandas as pd
 from finances_automation import configuration as conf
 from finances_automation.entities.database import Database
 from finances_automation.entities.table import Table
+from finances_automation.repositories.parse import ParseRepository
 
 
 class BaseParser:
@@ -15,18 +16,12 @@ class BaseParser:
 
         :param Table table: table to store data in
         :param str file: path to file to read in
-
-        :var str db_name: name of database to store output in
-        :var str db_location: location of that database
-        :var st db_user: user to be used to access the database
         """
         self.check_types(table, file)
 
-        self.db = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
         self.table = table
         self.file = file
         self.data = None
-
 
     @staticmethod
     def check_types(table, file):
@@ -43,17 +38,17 @@ class BaseParser:
             raise TypeError('file should be a string.')
 
     def read(self):
-        """ Read a statement at self.file, perform some operations and store it in self.data. This method should be
-        overridden in inheriting classes.
+        """ Read a statement at self.file, perform some operations and store it in self.data. This
+        method should be overridden in inheriting classes.
 
         :raise NotImplementedError: if method not overridden by inheriting class
         """
         raise NotImplementedError
 
-    def store_in_database(self):
+    def store(self):
         """ Store the parsed transactions in a database table.
         """
-        self.db.insert_into(
+        ParseRepository.store(
             table=self.table,
             columns=tuple(self.data.columns),
             values_group=self.data.itertuples(index=False)

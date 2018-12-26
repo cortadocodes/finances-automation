@@ -2,8 +2,8 @@ import os
 import sys
 
 from finances_automation import configuration as conf
-from finances_automation.operations.parse import CSVCleaner
 from finances_automation.entities.table import Table
+from finances_automation.operations.parse import CSVCleaner
 
 
 STATEMENT_LOCATION = os.path.abspath(sys.argv[1])
@@ -23,7 +23,7 @@ def parse_statement():
     p = CSVCleaner(table, STATEMENT_LOCATION)
     p.read(header=3)
     p.clean()
-    p.store_in_database()
+    p.store()
 
 
 if __name__ == '__main__':
