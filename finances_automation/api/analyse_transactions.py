@@ -12,7 +12,7 @@ TABLE_TO_STORE = Table.get_table(sys.argv[2].upper())
 START_DATE = sys.argv[3]
 END_DATE = sys.argv[4]
 
-OUTPUT_CSV_PATH = os.path.join(conf.PACKAGE_ROOT, 'data')
+OUTPUT_CSV_PATH = os.path.join(conf.PACKAGE_ROOT, 'data', 'totals')
 
 
 def analyse_transactions():
