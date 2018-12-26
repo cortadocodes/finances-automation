@@ -1,11 +1,10 @@
 import datetime as dt
 
 import numpy as np
-import pandas as pd
 
-from finances_automation.entities.database import Database
 from finances_automation import configuration as conf
 from finances_automation.entities.table import Table
+from finances_automation.repositories.categorise import CategoriseRepository
 
 
 class Categoriser:
@@ -14,9 +13,7 @@ class Categoriser:
 
         self.check_types(table, start_date, end_date, recategorise)
 
-        self.db = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
         self.data = None
-
         self.table = table
 
         self.income_categories = conf.INCOME_CATEGORIES
@@ -37,21 +34,8 @@ class Categoriser:
         if not isinstance(recategorise, bool):
             raise TypeError('recategorise should be boolean.')
 
-    def load_from_database(self):
-        data = self.db.select_from(self.table, columns=['*'], conditions=[
-            ('{} >='.format(self.table.date_columns[0]), self.start_date),
-            ('AND {} <='.format(self.table.date_columns[0]), self.end_date)
-        ])
-
-        self.data = pd.DataFrame(
-            data, columns=self.table.schema.keys()
-        )
-
-        self.data = self.data.astype(
-            dtype={column: float for column in self.table.monetary_columns}
-        )
-
-        self.data = self.data.astype({'category_code': float})
+    def load(self):
+        CategoriseRepository.load(self.table, self.start_date, self.end_date)
 
     def select_categories(self):
         self.data['category_code'] = self.data.apply(self.select_category, axis=1)
@@ -107,30 +91,5 @@ class Categoriser:
 
         return category
 
-    def store_in_database(self):
-        self.db.start()
-
-        for i in range(len(self.data)):
-            id = int(self.data.iloc[i, 0])
-            data = tuple([
-                int(self.data.iloc[i][self.table.category_columns[0]]),
-                self.data.iloc[i][self.table.category_columns[1]]]
-            )
-
-            operation = (
-                """
-                UPDATE {0}
-                SET {1} = %s, {2} = %s
-                WHERE {0}.id = {3}
-                """
-                .format(
-                    self.table.name,
-                    self.table.category_columns[0],
-                    self.table.category_columns[1],
-                    id
-                )
-            )
-
-            self.db.execute_statement(operation, data)
-
-        self.db.stop()
+    def update(self):
+        CategoriseRepository.update(self.table, self.data)
