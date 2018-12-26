@@ -83,6 +83,7 @@ TOTALS = {
     'name': 'totals',
     'schema': {
         'id': 'serial PRIMARY KEY',
+        'table_analysed': 'VARCHAR',
         'start_date': 'DATE NOT NULL',
         'end_date': 'DATE NOT NULL',
         'analysis_datetime': 'TIMESTAMPTZ NOT NULL',

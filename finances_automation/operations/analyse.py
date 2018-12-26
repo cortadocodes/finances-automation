@@ -30,7 +30,9 @@ class Analyser:
         self.start_date = dt.datetime.strptime(start_date, self.table_to_analyse.date_format).date()
         self.end_date = dt.datetime.strptime(end_date, self.table_to_analyse.date_format).date()
 
-        self.totals = pd.DataFrame(columns=self.table_to_store.date_columns + self.all_categories)
+        self.totals = pd.DataFrame(
+            columns = ['table_analysed'] + self.table_to_store.date_columns + self.all_categories
+        )
 
     def load_from_database(self):
         data = self.db.select_from(self.table_to_analyse, columns=['*'], conditions=[
@@ -62,6 +64,7 @@ class Analyser:
                 format=self.table_to_store.date_format
             )
 
+        self.totals['table_analysed'] = self.table_to_analyse.name
         self.totals['start_date'] = self.start_date
         self.totals['end_date'] = self.end_date
         self.totals['analysis_datetime'] = dt.datetime.now()
