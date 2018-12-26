@@ -85,13 +85,13 @@ TOTALS_TABLE = {
         'id': 'serial PRIMARY KEY',
         'start_date': 'DATE NOT NULL',
         'end_date': 'DATE NOT NULL',
-        'analysis_date': 'DATE NOT NULL',
+        'analysis_datetime': 'TIMESTAMPTZ NOT NULL',
         **{
             category.lower().replace(' ', '_'): 'DECIMAL'
             for category in [*INCOME_CATEGORIES, *EXPENSE_CATEGORIES]
         }
     },
     'monetary_columns': [*INCOME_CATEGORIES, *EXPENSE_CATEGORIES],
-    'date_columns': ['start_date', 'end_date', 'analysis_date'],
+    'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
     'date_format': '%d/%m/%Y'
 }

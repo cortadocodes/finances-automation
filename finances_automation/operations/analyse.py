@@ -41,7 +41,7 @@ class Analyser:
 
     def calculate_totals(self, positive_expenses=True):
         all_categories = self.income_categories + self.expense_categories
-        self.totals = pd.DataFrame(columns=['start_date', 'end_date'] + all_categories)
+        self.totals = pd.DataFrame(columns=self.table_to_store.date_columns + all_categories)
 
         for category in all_categories:
             condition = self.data['category'] == category
@@ -64,7 +64,7 @@ class Analyser:
 
         self.totals['start_date'] = self.start_date
         self.totals['end_date'] = self.end_date
-        self.totals['analysis_date'] = dt.datetime.now()
+        self.totals['analysis_datetime'] = dt.datetime.now()
 
     def get_totals_as_csv(self, path):
         if self.totals is None:
