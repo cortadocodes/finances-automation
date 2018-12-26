@@ -9,6 +9,7 @@ from finances_automation.entities.table import Table
 
 MAX_ROWS = 500
 TABLE = Table.get_table(sys.argv[1].upper())
+COLUMNS = sys.argv[2:] or list(TABLE.schema.keys())
 
 pd.set_option('display.max_rows', MAX_ROWS)
 pd.set_option('display.max_columns', 500)
@@ -20,11 +21,8 @@ def view_table():
     """ View a table from the database.
     """
     db = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
-    columns = list(TABLE.schema.keys())
-    data = db.select_from(table=TABLE, columns=columns)
-
-    dataframe = pd.DataFrame(data=data, columns=columns)
-
+    data = db.select_from(table=TABLE, columns=COLUMNS)
+    dataframe = pd.DataFrame(data=data, columns=COLUMNS)
     print(dataframe.to_string(index=False))
 
 
