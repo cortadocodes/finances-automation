@@ -31,8 +31,6 @@ class Analyser:
         self.end_date = dt.datetime.strptime(end_date, self.table_to_analyse.date_format).date()
 
         self.totals = pd.DataFrame(columns=self.table_to_store.date_columns + self.all_categories)
-        self.totals['start_date'] = self.start_date
-        self.totals['end_date'] = self.end_date
 
     def load_from_database(self):
         data = self.db.select_from(self.table_to_analyse, columns=['*'], conditions=[
@@ -64,6 +62,8 @@ class Analyser:
                 format=self.table_to_store.date_format
             )
 
+        self.totals['start_date'] = self.start_date
+        self.totals['end_date'] = self.end_date
         self.totals['analysis_datetime'] = dt.datetime.now()
 
     def get_totals_as_csv(self, path):
