@@ -14,9 +14,9 @@ def parse_statement():
     """ Read in a statement, clean it up and store it in the database.
     """
     if TYPE == 'current' or None:
-        table = Table(**conf.CURRENT_TRANSACTIONS_TABLE)
+        table = Table(**conf.CURRENT_TRANSACTIONS)
     elif TYPE == 'credit':
-        table = Table(**conf.CREDIT_TRANSACTIONS_TABLE)
+        table = Table(**conf.CREDIT_TRANSACTIONS)
     else:
         raise ValueError("TYPE should be 'current' or 'credit'")
 

@@ -41,7 +41,7 @@ ADJUSTMENT_CATEGORIES = [
     'ignore'
 ]
 
-CURRENT_TRANSACTIONS_TABLE = {
+CURRENT_TRANSACTIONS = {
     'name': 'current_transactions',
     'schema': {
         'id': 'serial PRIMARY KEY',
@@ -60,7 +60,7 @@ CURRENT_TRANSACTIONS_TABLE = {
     'category_columns': ['category_code', 'category']
 }
 
-CREDIT_TRANSACTIONS_TABLE = {
+CREDIT_TRANSACTIONS = {
     'name': 'credit_transactions',
     'schema': {
         'id': 'serial PRIMARY KEY',
@@ -79,7 +79,7 @@ CREDIT_TRANSACTIONS_TABLE = {
     'category_columns': ['category_code', 'category']
 }
 
-TOTALS_TABLE = {
+TOTALS = {
     'name': 'totals',
     'schema': {
         'id': 'serial PRIMARY KEY',

@@ -12,7 +12,7 @@ def initialise_database():
     database = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
     database.create(overwrite=REQUIRE_OVERWRITE)
 
-    table_names = 'CURRENT_TRANSACTIONS_TABLE', 'CREDIT_TRANSACTIONS_TABLE', 'TOTALS_TABLE'
+    table_names = 'CURRENT_TRANSACTIONS', 'CREDIT_TRANSACTIONS', 'TOTALS'
 
     for table_name in table_names:
         database.create_table(Table.get_table(table_name))
