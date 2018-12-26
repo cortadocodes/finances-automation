@@ -9,7 +9,7 @@ from finances_automation.entities.database import Database
 
 class Analyser:
 
-    def __init__(self, table_to_analyse, table_to_store, start_date, end_date):
+    def __init__(self, table_to_analyse, table_to_store, analysis_type, start_date, end_date):
         """
         :param finances_automation.entities.table.Table table_to_analyse: table to analyse
         :param finances_automation.entities.table.Table table_to_store: table to store analysis in
@@ -20,8 +20,13 @@ class Analyser:
         self.data = None
         self.totals = None
 
+        self.analyses = {
+            'totals': self._calculate_totals
+        }
+
         self.table_to_analyse = table_to_analyse
         self.table_to_store = table_to_store
+        self.analysis_type = analysis_type
 
         self.income_categories = conf.INCOME_CATEGORIES
         self.expense_categories = conf.EXPENSE_CATEGORIES
@@ -30,9 +35,11 @@ class Analyser:
         self.start_date = dt.datetime.strptime(start_date, self.table_to_analyse.date_format).date()
         self.end_date = dt.datetime.strptime(end_date, self.table_to_analyse.date_format).date()
 
-        self.totals = pd.DataFrame(
-            columns = ['table_analysed'] + self.table_to_store.date_columns + self.all_categories
-        )
+        self.totals = pd.DataFrame(columns = (
+            ['table_analysed', 'analysis_type']
+            + self.table_to_store.date_columns
+            + self.all_categories
+        ))
 
     def load_from_database(self):
         data = self.db.select_from(self.table_to_analyse, columns=['*'], conditions=[
@@ -44,7 +51,11 @@ class Analyser:
             data, columns=self.table_to_analyse.schema.keys()
         ).astype(dtype={column: float for column in self.table_to_analyse.monetary_columns})
 
-    def calculate_totals(self, positive_expenses=True):
+    def analyse(self):
+        self.analyses[self.analysis_type]()
+        self._set_metadata()
+
+    def _calculate_totals(self, positive_expenses=True):
         for category in self.all_categories:
             condition = self.data['category'] == category
             category_total = (
@@ -58,6 +69,7 @@ class Analyser:
 
             self.totals.loc[0, category] = round(category_total, 2)
 
+    def _set_metadata(self):
         for date_column in self.table_to_store.date_columns:
             self.totals[date_column] = pd.to_datetime(
                 self.totals[date_column],
@@ -65,6 +77,7 @@ class Analyser:
             )
 
         self.totals['table_analysed'] = self.table_to_analyse.name
+        self.totals['analysis_type'] = self.analysis_type
         self.totals['start_date'] = self.start_date
         self.totals['end_date'] = self.end_date
         self.totals['analysis_datetime'] = dt.datetime.now()
