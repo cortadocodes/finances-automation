@@ -25,9 +25,14 @@ class Analyser:
 
         self.income_categories = conf.INCOME_CATEGORIES
         self.expense_categories = conf.EXPENSE_CATEGORIES
+        self.all_categories = self.income_categories + self.expense_categories
 
         self.start_date = dt.datetime.strptime(start_date, self.table_to_analyse.date_format).date()
         self.end_date = dt.datetime.strptime(end_date, self.table_to_analyse.date_format).date()
+
+        self.totals = pd.DataFrame(columns=self.table_to_store.date_columns + self.all_categories)
+        self.totals['start_date'] = self.start_date
+        self.totals['end_date'] = self.end_date
 
     def load_from_database(self):
         data = self.db.select_from(self.table_to_analyse, columns=['*'], conditions=[
@@ -40,10 +45,7 @@ class Analyser:
         ).astype(dtype={column: float for column in self.table_to_analyse.monetary_columns})
 
     def calculate_totals(self, positive_expenses=True):
-        all_categories = self.income_categories + self.expense_categories
-        self.totals = pd.DataFrame(columns=self.table_to_store.date_columns + all_categories)
-
-        for category in all_categories:
+        for category in self.all_categories:
             condition = self.data['category'] == category
             category_total = (
                 self.data[condition][self.table_to_analyse.monetary_columns[0]].sum()
@@ -62,8 +64,6 @@ class Analyser:
                 format=self.table_to_store.date_format
             )
 
-        self.totals['start_date'] = self.start_date
-        self.totals['end_date'] = self.end_date
         self.totals['analysis_datetime'] = dt.datetime.now()
 
     def get_totals_as_csv(self, path):
