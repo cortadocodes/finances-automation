@@ -35,7 +35,7 @@ class Categoriser:
             raise TypeError('recategorise should be boolean.')
 
     def load(self):
-        CategoriseRepository.load(self.table, self.start_date, self.end_date)
+        self.data = CategoriseRepository().load(self.table, self.start_date, self.end_date)
 
     def select_categories(self):
         self.data['category_code'] = self.data.apply(self.select_category, axis=1)

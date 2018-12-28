@@ -43,12 +43,14 @@ class CategoriseRepository:
             ('AND {} <='.format(table.date_columns[0]), end_date)
         ])
 
-        self.data = pd.DataFrame(
+        data = pd.DataFrame(
             data, columns=table.schema.keys()
         )
 
-        self.data = self.data.astype(
+        data = data.astype(
             dtype={column: float for column in table.monetary_columns}
         )
 
-        self.data = self.data.astype({'category_code': float})
+        data = data.astype({'category_code': float})
+
+        return data
