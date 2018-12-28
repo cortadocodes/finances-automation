@@ -5,6 +5,7 @@ import pandas as pd
 
 from finances_automation import configuration as conf
 from finances_automation.entities.database import Database
+from finances_automation.repositories.analyse import AnalyseRepository
 
 
 class Analyser:
@@ -16,9 +17,7 @@ class Analyser:
         :param str start_date: date to start analysis at
         :param str end_date: date to end analysis at
         """
-        self.db = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
         self.data = None
-        self.totals = None
 
         self.analyses = {
             'totals': self._calculate_totals
@@ -42,14 +41,7 @@ class Analyser:
         ))
 
     def load_from_database(self):
-        data = self.db.select_from(self.table_to_analyse, columns=['*'], conditions=[
-            ('{} >='.format(self.table_to_analyse.date_columns[0]), self.start_date),
-            ('AND {} <='.format(self.table_to_analyse.date_columns[0]), self.end_date),
-        ])
-
-        self.data = pd.DataFrame(
-            data, columns=self.table_to_analyse.schema.keys()
-        ).astype(dtype={column: float for column in self.table_to_analyse.monetary_columns})
+        self.data = AnalyseRepository().load(self.table_to_analyse, self.start_date, self.end_date)
 
     def analyse(self):
         self.analyses[self.analysis_type]()
@@ -90,9 +82,5 @@ class Analyser:
 
         self.totals.to_csv(os.path.join(path, filename), index=False)
 
-    def store_in_database(self):
-        self.db.insert_into(
-            self.table_to_store,
-            tuple(self.totals.columns),
-            self.totals.itertuples(index=False)
-        )
+    def store(self):
+        AnalyseRepository().store(self.table_to_store, self.totals)

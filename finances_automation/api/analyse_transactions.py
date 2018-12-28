@@ -24,7 +24,7 @@ def analyse_transactions():
     analyser.load_from_database()
     analyser.analyse()
     analyser.get_totals_as_csv(OUTPUT_CSV_PATH)
-    analyser.store_in_database()
+    analyser.store()
 
 
 if __name__ == '__main__':
