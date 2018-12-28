@@ -195,9 +195,9 @@ class Database:
     def insert_into(self, table, columns, values_group):
         """Insert values into columns of a table.
 
-        :param Table table:
-        :param tuple(str) columns:
-        :param list(tuple) values_group:
+        :param Table table: database table to insert into
+        :param tuple(str) columns: columns to insert into
+        :param list(tuple) values_group: tuple of values for each row
         """
         self.start()
 
