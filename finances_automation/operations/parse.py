@@ -48,7 +48,7 @@ class BaseParser:
     def store(self):
         """ Store the parsed transactions in a database table.
         """
-        ParseRepository.store(
+        ParseRepository().store(
             table=self.table,
             columns=tuple(self.data.columns),
             values_group=self.data.itertuples(index=False)
