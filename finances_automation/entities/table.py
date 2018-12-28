@@ -5,7 +5,16 @@ class Table:
 
     def __init__(self, name, schema, monetary_columns=None, date_columns=None, date_format=None,
                  category_columns=None):
+        """ Initialise a Table representation with information relating to its structure.
 
+        :param str name: name of table
+        :param dict schema: schema of table as a dictionary mapping column name to PostgreSQL type
+            as a string
+        :param list(str) monetary_columns: names of columns containing monetary amounts
+        :param list(str) date_columns: names of columns containing dates
+        :param str date_format: format of dates in table
+        :param list(str) category_columns: names of columns containing category information
+        """
         self.name = name
         self.schema = schema
         self.monetary_columns = monetary_columns
@@ -14,9 +23,11 @@ class Table:
         self.category_columns = category_columns
 
     @staticmethod
-    def check_types(name, schema, monetary_columns, date_columns, date_format,
-                    category_columns):
+    def check_types(name, schema, monetary_columns, date_columns, date_format, category_columns):
+        """ Check if the initialisation parameters for the Table are of the correct type.
 
+        :raise TypeError: if any of the parameters are of the wrong type
+        """
         if not isinstance(name, str):
             raise TypeError('name should be a string.')
         if not isinstance(schema, dict):
