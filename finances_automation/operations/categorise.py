@@ -37,16 +37,19 @@ class Categoriser:
     def load(self):
         self.data = CategoriseRepository().load(self.table, self.start_date, self.end_date)
 
-    def select_categories(self):
-        self.data['category_code'] = self.data.apply(self.select_category, axis=1)
-        self.data['category'] = self.data.apply(self.convert_category_code, axis=1)
+    def store(self):
+        CategoriseRepository().update(self.table, self.data)
 
-    def select_category(self, row):
+    def select_categories(self):
+        self.data['category_code'] = self.data.apply(self._select_category, axis=1)
+        self.data['category'] = self.data.apply(self._convert_category_code, axis=1)
+
+    def _select_category(self, row):
         if not self.recategorise:
             if not np.isnan(row['category_code']):
                 return row['category_code']
 
-        self.print_categories()
+        self._print_categories()
 
         relevant_columns = self.table.date_columns + ['description'] + self.table.monetary_columns
         print(row[relevant_columns], end='\n\n')
@@ -56,7 +59,7 @@ class Categoriser:
 
         return category_code
 
-    def print_categories(self):
+    def _print_categories(self):
         print('=' * 45, end='\n\n')
 
         print('Income categories:')
@@ -73,7 +76,7 @@ class Categoriser:
 
         print('\n')
 
-    def convert_category_code(self, row):
+    def _convert_category_code(self, row):
         code = int(row['category_code'])
         income_length = len(self.income_categories)
         expense_length = len(self.expense_categories)
@@ -90,6 +93,3 @@ class Categoriser:
             category = self.adjustment_categories[code - income_length - expense_length]
 
         return category
-
-    def update(self):
-        CategoriseRepository.update(self.table, self.data)

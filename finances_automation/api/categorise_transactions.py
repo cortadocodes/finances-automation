@@ -15,7 +15,7 @@ def categorise_transactions():
     categoriser = Categoriser(TABLE, START_DATE, END_DATE)
     categoriser.load()
     categoriser.select_categories()
-    categoriser.update()
+    categoriser.store()
 
 
 if __name__ == '__main__':
