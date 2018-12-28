@@ -21,7 +21,7 @@ def analyse_transactions():
     """ Analyse transactions stored in a given database table between the given dates.
     """
     analyser = Analyser(TABLE_TO_ANALYSE, TABLE_TO_STORE, ANALYSIS_TYPE, START_DATE, END_DATE)
-    analyser.load_from_database()
+    analyser.load()
     analyser.analyse()
     analyser.get_totals_as_csv(OUTPUT_CSV_PATH)
     analyser.store()

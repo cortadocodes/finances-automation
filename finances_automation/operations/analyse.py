@@ -4,7 +4,6 @@ import os
 import pandas as pd
 
 from finances_automation import configuration as conf
-from finances_automation.entities.database import Database
 from finances_automation.repositories.analyse import AnalyseRepository
 
 
@@ -40,8 +39,11 @@ class Analyser:
             + self.all_categories
         ))
 
-    def load_from_database(self):
+    def load(self):
         self.data = AnalyseRepository().load(self.table_to_analyse, self.start_date, self.end_date)
+
+    def store(self):
+        AnalyseRepository().store(self.table_to_store, self.totals)
 
     def analyse(self):
         self.analyses[self.analysis_type]()
@@ -81,6 +83,3 @@ class Analyser:
         filename = '_'.join(['totals', self.table_to_analyse.name, str(dt.datetime.now()), '.csv'])
 
         self.totals.to_csv(os.path.join(path, filename), index=False)
-
-    def store(self):
-        AnalyseRepository().store(self.table_to_store, self.totals)
