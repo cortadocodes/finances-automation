@@ -4,6 +4,7 @@ import os
 import pandas as pd
 
 from finances_automation import configuration as conf
+from finances_automation.entities.table import Table
 from finances_automation.repositories.analyse import AnalyseRepository
 
 
@@ -16,6 +17,8 @@ class Analyser:
         :param str start_date: date to start analysis at
         :param str end_date: date to end analysis at
         """
+        self.check_types(table_to_analyse, table_to_store, analysis_type, start_date, end_date)
+
         self.data = None
 
         self.analyses = {
@@ -38,6 +41,19 @@ class Analyser:
             + self.table_to_store.date_columns
             + self.all_categories
         ))
+
+    @staticmethod
+    def check_types(table_to_analyse, table_to_store, analysis_type, start_date, end_date):
+        if not isinstance(table_to_analyse, Table):
+            raise TypeError('table_to_analyse must be a Table.')
+        if not isinstance(table_to_store, Table):
+            raise TypeError('table_to_store must be a Table.')
+        if not isinstance(analysis_type, str):
+            raise TypeError('analysis_type must be a string.')
+        if not isinstance(start_date, str):
+            raise TypeError('start_date must be a string.')
+        if not isinstance(end_date, str):
+            raise TypeError('end_date must be a string.')
 
     def load(self):
         self.data = AnalyseRepository().load(self.table_to_analyse, self.start_date, self.end_date)
