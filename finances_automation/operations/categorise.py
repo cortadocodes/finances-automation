@@ -60,6 +60,8 @@ class Categoriser:
         return category_code
 
     def _print_categories(self):
+        i, j, k = 0, 0, 0
+
         print('=' * 45, end='\n\n')
 
         print('Income categories:')
