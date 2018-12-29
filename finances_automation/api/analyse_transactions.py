@@ -23,7 +23,7 @@ def analyse_transactions():
     analyser = Analyser(TABLE_TO_ANALYSE, TABLE_TO_STORE, ANALYSIS_TYPE, START_DATE, END_DATE)
     analyser.load()
     analyser.analyse()
-    analyser.get_totals_as_csv(OUTPUT_CSV_PATH)
+    analyser.get_analysis_as_csv(OUTPUT_CSV_PATH)
     analyser.store()
 
 

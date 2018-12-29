@@ -92,7 +92,7 @@ class Analyser:
         self.totals['end_date'] = self.end_date
         self.totals['analysis_datetime'] = dt.datetime.now()
 
-    def get_totals_as_csv(self, path):
+    def get_analysis_as_csv(self, path):
         if self.totals is None:
             raise ValueError('Totals must be calculated before being exported.')
 
