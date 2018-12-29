@@ -1,29 +1,21 @@
 import os
 import sys
 
-from finances_automation import configuration as conf
 from finances_automation.entities.table import Table
 from finances_automation.operations.parse import CSVCleaner
 
 
 STATEMENT_LOCATION = os.path.abspath(sys.argv[1])
-TYPE = sys.argv[2].lower()
+TABLE = Table.get_table(sys.argv[2])
 
 
 def parse_statement():
     """ Read in a statement, clean it up and store it in the database.
     """
-    if TYPE == 'current' or None:
-        table = Table(**conf.CURRENT_TRANSACTIONS)
-    elif TYPE == 'credit':
-        table = Table(**conf.CREDIT_TRANSACTIONS)
-    else:
-        raise ValueError("TYPE should be 'current' or 'credit'")
-
-    p = CSVCleaner(table, STATEMENT_LOCATION)
-    p.read(header=3)
-    p.clean()
-    p.store()
+    parser = CSVCleaner(TABLE, STATEMENT_LOCATION)
+    parser.read(header=3)
+    parser.clean()
+    parser.store()
 
 
 if __name__ == '__main__':
