@@ -50,6 +50,8 @@ class Table:
         :raise ValueError: if the a configuration doesn't exist for the table name
         :return Table: table with the table name
         """
+        table_name = table_name.upper()
+
         if hasattr(conf, table_name):
             table_conf = getattr(conf, table_name)
             return Table(**table_conf)

@@ -4,7 +4,7 @@ from finances_automation.entities.table import Table
 from finances_automation.operations.categorise import Categoriser
 
 
-TABLE = Table.get_table(sys.argv[1].upper())
+TABLE = Table.get_table(sys.argv[1])
 START_DATE = sys.argv[2]
 END_DATE = sys.argv[3]
 

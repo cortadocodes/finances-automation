@@ -8,7 +8,7 @@ from finances_automation.entities.table import Table
 
 
 MAX_ROWS = 500
-TABLE = Table.get_table(sys.argv[1].upper())
+TABLE = Table.get_table(sys.argv[1])
 COLUMNS = sys.argv[2:] or list(TABLE.schema.keys())
 
 pd.set_option('display.max_rows', MAX_ROWS)

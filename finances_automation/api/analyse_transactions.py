@@ -8,8 +8,8 @@ from finances_automation.operations.analyse import Analyser
 
 ANALYSIS_TYPE = sys.argv[1].lower()
 
-TABLE_TO_ANALYSE = Table.get_table(sys.argv[2].upper())
-TABLE_TO_STORE = Table.get_table(ANALYSIS_TYPE.upper())
+TABLE_TO_ANALYSE = Table.get_table(sys.argv[2])
+TABLE_TO_STORE = Table.get_table(ANALYSIS_TYPE)
 
 START_DATE = sys.argv[3]
 END_DATE = sys.argv[4]
