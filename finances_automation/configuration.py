@@ -94,3 +94,19 @@ TOTALS = {
     'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
     'date_format': '%d/%m/%Y'
 }
+
+MONTHLY_AVERAGES = {
+    'name': 'monthly_averages',
+    'schema': {
+        'id': 'serial PRIMARY KEY',
+        'table_analysed': 'VARCHAR',
+        'analysis_type': 'VARCHAR',
+        'start_date': 'DATE NOT NULL',
+        'end_date': 'DATE NOT NULL',
+        'analysis_datetime': 'TIMESTAMPTZ NOT NULL',
+        **{category: 'DECIMAL' for category in [*INCOME_CATEGORIES, *EXPENSE_CATEGORIES]}
+    },
+    'monetary_columns': [*INCOME_CATEGORIES, *EXPENSE_CATEGORIES],
+    'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
+    'date_format': '%d/%m/%Y'
+}
