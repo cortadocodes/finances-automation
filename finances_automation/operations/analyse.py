@@ -2,6 +2,7 @@ import datetime as dt
 import math
 import os
 
+from matplotlib import pyplot as plt
 import numpy as np
 import pandas as pd
 
@@ -11,6 +12,8 @@ from finances_automation.repositories.analyse import AnalyseRepository
 
 
 class Analyser:
+
+    analyses_excluded_from_storage = ('plot_balance')
 
     def __init__(self, table_to_analyse, table_to_store, analysis_type, start_date, end_date):
         """
@@ -25,7 +28,8 @@ class Analyser:
 
         self.analyses = {
             'totals': self._calculate_totals,
-            'monthly_averages': self._calculate_averages
+            'monthly_averages': self._calculate_averages,
+            'plot_balance': self._plot_balance
         }
 
         self.table_to_analyse = table_to_analyse
@@ -45,8 +49,8 @@ class Analyser:
     def check_types(table_to_analyse, table_to_store, analysis_type, start_date, end_date):
         if not isinstance(table_to_analyse, Table):
             raise TypeError('table_to_analyse must be a Table.')
-        if not isinstance(table_to_store, Table):
-            raise TypeError('table_to_store must be a Table.')
+        if not (isinstance(table_to_store, Table) or table_to_store is None):
+            raise TypeError('table_to_store must be a Table or None.')
         if not isinstance(analysis_type, str):
             raise TypeError('analysis_type must be a string.')
         if not isinstance(start_date, str):
@@ -54,15 +58,19 @@ class Analyser:
         if not isinstance(end_date, str):
             raise TypeError('end_date must be a string.')
 
-    def load(self):
+    def _load(self):
         self.data = AnalyseRepository().load(self.table_to_analyse, self.start_date, self.end_date)
 
-    def store(self):
+    def _store(self):
         AnalyseRepository().store(self.table_to_store, self.analysis)
 
     def analyse(self):
+        self._load()
         self.analysis = self.analyses[self.analysis_type]()
-        self._set_metadata()
+
+        if self.analysis_type not in self.analyses_excluded_from_storage:
+            self._set_metadata()
+            self._store()
 
     def _calculate_totals(self, start_date=None, end_date=None, positive_expenses=True):
         start_date = start_date or self.start_date
@@ -121,6 +129,22 @@ class Analyser:
 
         return averages
 
+    def _plot_balance(self):
+        dates = self.data[self.table_to_analyse.date_columns[0]]
+        balance = self.data['balance']
+
+        plt.figure(figsize=(12, 8))
+        plt.plot(dates, balance)
+        plt.xlabel('Date', fontsize=16)
+        plt.ylabel('Balance / £', fontsize=16)
+        plt.title(
+            'Balance of {} between {} and {}'.format(
+                self.table_to_analyse.name, self.start_date, self.end_date
+            ),
+            fontsize=20
+        )
+        plt.show()
+
     def _set_metadata(self):
         for date_column in self.table_to_store.date_columns:
             self.analysis[date_column] = pd.to_datetime(
@@ -134,7 +158,9 @@ class Analyser:
         self.analysis['analysis_datetime'] = dt.datetime.now()
 
     def get_analysis_as_csv(self, path):
-        if self.analysis is None:
+        if self.analysis_type in self.analyses_excluded_from_storage:
+            raise ValueError('The {} analysis cannot be exported as a csv file.'.format(self.analysis_type))
+        elif self.analysis is None:
             raise ValueError('Analysis must be carried out before being exported.')
 
         filename = '_'.join([self.table_to_analyse.name, str(dt.datetime.now()), '.csv'])
