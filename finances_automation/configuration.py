@@ -84,7 +84,6 @@ TOTALS = {
     'schema': {
         'id': 'serial PRIMARY KEY',
         'table_analysed': 'VARCHAR',
-        'analysis_type': 'VARCHAR',
         'start_date': 'DATE NOT NULL',
         'end_date': 'DATE NOT NULL',
         'analysis_datetime': 'TIMESTAMPTZ NOT NULL',
@@ -100,7 +99,6 @@ MONTHLY_AVERAGES = {
     'schema': {
         'id': 'serial PRIMARY KEY',
         'table_analysed': 'VARCHAR',
-        'analysis_type': 'VARCHAR',
         'start_date': 'DATE NOT NULL',
         'end_date': 'DATE NOT NULL',
         'analysis_datetime': 'TIMESTAMPTZ NOT NULL',

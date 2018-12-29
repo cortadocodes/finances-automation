@@ -30,7 +30,9 @@ class Analyser:
 
         self.table_to_analyse = table_to_analyse
         self.table_to_store = table_to_store
+
         self.analysis_type = analysis_type
+        self.analysis = None
 
         self.income_categories = conf.INCOME_CATEGORIES
         self.expense_categories = conf.EXPENSE_CATEGORIES
@@ -127,7 +129,6 @@ class Analyser:
             )
 
         self.analysis['table_analysed'] = self.table_to_analyse.name
-        self.analysis['analysis_type'] = self.analysis_type
         self.analysis['start_date'] = self.start_date
         self.analysis['end_date'] = self.end_date
         self.analysis['analysis_datetime'] = dt.datetime.now()
