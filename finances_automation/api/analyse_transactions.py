@@ -20,7 +20,7 @@ if ANALYSIS_TYPE in EXCLUDED:
 else:
     TABLE_TO_STORE = Table.get_table(ANALYSIS_TYPE)
 
-OUTPUT_CSV_PATH = os.path.join(conf.PACKAGE_ROOT, 'data')
+OUTPUT_PATH = os.path.join(conf.PACKAGE_ROOT, 'data')
 
 
 def analyse_transactions():
@@ -28,9 +28,7 @@ def analyse_transactions():
     """
     analyser = Analyser(TABLE_TO_ANALYSE, TABLE_TO_STORE, ANALYSIS_TYPE, START_DATE, END_DATE)
     analyser.analyse()
-
-    if ANALYSIS_TYPE not in EXCLUDED:
-        analyser.get_analysis_as_csv(OUTPUT_CSV_PATH)
+    analyser.export_analysis(OUTPUT_PATH)
 
 
 if __name__ == '__main__':
