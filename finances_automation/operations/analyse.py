@@ -36,7 +36,7 @@ class Analyser:
         self.start_date = dt.datetime.strptime(start_date, self.table_to_analyse.date_format).date()
         self.end_date = dt.datetime.strptime(end_date, self.table_to_analyse.date_format).date()
 
-        self.totals = pd.DataFrame(columns = (
+        self.analysis = pd.DataFrame(columns = (
             ['table_analysed', 'analysis_type']
             + self.table_to_store.date_columns
             + self.all_categories
@@ -59,7 +59,7 @@ class Analyser:
         self.data = AnalyseRepository().load(self.table_to_analyse, self.start_date, self.end_date)
 
     def store(self):
-        AnalyseRepository().store(self.table_to_store, self.totals)
+        AnalyseRepository().store(self.table_to_store, self.analysis)
 
     def analyse(self):
         self.analyses[self.analysis_type]()
@@ -77,25 +77,25 @@ class Analyser:
                 if category in self.expense_categories:
                     category_total = - category_total
 
-            self.totals.loc[0, category] = round(category_total, 2)
+            self.analysis.loc[0, category] = round(category_total, 2)
 
     def _set_metadata(self):
         for date_column in self.table_to_store.date_columns:
-            self.totals[date_column] = pd.to_datetime(
-                self.totals[date_column],
+            self.analysis[date_column] = pd.to_datetime(
+                self.analysis[date_column],
                 format=self.table_to_store.date_format
             )
 
-        self.totals['table_analysed'] = self.table_to_analyse.name
-        self.totals['analysis_type'] = self.analysis_type
-        self.totals['start_date'] = self.start_date
-        self.totals['end_date'] = self.end_date
-        self.totals['analysis_datetime'] = dt.datetime.now()
+        self.analysis['table_analysed'] = self.table_to_analyse.name
+        self.analysis['analysis_type'] = self.analysis_type
+        self.analysis['start_date'] = self.start_date
+        self.analysis['end_date'] = self.end_date
+        self.analysis['analysis_datetime'] = dt.datetime.now()
 
     def get_analysis_as_csv(self, path):
-        if self.totals is None:
-            raise ValueError('Totals must be calculated before being exported.')
+        if self.analysis is None:
+            raise ValueError('Analysis must be carried out before being exported.')
 
-        filename = '_'.join(['totals', self.table_to_analyse.name, str(dt.datetime.now()), '.csv'])
-
-        self.totals.to_csv(os.path.join(path, filename), index=False)
+        filename = '_'.join([self.table_to_analyse.name, str(dt.datetime.now()), '.csv'])
+        full_path = os.path.join(path, self.analysis_type, filename)
+        self.analysis.to_csv(full_path, index=False, encoding='utf-8')

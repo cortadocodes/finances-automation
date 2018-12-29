@@ -14,7 +14,7 @@ ANALYSIS_TYPE = sys.argv[3].lower()
 START_DATE = sys.argv[4]
 END_DATE = sys.argv[5]
 
-OUTPUT_CSV_PATH = os.path.join(conf.PACKAGE_ROOT, 'data', 'totals')
+OUTPUT_CSV_PATH = os.path.join(conf.PACKAGE_ROOT, 'data')
 
 
 def analyse_transactions():
