@@ -1,6 +1,8 @@
 import datetime as dt
+import math
 import os
 
+import numpy as np
 import pandas as pd
 
 from finances_automation import configuration as conf
@@ -22,7 +24,8 @@ class Analyser:
         self.data = None
 
         self.analyses = {
-            'totals': self._calculate_totals
+            'totals': self._calculate_totals,
+            'monthly_averages': self._calculate_averages
         }
 
         self.table_to_analyse = table_to_analyse
@@ -35,12 +38,6 @@ class Analyser:
 
         self.start_date = dt.datetime.strptime(start_date, self.table_to_analyse.date_format).date()
         self.end_date = dt.datetime.strptime(end_date, self.table_to_analyse.date_format).date()
-
-        self.analysis = pd.DataFrame(columns = (
-            ['table_analysed', 'analysis_type']
-            + self.table_to_store.date_columns
-            + self.all_categories
-        ))
 
     @staticmethod
     def check_types(table_to_analyse, table_to_store, analysis_type, start_date, end_date):
@@ -62,22 +59,65 @@ class Analyser:
         AnalyseRepository().store(self.table_to_store, self.analysis)
 
     def analyse(self):
-        self.analyses[self.analysis_type]()
+        self.analysis = self.analyses[self.analysis_type]()
         self._set_metadata()
 
-    def _calculate_totals(self, positive_expenses=True):
+    def _calculate_totals(self, start_date=None, end_date=None, positive_expenses=True):
+        start_date = start_date or self.start_date
+        end_date = end_date or self.end_date
+
+        totals = pd.DataFrame(columns=(
+            ['table_analysed', 'analysis_type']
+            + self.table_to_store.date_columns
+            + self.all_categories
+        ))
+
         for category in self.all_categories:
-            condition = self.data['category'] == category
+            conditions = (
+                (self.data['category'] == category)
+                & (self.data[self.table_to_analyse.date_columns[0]] >= start_date)
+                & (self.data[self.table_to_analyse.date_columns[0]] <= end_date)
+            )
+
             category_total = (
-                self.data[condition][self.table_to_analyse.monetary_columns[0]].sum()
-                - self.data[condition][self.table_to_analyse.monetary_columns[1]].sum()
+                self.data[conditions][self.table_to_analyse.monetary_columns[0]].sum()
+                - self.data[conditions][self.table_to_analyse.monetary_columns[1]].sum()
             )
 
             if positive_expenses:
                 if category in self.expense_categories:
                     category_total = - category_total
 
-            self.analysis.loc[0, category] = round(category_total, 2)
+            totals.loc[0, category] = round(category_total, 2)
+
+        return totals
+
+    def _calculate_averages(self, time_window=30):
+        time_window = dt.timedelta(days=time_window)
+        total_duration_available = self.end_date - self.start_date + dt.timedelta(1)
+        number_of_windows = math.floor(total_duration_available / time_window)
+
+        if time_window > total_duration_available:
+            raise ValueError('time_window should be <= self.end_date - self.start_date')
+
+        period_totals = pd.DataFrame(columns=self.all_categories)
+        averages = pd.DataFrame(columns=(
+            ['table_analysed', 'analysis_type']
+            + self.table_to_store.date_columns
+            + self.all_categories
+        ))
+
+        start_dates = np.array([self.start_date + i * time_window for i in range(number_of_windows)])
+
+        for i, start_date in enumerate(start_dates):
+            end_date = start_date + time_window
+            totals = self._calculate_totals(start_date, end_date)[self.all_categories]
+            period_totals = period_totals.append(totals)
+
+        for column in self.all_categories:
+            averages.loc[0, column] = period_totals[column].mean().round(2)
+
+        return averages
 
     def _set_metadata(self):
         for date_column in self.table_to_store.date_columns:
@@ -97,5 +137,9 @@ class Analyser:
             raise ValueError('Analysis must be carried out before being exported.')
 
         filename = '_'.join([self.table_to_analyse.name, str(dt.datetime.now()), '.csv'])
-        full_path = os.path.join(path, self.analysis_type, filename)
-        self.analysis.to_csv(full_path, index=False, encoding='utf-8')
+        path = os.path.join(path, self.analysis_type)
+
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+        self.analysis.to_csv(os.path.join(path, filename), index=False, encoding='utf-8')
