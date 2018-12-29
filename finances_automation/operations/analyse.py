@@ -3,6 +3,7 @@ import math
 import os
 
 from matplotlib import pyplot as plt
+from matplotlib import dates as mdates
 import numpy as np
 import pandas as pd
 
@@ -13,7 +14,7 @@ from finances_automation.repositories.analyse import AnalyseRepository
 
 class Analyser:
 
-    analyses_excluded_from_storage = ('plot_balance')
+    analyses_excluded_from_storage = 'plot_balance',
 
     def __init__(self, table_to_analyse, table_to_store, analysis_type, start_date, end_date):
         """
@@ -143,6 +144,15 @@ class Analyser:
             ),
             fontsize=20
         )
+
+        ax = plt.gca()
+        ax.xaxis.set_major_locator(mdates.MonthLocator())
+        ax.xaxis.set_minor_locator(mdates.DayLocator(bymonthday=range(0, 30, 5)))
+        ax.xaxis.set_major_formatter(mdates.DateFormatter('%d/%m/%Y'))
+        ax.xaxis.set_minor_formatter(mdates.DateFormatter('%d'))
+
+        ax.tick_params(axis='both', which='both', labelsize=14)
+
         plt.show()
 
     def _set_metadata(self):
