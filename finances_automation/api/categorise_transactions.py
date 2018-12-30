@@ -12,9 +12,7 @@ def categorise_transactions(table, start_date, end_date):
     :param str end_date:
     """
     categoriser = Categoriser(table, start_date, end_date)
-    categoriser.load()
     categoriser.select_categories()
-    categoriser.store()
 
 
 if __name__ == '__main__':

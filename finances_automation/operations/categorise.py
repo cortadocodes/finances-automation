@@ -34,15 +34,17 @@ class Categoriser:
         if not isinstance(recategorise, bool):
             raise TypeError('recategorise should be boolean.')
 
-    def load(self):
+    def _load(self):
         self.data = CategoriseRepository().load(self.table, self.start_date, self.end_date)
 
-    def store(self):
+    def _store(self):
         CategoriseRepository().update(self.table, self.data)
 
     def select_categories(self):
+        self._load()
         self.data['category_code'] = self.data.apply(self._select_category, axis=1)
         self.data['category'] = self.data.apply(self._convert_category_code, axis=1)
+        self._store()
 
     def _select_category(self, row):
         if not self.recategorise:
