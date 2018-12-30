@@ -5,18 +5,19 @@ from finances_automation.entities.table import Table
 from finances_automation.operations.parse import CSVCleaner
 
 
-STATEMENT_LOCATION = os.path.abspath(sys.argv[1])
-TABLE = Table.get_table(sys.argv[2])
-
-
-def parse_statement():
+def parse_statement(statement_location, table):
     """ Read in a statement, clean it up and store it in the database.
+
+    :param str statement_location:
+    :param Table table:
     """
-    parser = CSVCleaner(TABLE, STATEMENT_LOCATION)
+    parser = CSVCleaner(table, statement_location)
     parser.read(header=3)
     parser.clean()
     parser.store()
 
 
 if __name__ == '__main__':
-    parse_statement()
+    statement_location = os.path.abspath(sys.argv[1])
+    table = Table.get_table(sys.argv[2])
+    parse_statement(statement_location, table)

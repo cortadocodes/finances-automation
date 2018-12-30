@@ -4,19 +4,21 @@ from finances_automation.entities.table import Table
 from finances_automation.operations.categorise import Categoriser
 
 
-TABLE = Table.get_table(sys.argv[1])
-START_DATE = sys.argv[2]
-END_DATE = sys.argv[3]
-
-
-def categorise_transactions():
+def categorise_transactions(table, start_date, end_date):
     """ Load transactions from the database, categorise them, and update the database with these categories.
+
+    :param Table table:
+    :param str start_date:
+    :param str end_date:
     """
-    categoriser = Categoriser(TABLE, START_DATE, END_DATE)
+    categoriser = Categoriser(table, start_date, end_date)
     categoriser.load()
     categoriser.select_categories()
     categoriser.store()
 
 
 if __name__ == '__main__':
-    categorise_transactions()
+    table = Table.get_table(sys.argv[1])
+    start_date = sys.argv[2]
+    end_date = sys.argv[3]
+    categorise_transactions(table, start_date, end_date)
