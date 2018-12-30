@@ -9,9 +9,7 @@ from finances_automation.operations.analyse import Analyser
 EXCLUDED = Analyser.analyses_excluded_from_storage
 
 ANALYSIS_TYPE = sys.argv[1].lower()
-
 TABLE_TO_ANALYSE = Table.get_table(sys.argv[2])
-
 START_DATE = sys.argv[3]
 END_DATE = sys.argv[4]
 
