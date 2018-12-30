@@ -21,13 +21,15 @@ def view_table(table, columns):
     :param list(str) columns:
     """
     db = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
-    data = db.select_from(table=table, columns=columns)
+    data = db.select_from(table, columns)
+    if columns == ['*']:
+        columns = db.get_table_column_names(table)
     dataframe = pd.DataFrame(data=data, columns=columns)
-    # print(dataframe.to_string(index=False))
     return dataframe
 
 
 if __name__ == '__main__':
     table = Table.get_table(sys.argv[1])
     columns = sys.argv[2:] or list(table.schema.keys())
-    view_table(table, columns)
+    df = view_table(table, columns)
+    print(df.to_string(index=False))
