@@ -15,21 +15,23 @@ pd.set_option('display.width', 1000)
 
 
 def view_table(table, columns):
-    """ View a table from the database.
+    """ View data from the specified columns of a table from the database.
 
     :param Table table:
     :param list(str) columns:
     """
     db = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
     data = db.select_from(table, columns)
+
     if columns == ['*']:
         columns = db.get_table_column_names(table)
-    dataframe = pd.DataFrame(data=data, columns=columns)
-    return dataframe
+
+    return pd.DataFrame(data=data, columns=columns)
 
 
 if __name__ == '__main__':
     table = Table.get_table(sys.argv[1])
     columns = sys.argv[2:] or list(table.schema.keys())
+
     df = view_table(table, columns)
     print(df.to_string(index=False))
