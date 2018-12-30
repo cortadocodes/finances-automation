@@ -141,7 +141,7 @@ class Analyser:
         dates = self.data[self.table_to_analyse.date_columns[0]]
         balance = self.data['balance']
 
-        balance_figure = plt.figure(figsize=(12, 8))
+        figure = plt.figure(figsize=(12, 8))
         plt.plot(dates, balance)
         plt.xlabel('Date', fontsize=16)
         plt.ylabel('Balance / £', fontsize=16)
@@ -157,11 +157,11 @@ class Analyser:
         ax.xaxis.set_minor_locator(mdates.DayLocator(bymonthday=range(0, 30, 5)))
         ax.xaxis.set_major_formatter(mdates.DateFormatter('%d/%m/%Y'))
         ax.xaxis.set_minor_formatter(mdates.DateFormatter('%d'))
-
         ax.tick_params(axis='both', which='both', labelsize=14)
 
         plt.show()
-        self.analysis = balance_figure
+
+        return figure
 
     def _set_metadata(self):
         for date_column in self.table_to_store.date_columns:
