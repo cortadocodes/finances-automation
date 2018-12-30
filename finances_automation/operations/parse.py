@@ -35,7 +35,7 @@ class BaseParser:
         if not isinstance(file, str):
             raise TypeError('file should be a string.')
 
-    def read(self):
+    def _read(self):
         """ Read a statement at self.file, perform some operations and store it in self.data. This
         method should be overridden in inheriting classes.
 
@@ -43,7 +43,14 @@ class BaseParser:
         """
         raise NotImplementedError
 
-    def store(self):
+    def parse(self):
+        """ Parse the statement.
+
+        :raise NotImplementedError: if method not overridden by inheriting class
+        """
+        raise NotImplementedError
+
+    def _store(self):
         """ Store the parsed transactions in a database table.
         """
         ParseRepository().store(
@@ -56,7 +63,14 @@ class BaseParser:
 class CSVCleaner(BaseParser):
     """ A parser that loads a .csv statement and cleans the data before storing it in the database.
     """
-    def read(self, delimiter=',', header=0):
+    def parse(self):
+        """ Clean and store the statement.
+        """
+        self._read(header=3)
+        self._clean()
+        self._store()
+
+    def _read(self, delimiter=',', header=0):
         """ Read the .csv statement at self.file into a pd.DataFrame object, and store it in self.data.
 
         :param str delimiter: column delimiter in self.file
@@ -64,7 +78,7 @@ class CSVCleaner(BaseParser):
         """
         self.data = pd.read_csv(self.file, delimiter=delimiter, header=header)
 
-    def clean(self):
+    def _clean(self):
         """ Clean the statement's data by:
 
         * Dropping all-NaN rows and columns

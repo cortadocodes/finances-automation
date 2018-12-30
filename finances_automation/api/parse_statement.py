@@ -12,9 +12,7 @@ def parse_statement(statement_location, table):
     :param Table table:
     """
     parser = CSVCleaner(table, statement_location)
-    parser.read(header=3)
-    parser.clean()
-    parser.store()
+    parser.parse()
 
 
 if __name__ == '__main__':
