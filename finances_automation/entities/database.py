@@ -161,6 +161,16 @@ class Database:
         self.execute_statement(table_creation_statement)
         self.stop()
 
+    def get_table_column_names(self, table):
+        """ Get the column names of a table.
+
+        :param Table table:
+
+        :return list(str): column names
+        """
+        self.select_from(table, ['*'])
+        return [description[0] for description in self.cursor.description]
+
     def select_from(self, table, columns, conditions=None):
         """ Select columns from a table according to conditions.
 
