@@ -140,8 +140,10 @@ class Analyser:
         dates = self.table_to_analyse.data[self.table_to_analyse.date_columns[0]]
         balance = self.table_to_analyse.data['balance']
 
+        dates_sorted, balance_sorted = zip(*sorted(zip(dates, balance)))
+
         figure = plt.figure(figsize=(12, 8))
-        plt.plot(dates, balance)
+        plt.plot(dates_sorted, balance_sorted)
         plt.xlabel('Date', fontsize=16)
         plt.ylabel('Balance / £', fontsize=16)
         plt.title(
