@@ -9,6 +9,24 @@ class CategoriseRepository:
     def __init__(self):
         self.db = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
 
+    def load(self, table, start_date, end_date):
+        data = self.db.select_from(table, columns=['*'], conditions=[
+            ('{} >='.format(table.date_columns[0]), start_date),
+            ('AND {} <='.format(table.date_columns[0]), end_date)
+        ])
+
+        data = pd.DataFrame(
+            data, columns=table.schema.keys()
+        )
+
+        data = data.astype(
+            dtype={column: float for column in table.monetary_columns}
+        )
+
+        data = data.astype({'category_code': float})
+
+        return data
+
     def update(self, table):
         self.db.start()
 
@@ -38,21 +56,3 @@ class CategoriseRepository:
             self.db.execute_statement(operation, data)
 
         self.db.stop()
-
-    def load(self, table, start_date, end_date):
-        data = self.db.select_from(table, columns=['*'], conditions=[
-            ('{} >='.format(table.date_columns[0]), start_date),
-            ('AND {} <='.format(table.date_columns[0]), end_date)
-        ])
-
-        data = pd.DataFrame(
-            data, columns=table.schema.keys()
-        )
-
-        data = data.astype(
-            dtype={column: float for column in table.monetary_columns}
-        )
-
-        data = data.astype({'category_code': float})
-
-        return data
