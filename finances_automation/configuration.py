@@ -10,6 +10,39 @@ DB_NAME = 'finances'
 DB_CLUSTER = os.path.join(PACKAGE_ROOT, 'data', 'database_cluster')
 USER = 'Marcus1'
 
+CATEGORIES = {
+    'income': [
+        'job',
+        'bursaries_and_scholarships',
+        'transfers_in',
+        'other_income'
+    ],
+
+    'expense': [
+        'rent',
+        'utility_bills',
+        'essentials',
+        'health',
+        'clothes',
+        'subscriptions',
+        'cash',
+        'fun',
+        'coffee',
+        'holidays',
+        'travel',
+        'credit_card',
+        'savings_and_investments',
+        'loan_repayments',
+        'charity',
+        'other_expenses'
+    ],
+
+    'adjustment': [
+        'make_balance',
+        'ignore'
+    ]
+}
+
 TABLES = {
     'current_transactions': {
         'name': 'current_transactions',
@@ -79,39 +112,6 @@ TABLES = {
         'date_format': '%d/%m/%Y'
     }
 
-}
-
-CATEGORIES = {
-    'income': [
-        'job',
-        'bursaries_and_scholarships',
-        'transfers_in',
-        'other_income'
-    ],
-
-    'expense': [
-        'rent',
-        'utility_bills',
-        'essentials',
-        'health',
-        'clothes',
-        'subscriptions',
-        'cash',
-        'fun',
-        'coffee',
-        'holidays',
-        'travel',
-        'credit_card',
-        'savings_and_investments',
-        'loan_repayments',
-        'charity',
-        'other_expenses'
-    ],
-
-    'adjustment': [
-        'make_balance',
-        'ignore'
-    ]
 }
 
 PARSER = {
