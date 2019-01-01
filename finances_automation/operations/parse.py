@@ -20,7 +20,6 @@ class BaseParser:
 
         self.table = table
         self.file = file
-        self.data = None
 
     @staticmethod
     def check_types(table, file):
@@ -37,8 +36,8 @@ class BaseParser:
             raise TypeError('file should be a string.')
 
     def _read(self, *args, **kwargs):
-        """ Read a statement at self.file, perform some operations and store it in self.data. This
-        method should be overridden in inheriting classes.
+        """ Read a statement at self.file, perform some operations and store it in self.table.data.
+        This method should be overridden in inheriting classes.
 
         :raise NotImplementedError: if method not overridden by inheriting class
         """
@@ -51,14 +50,10 @@ class BaseParser:
         """
         raise NotImplementedError
 
-    def _store(self):
+    def _insert(self):
         """ Store the parsed transactions in a database table.
         """
-        ParseRepository().store(
-            table=self.table,
-            columns=tuple(self.data.columns),
-            values_group=self.data.itertuples(index=False)
-        )
+        ParseRepository().insert(self.table)
 
 
 class CSVCleaner(BaseParser):
@@ -74,17 +69,17 @@ class CSVCleaner(BaseParser):
         """
         self._read(**conf.PARSER)
         self._clean()
-        self._store()
+        self._insert()
 
     def _read(self, delimiter, header, usecols, dtype):
-        """ Read the .csv statement at self.file into a pd.DataFrame object, and store it in self.data.
+        """ Read the .csv statement at self.file into a pd.DataFrame object, and store it in self.table.data.
 
         :param str delimiter: column delimiter in self.file
         :param int header: row number that headers are on
         :param list usecols: names or numbers of columns to use
         :param dict dtype: mapping of column name to type of data e.g. np.float64
         """
-        self.data = pd.read_csv(
+        self.table.data = pd.read_csv(
             self.file,
             delimiter=delimiter,
             header=header,
@@ -102,9 +97,9 @@ class CSVCleaner(BaseParser):
         * Removing unwanted characters from monetary_columns
         * Converting the statement's notation for negative numbers to a standard minus sign
         """
-        self.data.dropna(axis=0, how='all', inplace=True)
-        self.data.dropna(axis=1, how='all', inplace=True)
-        self.data.drop_duplicates(inplace=True)
+        self.table.data.dropna(axis=0, how='all', inplace=True)
+        self.table.data.dropna(axis=1, how='all', inplace=True)
+        self.table.data.drop_duplicates(inplace=True)
 
         self._convert_column_names()
         self._add_missing_database_table_columns()
@@ -115,20 +110,22 @@ class CSVCleaner(BaseParser):
     def _convert_column_names(self):
         """ Convert column names to snake_case.
         """
-        self.data.columns = self.data.columns.str.lower().str.replace(' ', '_')
+        self.table.data.columns = self.table.data.columns.str.lower().str.replace(' ', '_')
 
     def _add_missing_database_table_columns(self):
         """ Add columns in the database table that are missing from the read-in file.
         """
         for column in self.table.schema.keys():
-            if column not in self.data.columns and column != 'id':
-                self.data[column] = np.nan
+            if column not in self.table.data.columns and column != 'id':
+                self.table.data[column] = np.nan
 
     def _remove_unwanted_characters(self):
         """ Removing unwanted characters from monetary_columns.
         """
         for column in self.table.monetary_columns:
-            self.data[column] = self.data[column].astype(str).str.replace('£', '').str.replace(',', '')
+            self.table.data[column] = (
+                self.table.data[column].astype(str).str.replace('£', '').str.replace(',', '')
+            )
 
     def _convert_negative_values(self):
         """ Convert (numbers) to standard negative notation.
@@ -137,17 +134,17 @@ class CSVCleaner(BaseParser):
         replacement = r'-\1'
 
         for column in self.table.monetary_columns:
-            self.data[column] = self.data[column].str.replace(negatives_values, replacement)
+            self.table.data[column] = self.table.data[column].str.replace(negatives_values, replacement)
 
     def _enforce_column_types(self):
         """ Convert dates to the format specified in the configuration.
         """
         for date_column in self.table.date_columns:
-            self.data[date_column] = pd.to_datetime(
-                self.data[date_column],
+            self.table.data[date_column] = pd.to_datetime(
+                self.table.data[date_column],
                 format=self.table.date_format
             )
 
-        self.data = self.data.astype(
+        self.table.data = self.table.data.astype(
             dtype={column: float for column in self.table.monetary_columns}
         )

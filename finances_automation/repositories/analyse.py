@@ -21,9 +21,9 @@ class AnalyseRepository:
 
         return data
 
-    def store(self, table, totals):
+    def insert(self, table, analysis):
         self.db.insert_into(
             table,
-            tuple(totals.columns),
-            totals.itertuples(index=False)
+            tuple(analysis.columns),
+            analysis.itertuples(index=False)
         )

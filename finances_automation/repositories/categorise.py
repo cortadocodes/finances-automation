@@ -9,14 +9,16 @@ class CategoriseRepository:
     def __init__(self):
         self.db = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
 
-    def update(self, table, data):
+    def update(self, table):
         self.db.start()
 
-        for i in range(len(data)):
-            id = int(data.iloc[i, 0])
+        for i in range(len(table.data)):
+            id = int(table.data.iloc[i, 0])
+            row = table.data.iloc[i]
+
             data = tuple([
-                int(data.iloc[i][table.category_columns[0]]),
-                data.iloc[i][table.category_columns[1]]]
+                int(row[table.category_columns[0]]),
+                row[table.category_columns[1]]]
             )
 
             operation = (

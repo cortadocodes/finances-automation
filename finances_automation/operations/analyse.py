@@ -25,8 +25,6 @@ class Analyser:
         """
         self.check_types(table_to_analyse, table_to_store, analysis_type, start_date, end_date)
 
-        self.data = None
-
         self.analyses = {
             'totals': self._calculate_totals,
             'monthly_averages': self._calculate_averages,
@@ -60,10 +58,12 @@ class Analyser:
             raise TypeError('end_date must be a string.')
 
     def _load(self):
-        self.data = AnalyseRepository().load(self.table_to_analyse, self.start_date, self.end_date)
+        self.table_to_analyse.data = AnalyseRepository().load(
+            self.table_to_analyse, self.start_date, self.end_date
+        )
 
-    def _store(self):
-        AnalyseRepository().store(self.table_to_store, self.analysis)
+    def _insert(self):
+        AnalyseRepository().insert(self.table_to_store, self.analysis)
 
     def analyse(self):
         self._load()
@@ -71,7 +71,7 @@ class Analyser:
 
         if self.analysis_type not in self.analyses_excluded_from_storage:
             self._set_metadata()
-            self._store()
+            self._insert()
 
     def _calculate_totals(self, start_date=None, end_date=None, positive_expenses=True):
         self.export_type = 'csv'
@@ -87,14 +87,14 @@ class Analyser:
 
         for category in self.all_categories:
             conditions = (
-                (self.data['category'] == category)
-                & (self.data[self.table_to_analyse.date_columns[0]] >= start_date)
-                & (self.data[self.table_to_analyse.date_columns[0]] <= end_date)
+                (self.table_to_analyse.data['category'] == category)
+                & (self.table_to_analyse.data[self.table_to_analyse.date_columns[0]] >= start_date)
+                & (self.table_to_analyse.data[self.table_to_analyse.date_columns[0]] <= end_date)
             )
 
             category_total = (
-                self.data[conditions][self.table_to_analyse.monetary_columns[0]].sum()
-                - self.data[conditions][self.table_to_analyse.monetary_columns[1]].sum()
+                self.table_to_analyse.data[conditions][self.table_to_analyse.monetary_columns[0]].sum()
+                - self.table_to_analyse.data[conditions][self.table_to_analyse.monetary_columns[1]].sum()
             )
 
             if positive_expenses:
@@ -137,8 +137,8 @@ class Analyser:
     def _plot_balance(self):
         self.export_type = 'image'
 
-        dates = self.data[self.table_to_analyse.date_columns[0]]
-        balance = self.data['balance']
+        dates = self.table_to_analyse.data[self.table_to_analyse.date_columns[0]]
+        balance = self.table_to_analyse.data['balance']
 
         figure = plt.figure(figsize=(12, 8))
         plt.plot(dates, balance)

@@ -13,7 +13,6 @@ class Categoriser:
 
         self.check_types(table, start_date, end_date, recategorise)
 
-        self.data = None
         self.table = table
 
         self.categories = conf.CATEGORIES
@@ -33,16 +32,16 @@ class Categoriser:
             raise TypeError('recategorise should be boolean.')
 
     def _load(self):
-        self.data = CategoriseRepository().load(self.table, self.start_date, self.end_date)
+        self.table.data = CategoriseRepository().load(self.table, self.start_date, self.end_date)
 
-    def _store(self):
-        CategoriseRepository().update(self.table, self.data)
+    def _update(self):
+        CategoriseRepository().update(self.table)
 
     def select_categories(self):
         self._load()
-        self.data['category_code'] = self.data.apply(self._select_category, axis=1)
-        self.data['category'] = self.data.apply(self._convert_category_code, axis=1)
-        self._store()
+        self.table.data['category_code'] = self.table.data.apply(self._select_category, axis=1)
+        self.table.data['category'] = self.table.data.apply(self._convert_category_code, axis=1)
+        self._update()
 
     def _select_category(self, row):
         if not self.recategorise:

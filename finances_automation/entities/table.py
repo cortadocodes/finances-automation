@@ -1,3 +1,5 @@
+import pandas as pd
+
 from finances_automation import configuration as conf
 
 
@@ -5,7 +7,7 @@ class Table:
 
     def __init__(self, name, schema, monetary_columns=None, date_columns=None, date_format=None,
                  category_columns=None):
-        """ Initialise a Table representation with information relating to its structure.
+        """ Initialise a python representation of a database table in memory.
 
         :param str name: name of table
         :param dict schema: schema of table as a dictionary mapping column name to PostgreSQL type
@@ -14,6 +16,8 @@ class Table:
         :param list(str) date_columns: names of columns containing dates
         :param str date_format: format of dates in table
         :param list(str) category_columns: names of columns containing category information
+
+        :var pd.DataFrame data: data loaded from the database table (modified or unmodified)
         """
         self.name = name
         self.schema = schema
@@ -21,6 +25,8 @@ class Table:
         self.date_columns = date_columns
         self.date_format = date_format
         self.category_columns = category_columns
+
+        self.data = pd.DataFrame()
 
     @staticmethod
     def check_types(name, schema, monetary_columns, date_columns, date_format, category_columns):
