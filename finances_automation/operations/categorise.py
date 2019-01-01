@@ -14,7 +14,6 @@ class Categoriser:
         self.check_types(table, start_date, end_date, recategorise)
 
         self.table = table
-
         self.categories = conf.CATEGORIES
 
         self.start_date = dt.datetime.strptime(start_date, self.table.date_format).date()
