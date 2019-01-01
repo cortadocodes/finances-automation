@@ -111,3 +111,10 @@ TABLES = {
     }
 
 }
+
+PARSER = {
+    'delimiter': ',',
+    'header': 3,
+    'usecols': None,
+    'dtype': None
+}

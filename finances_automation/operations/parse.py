@@ -3,6 +3,7 @@
 import numpy as np
 import pandas as pd
 
+from finances_automation import configuration as conf
 from finances_automation.entities.table import Table
 from finances_automation.repositories.parse import ParseRepository
 
@@ -35,7 +36,7 @@ class BaseParser:
         if not isinstance(file, str):
             raise TypeError('file should be a string.')
 
-    def _read(self):
+    def _read(self, *args, **kwargs):
         """ Read a statement at self.file, perform some operations and store it in self.data. This
         method should be overridden in inheriting classes.
 
@@ -65,18 +66,31 @@ class CSVCleaner(BaseParser):
     """
     def parse(self):
         """ Clean and store the statement.
+
+        :param str delimiter: column delimiter in self.file
+        :param int header: row number that headers are on
+        :param list usecols: names or numbers of columns to use
+        :param dict dtype: mapping of column name to type of data e.g. np.float64
         """
-        self._read(header=3)
+        self._read(**conf.PARSER)
         self._clean()
         self._store()
 
-    def _read(self, delimiter=',', header=0):
+    def _read(self, delimiter, header, usecols, dtype):
         """ Read the .csv statement at self.file into a pd.DataFrame object, and store it in self.data.
 
         :param str delimiter: column delimiter in self.file
         :param int header: row number that headers are on
+        :param list usecols: names or numbers of columns to use
+        :param dict dtype: mapping of column name to type of data e.g. np.float64
         """
-        self.data = pd.read_csv(self.file, delimiter=delimiter, header=header)
+        self.data = pd.read_csv(
+            self.file,
+            delimiter=delimiter,
+            header=header,
+            usecols=usecols,
+            dtype=dtype
+        )
 
     def _clean(self):
         """ Clean the statement's data by:
