@@ -63,7 +63,7 @@ class Analyser:
         )
 
     def _insert(self):
-        AnalyseRepository().insert(self.table_to_store, self.analysis)
+        AnalyseRepository().insert(self.analysis, self.table_to_store)
 
     def analyse(self):
         self._load()

@@ -21,7 +21,7 @@ class AnalyseRepository:
 
         return data
 
-    def insert(self, table, analysis):
+    def insert(self, analysis, table):
         self.db.insert_into(
             table,
             tuple(analysis.columns),
