@@ -1,6 +1,7 @@
 import datetime as dt
 
 import numpy as np
+import pandas as pd
 
 from finances_automation import configuration as conf
 from finances_automation.entities.table import Table
@@ -20,6 +21,9 @@ class Categoriser:
         self.end_date = dt.datetime.strptime(end_date, self.table.date_format).date()
 
         self.recategorise = recategorise
+
+        pd.set_option('max_colwidth', 200)
+        pd.set_option('display.width', 1000)
 
     @staticmethod
     def check_types(table, start_date, end_date, recategorise):
