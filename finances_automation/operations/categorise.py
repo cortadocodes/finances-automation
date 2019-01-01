@@ -16,9 +16,7 @@ class Categoriser:
         self.data = None
         self.table = table
 
-        self.income_categories = conf.INCOME_CATEGORIES
-        self.expense_categories = conf.EXPENSE_CATEGORIES
-        self.adjustment_categories = conf.ADJUSTMENT_CATEGORIES
+        self.categories = conf.CATEGORIES
 
         self.start_date = dt.datetime.strptime(start_date, self.table.date_format).date()
         self.end_date = dt.datetime.strptime(end_date, self.table.date_format).date()
@@ -67,33 +65,41 @@ class Categoriser:
         print('=' * 45, end='\n\n')
 
         print('Income categories:')
-        for i, category in enumerate(self.income_categories):
+        for i, category in enumerate(self.categories['income']):
             print('{}: {}'.format(i, category))
 
         print('\nExpense categories:')
-        for j, category in enumerate(self.expense_categories):
+        for j, category in enumerate(self.categories['expense']):
             print('{}: {}'.format(i + j + 1, category))
 
         print('\nAdjustment categories:')
-        for k, category in enumerate(self.adjustment_categories):
+        for k, category in enumerate(self.categories['adjustment']):
             print('{}: {}'.format(i + j + k + 2, category))
 
         print('\n')
 
     def _convert_category_code(self, row):
+        category = None
         code = int(row['category_code'])
-        income_length = len(self.income_categories)
-        expense_length = len(self.expense_categories)
-        adjustment_length = len(self.adjustment_categories)
 
-        if code < 0 | isinstance(code, float) | code >= expense_length + income_length + adjustment_length:
-            raise ValueError("Received a category code larger than the sum of the lengths of the category lists.")
+        income_length = len(self.categories['income'])
+        expense_length = len(self.categories['expense'])
+        adjustment_length = len(self.categories['adjustment'])
+
+        is_invalid_code = (
+            code < 0
+            | isinstance(code, float)
+            | code >= expense_length + income_length + adjustment_length
+        )
+
+        if is_invalid_code:
+            raise ValueError('Received an invalid category_code: {}'.format(code))
 
         if code < income_length:
-            category = self.income_categories[code]
+            category = self.categories['income'][code]
         elif code < expense_length + income_length:
-            category = self.expense_categories[code - income_length]
+            category = self.categories['expense'][code - income_length]
         elif code < expense_length + income_length + adjustment_length:
-            category = self.adjustment_categories[code - income_length - expense_length]
+            category = self.categories['adjustment'][code - income_length - expense_length]
 
         return category

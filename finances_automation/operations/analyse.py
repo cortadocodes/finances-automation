@@ -40,9 +40,8 @@ class Analyser:
         self.analysis = None
         self.export_type = None
 
-        self.income_categories = conf.INCOME_CATEGORIES
-        self.expense_categories = conf.EXPENSE_CATEGORIES
-        self.all_categories = self.income_categories + self.expense_categories
+        self.categories = conf.CATEGORIES
+        self.all_categories = self.categories['income'] + self.categories['expense']
 
         self.start_date = dt.datetime.strptime(start_date, self.table_to_analyse.date_format).date()
         self.end_date = dt.datetime.strptime(end_date, self.table_to_analyse.date_format).date()
@@ -99,7 +98,7 @@ class Analyser:
             )
 
             if positive_expenses:
-                if category in self.expense_categories:
+                if category in self.categories['expense']:
                     category_total = - category_total
 
             totals.loc[0, category] = round(category_total, 2)

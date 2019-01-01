@@ -10,36 +10,36 @@ USER = 'Marcus1'
 DB_NAME = 'finances'
 DB_CLUSTER = os.path.join(PACKAGE_ROOT, 'data', 'database_cluster')
 
-INCOME_CATEGORIES = [
-    'job',
-    'bursaries_and_scholarships',
-    'transfers_in',
-    'other_income',
-]
-
-EXPENSE_CATEGORIES = [
-    'rent',
-    'utility_bills',
-    'essentials',
-    'health',
-    'clothes',
-    'subscriptions',
-    'cash',
-    'fun',
-    'coffee',
-    'holidays',
-    'travel',
-    'credit_card',
-    'savings_and_investments',
-    'loan_repayments',
-    'charity',
-    'other_expenses'
-]
-
-ADJUSTMENT_CATEGORIES = [
-    'make_balance',
-    'ignore'
-]
+CATEGORIES = {
+    'income': [
+        'job',
+        'bursaries_and_scholarships',
+        'transfers_in',
+        'other_income'
+    ],
+    'expense': [
+        'rent',
+        'utility_bills',
+        'essentials',
+        'health',
+        'clothes',
+        'subscriptions',
+        'cash',
+        'fun',
+        'coffee',
+        'holidays',
+        'travel',
+        'credit_card',
+        'savings_and_investments',
+        'loan_repayments',
+        'charity',
+        'other_expenses'
+    ],
+    'adjustment': [
+        'make_balance',
+        'ignore'
+    ]
+}
 
 TABLES = {
     'current_transactions': {
@@ -88,9 +88,9 @@ TABLES = {
             'start_date': 'DATE NOT NULL',
             'end_date': 'DATE NOT NULL',
             'analysis_datetime': 'TIMESTAMPTZ NOT NULL',
-            **{category: 'DECIMAL' for category in [*INCOME_CATEGORIES, *EXPENSE_CATEGORIES]}
+            **{category: 'DECIMAL' for category in [*CATEGORIES['income'], *CATEGORIES['expense']]}
         },
-        'monetary_columns': [*INCOME_CATEGORIES, *EXPENSE_CATEGORIES],
+        'monetary_columns': [*CATEGORIES['income'], *CATEGORIES['expense']],
         'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
         'date_format': '%d/%m/%Y'
     },
@@ -103,9 +103,9 @@ TABLES = {
             'start_date': 'DATE NOT NULL',
             'end_date': 'DATE NOT NULL',
             'analysis_datetime': 'TIMESTAMPTZ NOT NULL',
-            **{category: 'DECIMAL' for category in [*INCOME_CATEGORIES, *EXPENSE_CATEGORIES]}
+            **{category: 'DECIMAL' for category in [*CATEGORIES['income'], *CATEGORIES['expense']]}
         },
-        'monetary_columns': [*INCOME_CATEGORIES, *EXPENSE_CATEGORIES],
+        'monetary_columns': [*CATEGORIES['income'], *CATEGORIES['expense']],
         'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
         'date_format': '%d/%m/%Y'
     }
