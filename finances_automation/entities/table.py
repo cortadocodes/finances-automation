@@ -48,12 +48,14 @@ class Table:
         :param str table_name: possible name of a table
 
         :raise ValueError: if the a configuration doesn't exist for the table name
-        :return Table: table with the table name
+        :return Table:
         """
-        table_name = table_name.upper()
-
-        if hasattr(conf, table_name):
-            table_conf = getattr(conf, table_name)
+        try:
+            table_conf = conf.TABLES[table_name]
             return Table(**table_conf)
 
-        raise ValueError('No such table: {}.'.format(table_name))
+        except KeyError:
+            raise ValueError(
+                "No such table: '{}'. Possible tables: {}"
+                .format(table_name, list(conf.TABLES.keys()))
+            )

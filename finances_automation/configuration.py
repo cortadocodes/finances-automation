@@ -41,70 +41,73 @@ ADJUSTMENT_CATEGORIES = [
     'ignore'
 ]
 
-CURRENT_TRANSACTIONS = {
-    'name': 'current_transactions',
-    'schema': {
-        'id': 'serial PRIMARY KEY',
-        'date': 'DATE NOT NULL',
-        'card': 'VARCHAR',
-        'description': 'VARCHAR',
-        'money_in': 'VARCHAR',
-        'money_out': 'VARCHAR',
-        'balance': 'DECIMAL',
-        'category_code': 'DECIMAL',
-        'category': 'VARCHAR'
+TABLES = {
+    'current_transactions': {
+        'name': 'current_transactions',
+        'schema': {
+            'id': 'serial PRIMARY KEY',
+            'date': 'DATE NOT NULL',
+            'card': 'VARCHAR',
+            'description': 'VARCHAR',
+            'money_in': 'VARCHAR',
+            'money_out': 'VARCHAR',
+            'balance': 'DECIMAL',
+            'category_code': 'DECIMAL',
+            'category': 'VARCHAR'
+        },
+        'monetary_columns': ['money_in', 'money_out', 'balance'],
+        'date_columns': ['date'],
+        'date_format': '%d/%m/%Y',
+        'category_columns': ['category_code', 'category']
     },
-    'monetary_columns': ['money_in', 'money_out', 'balance'],
-    'date_columns': ['date'],
-    'date_format': '%d/%m/%Y',
-    'category_columns': ['category_code', 'category']
-}
 
-CREDIT_TRANSACTIONS = {
-    'name': 'credit_transactions',
-    'schema': {
-        'id': 'serial PRIMARY KEY',
-        'date': 'DATE NOT NULL',
-        'card': 'VARCHAR',
-        'description': 'VARCHAR',
-        'money_in': 'VARCHAR',
-        'money_out': 'VARCHAR',
-        'balance': 'DECIMAL',
-        'category_code': 'DECIMAL',
-        'category': 'VARCHAR'
+    'credit_transactions': {
+        'name': 'credit_transactions',
+        'schema': {
+            'id': 'serial PRIMARY KEY',
+            'date': 'DATE NOT NULL',
+            'card': 'VARCHAR',
+            'description': 'VARCHAR',
+            'money_in': 'VARCHAR',
+            'money_out': 'VARCHAR',
+            'balance': 'DECIMAL',
+            'category_code': 'DECIMAL',
+            'category': 'VARCHAR'
+        },
+        'monetary_columns': ['money_in', 'money_out', 'balance'],
+        'date_columns': ['date'],
+        'date_format': '%d/%m/%Y',
+        'category_columns': ['category_code', 'category']
     },
-    'monetary_columns': ['money_in', 'money_out', 'balance'],
-    'date_columns': ['date'],
-    'date_format': '%d/%m/%Y',
-    'category_columns': ['category_code', 'category']
-}
 
-TOTALS = {
-    'name': 'totals',
-    'schema': {
-        'id': 'serial PRIMARY KEY',
-        'table_analysed': 'VARCHAR',
-        'start_date': 'DATE NOT NULL',
-        'end_date': 'DATE NOT NULL',
-        'analysis_datetime': 'TIMESTAMPTZ NOT NULL',
-        **{category: 'DECIMAL' for category in [*INCOME_CATEGORIES, *EXPENSE_CATEGORIES]}
+    'totals': {
+        'name': 'totals',
+        'schema': {
+            'id': 'serial PRIMARY KEY',
+            'table_analysed': 'VARCHAR',
+            'start_date': 'DATE NOT NULL',
+            'end_date': 'DATE NOT NULL',
+            'analysis_datetime': 'TIMESTAMPTZ NOT NULL',
+            **{category: 'DECIMAL' for category in [*INCOME_CATEGORIES, *EXPENSE_CATEGORIES]}
+        },
+        'monetary_columns': [*INCOME_CATEGORIES, *EXPENSE_CATEGORIES],
+        'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
+        'date_format': '%d/%m/%Y'
     },
-    'monetary_columns': [*INCOME_CATEGORIES, *EXPENSE_CATEGORIES],
-    'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
-    'date_format': '%d/%m/%Y'
-}
 
-MONTHLY_AVERAGES = {
-    'name': 'monthly_averages',
-    'schema': {
-        'id': 'serial PRIMARY KEY',
-        'table_analysed': 'VARCHAR',
-        'start_date': 'DATE NOT NULL',
-        'end_date': 'DATE NOT NULL',
-        'analysis_datetime': 'TIMESTAMPTZ NOT NULL',
-        **{category: 'DECIMAL' for category in [*INCOME_CATEGORIES, *EXPENSE_CATEGORIES]}
-    },
-    'monetary_columns': [*INCOME_CATEGORIES, *EXPENSE_CATEGORIES],
-    'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
-    'date_format': '%d/%m/%Y'
+    'monthly_averages': {
+        'name': 'monthly_averages',
+        'schema': {
+            'id': 'serial PRIMARY KEY',
+            'table_analysed': 'VARCHAR',
+            'start_date': 'DATE NOT NULL',
+            'end_date': 'DATE NOT NULL',
+            'analysis_datetime': 'TIMESTAMPTZ NOT NULL',
+            **{category: 'DECIMAL' for category in [*INCOME_CATEGORIES, *EXPENSE_CATEGORIES]}
+        },
+        'monetary_columns': [*INCOME_CATEGORIES, *EXPENSE_CATEGORIES],
+        'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
+        'date_format': '%d/%m/%Y'
+    }
+
 }
