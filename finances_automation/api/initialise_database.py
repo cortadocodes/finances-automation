@@ -11,9 +11,7 @@ def initialise_database(overwrite):
     database = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
     database.create(overwrite=overwrite)
 
-    table_names = 'current_transactions', 'credit_transactions', 'totals', 'monthly_averages'
-
-    for table_name in table_names:
+    for table_name in conf.TABLE_NAMES:
         database.create_table(Table.get_table(table_name))
 
 
