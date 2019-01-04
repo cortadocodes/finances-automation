@@ -60,19 +60,13 @@ class Analyser:
         if not isinstance(end_date, str):
             raise TypeError('end_date must be a string.')
 
-    def _load(self):
-        self.table_to_analyse_repository.load(self.start_date, self.end_date)
-
-    def _insert(self):
-        self.table_to_store_repository.insert(self.analysis)
-
     def analyse(self):
-        self._load()
+        self.table_to_analyse_repository.load(self.start_date, self.end_date)
         self.analysis = self.analyses[self.analysis_type]()
 
         if self.analysis_type not in self.analyses_excluded_from_storage:
             self._set_metadata()
-            self._insert()
+            self.table_to_store_repository.insert(self.analysis)
 
     def _calculate_totals(self, start_date=None, end_date=None, positive_expenses=True):
         self.export_type = 'csv'

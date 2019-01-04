@@ -54,11 +54,6 @@ class BaseParser:
         """
         raise NotImplementedError
 
-    def _insert(self):
-        """ Store the parsed transactions in a database table.
-        """
-        self.table_repository.insert(self.data)
-
 
 class CSVCleaner(BaseParser):
     """ A parser that loads a .csv statement and cleans the data before storing it in the database.
@@ -73,7 +68,7 @@ class CSVCleaner(BaseParser):
         """
         self._read(**conf.PARSER)
         self._clean()
-        self._insert()
+        self.table_repository.insert(self.data)
 
     def _read(self, delimiter, header, usecols, dtype):
         """ Read the .csv statement at self.file into a pd.DataFrame object, and store it in self.data.
