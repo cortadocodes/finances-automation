@@ -57,7 +57,7 @@ class BaseParser:
     def _insert(self):
         """ Store the parsed transactions in a database table.
         """
-        self.table_repository.insert(self.data, self)
+        self.table_repository.insert(self.data)
 
 
 class CSVCleaner(BaseParser):
