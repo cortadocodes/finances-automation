@@ -5,6 +5,8 @@ from finances_automation.entities.database import Database
 
 
 class BaseRepository:
+    """ A base repository that provides loading of data from a database table and insertion into it.
+    """
 
     def __init__(self, table):
         """ Initialise a repository for the given table.
@@ -40,33 +42,3 @@ class BaseRepository:
             columns=tuple(data.columns),
             values_group=data.itertuples(index=False)
         )
-
-    def update(self):
-        self.db.start()
-
-        for i in range(len(self.table.data)):
-            id = int(self.table.data.iloc[i, 0])
-            row = self.table.data.iloc[i]
-
-            data = tuple([
-                int(row[self.table.category_columns[0]]),
-                row[self.table.category_columns[1]]]
-            )
-
-            operation = (
-                """
-                UPDATE {0}
-                SET {1} = %s, {2} = %s
-                WHERE {0}.id = {3}
-                """
-                .format(
-                    self.table.name,
-                    self.table.category_columns[0],
-                    self.table.category_columns[1],
-                    id
-                )
-            )
-
-            self.db.execute_statement(operation, data)
-
-        self.db.stop()

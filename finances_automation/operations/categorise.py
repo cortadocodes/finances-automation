@@ -5,7 +5,7 @@ import pandas as pd
 
 from finances_automation import configuration as conf
 from finances_automation.entities.table import Table
-from finances_automation.repositories.base_repository import BaseRepository
+from finances_automation.repositories.transactions_repository import TransactionsRepository
 
 
 class Categoriser:
@@ -15,7 +15,7 @@ class Categoriser:
         self.check_types(table, start_date, end_date, recategorise)
 
         self.table = table
-        self.table_repository = BaseRepository(self.table)
+        self.table_repository = TransactionsRepository(self.table)
 
         self.categories = conf.CATEGORIES
 
@@ -40,7 +40,7 @@ class Categoriser:
         self.table_repository.load(self.start_date, self.end_date)
 
     def _update(self):
-        self.table_repository.update()
+        self.table_repository.update_categories()
 
     def select_categories(self):
         self._load()
