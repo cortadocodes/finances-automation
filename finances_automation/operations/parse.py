@@ -5,7 +5,7 @@ import pandas as pd
 
 from finances_automation import configuration as conf
 from finances_automation.entities.table import Table
-from finances_automation.repositories.base_repository import BaseRepository
+from finances_automation.repositories import BaseRepository
 
 
 class BaseParser:
