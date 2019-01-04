@@ -5,11 +5,12 @@ from finances_automation import configuration as conf
 
 class Table:
 
-    def __init__(self, name, schema, monetary_columns=None, date_columns=None, date_format=None,
-                 category_columns=None):
+    def __init__(self, name, schema, type, monetary_columns=None, date_columns=None,
+                 date_format=None, category_columns=None):
         """ Initialise a python representation of a database table in memory.
 
         :param str name: name of table
+        :param str type: type of table
         :param dict schema: schema of table as a dictionary mapping column name to PostgreSQL type
             as a string
         :param list(str) monetary_columns: names of columns containing monetary amounts
@@ -20,6 +21,7 @@ class Table:
         :var pd.DataFrame data: data loaded from the database table (modified or unmodified)
         """
         self.name = name
+        self.type = type
         self.schema = schema
         self.monetary_columns = monetary_columns
         self.date_columns = date_columns
@@ -29,13 +31,16 @@ class Table:
         self.data = pd.DataFrame()
 
     @staticmethod
-    def check_types(name, schema, monetary_columns, date_columns, date_format, category_columns):
+    def check_types(name, type, schema, monetary_columns, date_columns, date_format,
+                    category_columns):
         """ Check if the initialisation parameters for the Table are of the correct type.
 
         :raise TypeError: if any of the parameters are of the wrong type
         """
         if not isinstance(name, str):
             raise TypeError('name should be a string.')
+        if not isinstance(type, str):
+            raise TypeError('type should be a string')
         if not isinstance(schema, dict):
             raise TypeError('schema should be a dictionary.')
         if not isinstance(monetary_columns, list):

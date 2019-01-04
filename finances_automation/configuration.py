@@ -46,6 +46,7 @@ CATEGORIES = {
 TABLES = {
     'current_transactions': {
         'name': 'current_transactions',
+        'type': 'transactions',
         'schema': {
             'id': 'serial PRIMARY KEY',
             'date': 'DATE NOT NULL',
@@ -65,6 +66,7 @@ TABLES = {
 
     'credit_transactions': {
         'name': 'credit_transactions',
+        'type': 'transactions',
         'schema': {
             'id': 'serial PRIMARY KEY',
             'date': 'DATE NOT NULL',
@@ -84,6 +86,7 @@ TABLES = {
 
     'totals': {
         'name': 'totals',
+        'type': 'analysis',
         'schema': {
             'id': 'serial PRIMARY KEY',
             'table_analysed': 'VARCHAR',
@@ -99,6 +102,7 @@ TABLES = {
 
     'monthly_averages': {
         'name': 'monthly_averages',
+        'type': 'analysis',
         'schema': {
             'id': 'serial PRIMARY KEY',
             'table_analysed': 'VARCHAR',
@@ -112,6 +116,9 @@ TABLES = {
         'date_format': '%d/%m/%Y'
     }
 }
+
+TRANSACTION_TABLES = (table['name'] for table in TABLES if table.type == 'transactions')
+ANALYSIS_TABLES = (table['name'] for table in TABLES if table.type == 'analysis')
 
 PARSER = {
     'delimiter': ',',
