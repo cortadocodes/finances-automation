@@ -26,7 +26,7 @@ class Analyser:
         self.check_types(table_to_analyse, table_to_store, analysis_type, start_date, end_date)
 
         self.analyses = {
-            'totals': self._calculate_totals,
+            'category_totals': self._calculate_category_totals,
             'monthly_averages': self._calculate_averages,
             'plot_balance': self._plot_balance
         }
@@ -68,7 +68,7 @@ class Analyser:
             self._set_metadata()
             self.table_to_store_repository.insert(self.analysis)
 
-    def _calculate_totals(self, start_date=None, end_date=None, positive_expenses=True):
+    def _calculate_category_totals(self, start_date=None, end_date=None, positive_expenses=True):
         self.export_type = 'csv'
 
         start_date = start_date or self.start_date
@@ -121,7 +121,7 @@ class Analyser:
 
         for i, start_date in enumerate(start_dates):
             end_date = start_date + time_window
-            totals = self._calculate_totals(start_date, end_date)[self.all_categories]
+            totals = self._calculate_category_totals(start_date, end_date)[self.all_categories]
             period_totals = period_totals.append(totals)
 
         for column in self.all_categories:
