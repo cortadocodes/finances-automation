@@ -14,8 +14,8 @@ def analyse_transactions(analysis_type, table_to_analyse, table_to_store, start_
     """ Analyse transactions stored in a given database table between the given dates.
 
     :param str analysis_type:
-    :param str table_to_analyse:
-    :param str table_to_store:
+    :param Table table_to_analyse:
+    :param Table table_to_store:
     :param str start_date:
     :param str end_date:
     """
