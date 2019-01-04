@@ -5,7 +5,6 @@ import pandas as pd
 
 from finances_automation import configuration as conf
 from finances_automation.entities.table import Table
-from finances_automation.repositories.categorise import CategoriseRepository
 
 
 class Categoriser:
@@ -35,10 +34,10 @@ class Categoriser:
             raise TypeError('recategorise should be boolean.')
 
     def _load(self):
-        self.table.data = CategoriseRepository().load(self.table, self.start_date, self.end_date)
+        self.table.repository.load(self.start_date, self.end_date)
 
     def _update(self):
-        CategoriseRepository().update(self.table)
+        self.table.repository.update(self.table)
 
     def select_categories(self):
         self._load()
