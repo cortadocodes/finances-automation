@@ -9,6 +9,7 @@ import pandas as pd
 
 from finances_automation import configuration as conf
 from finances_automation.entities.table import Table
+from finances_automation.repositories.base_repository import BaseRepository
 
 
 class Analyser:
@@ -32,6 +33,9 @@ class Analyser:
 
         self.table_to_analyse = table_to_analyse
         self.table_to_store = table_to_store
+
+        self.table_to_analyse_repository = BaseRepository(self.table_to_analyse)
+        self.table_to_store_repository = BaseRepository(self.table_to_store)
 
         self.analysis_type = analysis_type
         self.analysis = None
@@ -57,10 +61,10 @@ class Analyser:
             raise TypeError('end_date must be a string.')
 
     def _load(self):
-        self.table_to_analyse.repository.load(self.start_date, self.end_date)
+        self.table_to_analyse_repository.load(self.start_date, self.end_date)
 
     def _insert(self):
-        self.table_to_store.repository.insert(self.analysis)
+        self.table_to_store_repository.insert(self.analysis)
 
     def analyse(self):
         self._load()

@@ -5,6 +5,7 @@ import pandas as pd
 
 from finances_automation import configuration as conf
 from finances_automation.entities.table import Table
+from finances_automation.repositories.base_repository import BaseRepository
 
 
 class BaseParser:
@@ -18,6 +19,8 @@ class BaseParser:
         self.check_types(table, file)
 
         self.table = table
+        self.table_repository = BaseRepository(self.table)
+
         self.file = file
 
         self.data = None
@@ -54,7 +57,7 @@ class BaseParser:
     def _insert(self):
         """ Store the parsed transactions in a database table.
         """
-        self.table.repository.insert(self.data, self)
+        self.table_repository.insert(self.data, self)
 
 
 class CSVCleaner(BaseParser):
