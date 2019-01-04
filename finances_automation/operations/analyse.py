@@ -28,6 +28,7 @@ class Analyser:
         self.analyses = {
             'category_totals': self._calculate_category_totals,
             'monthly_averages': self._calculate_averages,
+            'totals_across_all_accounts': self._calculate_category_totals_across_accounts,
             'plot_balance': self._plot_balance
         }
 
@@ -95,6 +96,48 @@ class Analyser:
             if positive_expenses:
                 if category in self.categories['expense']:
                     category_total = - category_total
+
+            totals.loc[0, category] = round(category_total, 2)
+
+        return totals
+
+    def _calculate_category_totals_across_accounts(self, start_date=None, end_date=None,
+                                                   positive_expenses=True):
+        self.export_type = 'csv'
+
+        tables = [Table.get_table(table_name) for table_name in conf.TRANSACTION_TABLES]
+
+        start_date = start_date or self.start_date
+        end_date = end_date or self.end_date
+
+        totals = pd.DataFrame(columns=(
+            ['table_analysed', 'analysis_type']
+            + self.table_to_store.date_columns
+            + self.all_categories
+        ))
+
+        for category in self.all_categories:
+
+            category_total = 0
+
+            for table in tables:
+
+                conditions = (
+                    (table.data['category'] == category)
+                    & (table.data[table.date_columns[0]] >= start_date)
+                    & (table.data[table.date_columns[0]] <= end_date)
+                )
+
+                table_category_total = (
+                    table.data[conditions][table.monetary_columns[0]].sum()
+                    - table.data[conditions][table.monetary_columns[1]].sum()
+                )
+
+                if positive_expenses:
+                    if category in self.categories['expense']:
+                        table_category_total = - table_category_total
+
+                category_total += table_category_total
 
             totals.loc[0, category] = round(category_total, 2)
 
