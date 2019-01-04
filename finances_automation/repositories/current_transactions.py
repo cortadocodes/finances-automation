@@ -1,20 +1,23 @@
 from finances_automation import configuration as conf
 from finances_automation.entities.database import Database
+from finances_automation.entities.table import Table
 
 
-class ParseRepository:
+class CurrentTransactionsRepository:
 
     def __init__(self):
+        """ Initialise a repository for the current_transactions table.
+        """
         self.db = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
+        self.table = Table.get_table('current_transactions')
 
-    def insert(self, data, table):
-        """ Store the parsed transactions in a database table.
+    def insert(self, data):
+        """ Insert data into the table.
 
         :param pandas.DataFrame data:
-        :param finances_automation.entities.Table table:
         """
         self.db.insert_into(
-            table=table,
+            table=self.table.name,
             columns=tuple(data.columns),
             values_group=data.itertuples(index=False)
         )

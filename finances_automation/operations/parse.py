@@ -5,7 +5,6 @@ import pandas as pd
 
 from finances_automation import configuration as conf
 from finances_automation.entities.table import Table
-from finances_automation.repositories.parse import ParseRepository
 
 
 class BaseParser:
@@ -55,7 +54,7 @@ class BaseParser:
     def _insert(self):
         """ Store the parsed transactions in a database table.
         """
-        ParseRepository().insert(self.data, self.table)
+        self.table.repository.insert(self.data, self)
 
 
 class CSVCleaner(BaseParser):

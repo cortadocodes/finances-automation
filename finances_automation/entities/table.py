@@ -26,6 +26,7 @@ class Table:
         self.date_format = date_format
         self.category_columns = category_columns
 
+        self.repository = self.repository()
         self.data = pd.DataFrame()
 
     @staticmethod
