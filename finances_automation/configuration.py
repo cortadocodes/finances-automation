@@ -89,7 +89,23 @@ TABLES = {
         'type': 'analysis',
         'schema': {
             'id': 'serial PRIMARY KEY',
-            'table_analysed': 'VARCHAR',
+            'tables_analysed': 'VARCHAR',
+            'start_date': 'DATE NOT NULL',
+            'end_date': 'DATE NOT NULL',
+            'analysis_datetime': 'TIMESTAMPTZ NOT NULL',
+            **{category: 'DECIMAL' for category in [*CATEGORIES['income'], *CATEGORIES['expense']]}
+        },
+        'monetary_columns': [*CATEGORIES['income'], *CATEGORIES['expense']],
+        'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
+        'date_format': '%d/%m/%Y'
+    },
+
+    'totals_across_all_accounts': {
+        'name': 'totals_across_all_accounts',
+        'type': 'analysis',
+        'schema': {
+            'id': 'serial PRIMARY KEY',
+            'tables_analysed': 'VARCHAR',
             'start_date': 'DATE NOT NULL',
             'end_date': 'DATE NOT NULL',
             'analysis_datetime': 'TIMESTAMPTZ NOT NULL',
@@ -105,7 +121,7 @@ TABLES = {
         'type': 'analysis',
         'schema': {
             'id': 'serial PRIMARY KEY',
-            'table_analysed': 'VARCHAR',
+            'tables_analysed': 'VARCHAR',
             'start_date': 'DATE NOT NULL',
             'end_date': 'DATE NOT NULL',
             'analysis_datetime': 'TIMESTAMPTZ NOT NULL',
@@ -117,6 +133,7 @@ TABLES = {
     }
 }
 
+TABLE_NAMES = (table['name'] for table in TABLES)
 TRANSACTION_TABLES = (table['name'] for table in TABLES if table.type == 'transactions')
 ANALYSIS_TABLES = (table['name'] for table in TABLES if table.type == 'analysis')
 

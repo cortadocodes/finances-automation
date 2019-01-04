@@ -76,7 +76,7 @@ class Analyser:
         end_date = end_date or self.end_date
 
         totals = pd.DataFrame(columns=(
-            ['table_analysed', 'analysis_type']
+            ['tables_analysed', 'analysis_type']
             + self.table_to_store.date_columns
             + self.all_categories
         ))
@@ -110,11 +110,7 @@ class Analyser:
         start_date = start_date or self.start_date
         end_date = end_date or self.end_date
 
-        totals = pd.DataFrame(columns=(
-            ['table_analysed', 'analysis_type']
-            + self.table_to_store.date_columns
-            + self.all_categories
-        ))
+        totals = pd.DataFrame(columns=(list(self.table.schema.keys())))
 
         for category in self.all_categories:
 
@@ -155,7 +151,7 @@ class Analyser:
 
         period_totals = pd.DataFrame(columns=self.all_categories)
         averages = pd.DataFrame(columns=(
-            ['table_analysed', 'analysis_type']
+            ['tables_analysed', 'analysis_type']
             + self.table_to_store.date_columns
             + self.all_categories
         ))
@@ -209,7 +205,7 @@ class Analyser:
                 format=self.table_to_store.date_format
             )
 
-        self.analysis['table_analysed'] = self.table_to_analyse.name
+        self.analysis['tables_analysed'] = self.table_to_analyse.name
         self.analysis['start_date'] = self.start_date
         self.analysis['end_date'] = self.end_date
         self.analysis['analysis_datetime'] = dt.datetime.now()
