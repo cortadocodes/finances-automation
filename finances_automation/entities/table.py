@@ -1,6 +1,7 @@
 import pandas as pd
 
 from finances_automation import configuration as conf
+from finances_automation.repositories.base_repository import BaseRepository
 
 
 class Table:
@@ -26,7 +27,7 @@ class Table:
         self.date_format = date_format
         self.category_columns = category_columns
 
-        self.repository = self.repository()
+        self.repository = BaseRepository(self)
         self.data = pd.DataFrame()
 
     @staticmethod

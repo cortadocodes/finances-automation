@@ -6,11 +6,13 @@ from finances_automation.entities.database import Database
 
 class BaseRepository:
 
-    def __init__(self):
-        """ Initialise an empty repository.
+    def __init__(self, table):
+        """ Initialise a repository for the given table.
+
+        :param finances_automation.entities.table.Table table:
         """
+        self.table = table
         self.db = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
-        self.table = None
 
     def load(self, start_date, end_date):
         self.table.data = self.db.select_from(self.table, columns=['*'], conditions=[

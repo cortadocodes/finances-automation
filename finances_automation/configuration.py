@@ -3,11 +3,6 @@ which columns are relevant in statements, how dates are parsed, and which catego
 """
 import os
 
-from finances_automation.repositories.credit_transactions import CreditTransactionsRepository
-from finances_automation.repositories.current_transactions import CurrentTransactionsRepository
-from finances_automation.repositories.monthly_averages import MonthlyAveragesRepository
-from finances_automation.repositories.totals import TotalsRepository
-
 
 PACKAGE_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
@@ -65,8 +60,7 @@ TABLES = {
         'monetary_columns': ['money_in', 'money_out', 'balance'],
         'date_columns': ['date'],
         'date_format': '%d/%m/%Y',
-        'category_columns': ['category_code', 'category'],
-        'repository': CurrentTransactionsRepository
+        'category_columns': ['category_code', 'category']
     },
 
     'credit_transactions': {
@@ -85,8 +79,7 @@ TABLES = {
         'monetary_columns': ['money_in', 'money_out', 'balance'],
         'date_columns': ['date'],
         'date_format': '%d/%m/%Y',
-        'category_columns': ['category_code', 'category'],
-        'repository': CreditTransactionsRepository
+        'category_columns': ['category_code', 'category']
     },
 
     'totals': {
@@ -101,8 +94,7 @@ TABLES = {
         },
         'monetary_columns': [*CATEGORIES['income'], *CATEGORIES['expense']],
         'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
-        'date_format': '%d/%m/%Y',
-        'repository': TotalsRepository
+        'date_format': '%d/%m/%Y'
     },
 
     'monthly_averages': {
@@ -117,8 +109,7 @@ TABLES = {
         },
         'monetary_columns': [*CATEGORIES['income'], *CATEGORIES['expense']],
         'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
-        'date_format': '%d/%m/%Y',
-        'repository': MonthlyAveragesRepository
+        'date_format': '%d/%m/%Y'
     }
 }
 
