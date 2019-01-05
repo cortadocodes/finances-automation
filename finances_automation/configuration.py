@@ -133,9 +133,15 @@ TABLES = {
     }
 }
 
-TABLE_NAMES = (table['name'] for table in TABLES)
-TRANSACTION_TABLES = (table['name'] for table in TABLES if table.type == 'transactions')
-ANALYSIS_TABLES = (table['name'] for table in TABLES if table.type == 'analysis')
+TABLE_NAMES = (table_name for table_name in TABLES)
+
+TRANSACTION_TABLE_NAMES = (
+    table['name'] for table in list(TABLES.values()) if table['type'] == 'transactions'
+)
+
+ANALYSIS_TABLE_NAMES = (
+    table['name'] for table in list(TABLES.values()) if table['type'] == 'analysis'
+)
 
 PARSER = {
     'delimiter': ',',
