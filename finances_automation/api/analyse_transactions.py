@@ -7,7 +7,7 @@ from finances_automation.operations.analyse import Analyser
 
 
 EXCLUDED_FROM_STORAGE = Analyser.analyses_excluded_from_storage
-OUTPUT_PATH = os.path.join(conf.PACKAGE_ROOT, 'data')
+OUTPUT_PATH = os.path.join(conf.package_root, 'data')
 
 
 def analyse_transactions(analysis_type, table_to_analyse, table_to_store, start_date, end_date):

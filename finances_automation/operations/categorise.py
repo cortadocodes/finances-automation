@@ -17,7 +17,7 @@ class Categoriser:
         self.table = table
         self.table_repository = TransactionsRepository(self.table)
 
-        self.categories = conf.CATEGORIES
+        self.categories = conf.categories
 
         self.start_date = dt.datetime.strptime(start_date, self.table.date_format).date()
         self.end_date = dt.datetime.strptime(end_date, self.table.date_format).date()

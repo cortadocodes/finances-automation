@@ -66,7 +66,7 @@ class CSVCleaner(BaseParser):
         :param list usecols: names or numbers of columns to use
         :param dict dtype: mapping of column name to type of data e.g. np.float64
         """
-        self._read(**conf.PARSER)
+        self._read(**conf.parser)
         self._clean()
         self.table_repository.insert(self.data)
 

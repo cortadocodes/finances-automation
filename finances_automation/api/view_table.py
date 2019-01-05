@@ -20,7 +20,7 @@ def view_table(table, columns):
     :param Table table:
     :param list(str) columns:
     """
-    db = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
+    db = Database(conf.db_name, conf.db_cluster, conf.user)
     data = db.select_from(table, columns)
 
     if columns == ['*']:

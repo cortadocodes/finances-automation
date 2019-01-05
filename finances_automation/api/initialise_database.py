@@ -8,10 +8,10 @@ def initialise_database(overwrite):
 
     :param bool overwrite: True if existing database should be overwritten
     """
-    database = Database(conf.DB_NAME, conf.DB_CLUSTER, conf.USER)
+    database = Database(conf.db_name, conf.db_cluster, conf.user)
     database.create(overwrite=overwrite)
 
-    for table_name in conf.TABLE_NAMES:
+    for table_name in conf.table_names:
         database.create_table(Table.get_table(table_name))
 
 

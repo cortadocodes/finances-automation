@@ -62,11 +62,11 @@ class Table:
         :return Table:
         """
         try:
-            table_conf = conf.TABLES[table_name]
+            table_conf = conf.table_configurations[table_name]
             return Table(**table_conf)
 
         except KeyError:
             raise ValueError(
                 "No such table: '{}'. Possible tables: {}"
-                .format(table_name, list(conf.TABLES.keys()))
+                .format(table_name, conf.table_names)
             )

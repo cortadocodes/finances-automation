@@ -4,13 +4,13 @@ which columns are relevant in statements, how dates are parsed, and which catego
 import os
 
 
-PACKAGE_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+package_root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
-DB_NAME = 'finances'
-DB_CLUSTER = os.path.join(PACKAGE_ROOT, 'data', 'database_cluster')
-USER = 'Marcus1'
+db_name = 'finances'
+db_cluster = os.path.join(package_root, 'data', 'database_cluster')
+user = 'Marcus1'
 
-CATEGORIES = {
+categories = {
     'income': [
         'job',
         'bursaries_and_scholarships',
@@ -43,7 +43,7 @@ CATEGORIES = {
     ]
 }
 
-TABLES = {
+table_configurations = {
     'current_transactions': {
         'name': 'current_transactions',
         'type': 'transactions',
@@ -93,9 +93,9 @@ TABLES = {
             'start_date': 'DATE NOT NULL',
             'end_date': 'DATE NOT NULL',
             'analysis_datetime': 'TIMESTAMPTZ NOT NULL',
-            **{category: 'DECIMAL' for category in [*CATEGORIES['income'], *CATEGORIES['expense']]}
+            **{category: 'DECIMAL' for category in [*categories['income'], *categories['expense']]}
         },
-        'monetary_columns': [*CATEGORIES['income'], *CATEGORIES['expense']],
+        'monetary_columns': [*categories['income'], *categories['expense']],
         'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
         'date_format': '%d/%m/%Y'
     },
@@ -109,9 +109,9 @@ TABLES = {
             'start_date': 'DATE NOT NULL',
             'end_date': 'DATE NOT NULL',
             'analysis_datetime': 'TIMESTAMPTZ NOT NULL',
-            **{category: 'DECIMAL' for category in [*CATEGORIES['income'], *CATEGORIES['expense']]}
+            **{category: 'DECIMAL' for category in [*categories['income'], *categories['expense']]}
         },
-        'monetary_columns': [*CATEGORIES['income'], *CATEGORIES['expense']],
+        'monetary_columns': [*categories['income'], *categories['expense']],
         'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
         'date_format': '%d/%m/%Y'
     },
@@ -125,25 +125,25 @@ TABLES = {
             'start_date': 'DATE NOT NULL',
             'end_date': 'DATE NOT NULL',
             'analysis_datetime': 'TIMESTAMPTZ NOT NULL',
-            **{category: 'DECIMAL' for category in [*CATEGORIES['income'], *CATEGORIES['expense']]}
+            **{category: 'DECIMAL' for category in [*categories['income'], *categories['expense']]}
         },
-        'monetary_columns': [*CATEGORIES['income'], *CATEGORIES['expense']],
+        'monetary_columns': [*categories['income'], *categories['expense']],
         'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
         'date_format': '%d/%m/%Y'
     }
 }
 
-TABLE_NAMES = (table_name for table_name in TABLES)
+table_names = (table_name for table_name in table_configurations)
 
-TRANSACTION_TABLE_NAMES = (
-    table['name'] for table in list(TABLES.values()) if table['type'] == 'transactions'
+transaction_table_names = (
+    table['name'] for table in list(table_configurations.values()) if table['type'] == 'transactions'
 )
 
-ANALYSIS_TABLE_NAMES = (
-    table['name'] for table in list(TABLES.values()) if table['type'] == 'analysis'
+analysis_table_names = (
+    table['name'] for table in list(table_configurations.values()) if table['type'] == 'analysis'
 )
 
-PARSER = {
+parser = {
     'delimiter': ',',
     'header': 3,
     'usecols': None,

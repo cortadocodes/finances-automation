@@ -42,7 +42,7 @@ class Analyser:
         self.analysis = None
         self.export_type = None
 
-        self.categories = conf.CATEGORIES
+        self.categories = conf.categories
         self.all_categories = self.categories['income'] + self.categories['expense']
 
         self.start_date = dt.datetime.strptime(start_date, self.table_to_analyse.date_format).date()
