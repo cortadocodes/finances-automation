@@ -16,14 +16,15 @@ class Analyser:
 
     analyses_excluded_from_storage = 'plot_balance',
 
-    def __init__(self, table_to_analyse, table_to_store, analysis_type, start_date, end_date):
+    def __init__(self, tables_to_analyse, table_to_store, analysis_type, start_date, end_date):
         """
-        :param finances_automation.entities.table.Table table_to_analyse: table to analyse
+        :param list(finances_automation.entities.table.Table) tables_to_analyse: tables to analyse
         :param finances_automation.entities.table.Table table_to_store: table to store analysis in
+        :param str analysis_type: name of analysis to carry out
         :param str start_date: date to start analysis at
         :param str end_date: date to end analysis at
         """
-        self.check_types(table_to_analyse, table_to_store, analysis_type, start_date, end_date)
+        self.check_types(tables_to_analyse, table_to_store, analysis_type, start_date, end_date)
 
         self.analyses = {
             'category_totals': self._calculate_category_totals,
@@ -32,10 +33,10 @@ class Analyser:
             'plot_balance': self._plot_balance
         }
 
-        self.table_to_analyse = table_to_analyse
+        self.tables_to_analyse = tables_to_analyse
         self.table_to_store = table_to_store
 
-        self.table_to_analyse_repository = BaseRepository(self.table_to_analyse)
+        self.tables_to_analyse_repositories = [BaseRepository(table) for table in self.tables_to_analyse]
         self.table_to_store_repository = BaseRepository(self.table_to_store)
 
         self.analysis_type = analysis_type
@@ -45,13 +46,13 @@ class Analyser:
         self.categories = conf.categories
         self.all_categories = self.categories['income'] + self.categories['expense']
 
-        self.start_date = dt.datetime.strptime(start_date, self.table_to_analyse.date_format).date()
-        self.end_date = dt.datetime.strptime(end_date, self.table_to_analyse.date_format).date()
+        self.start_date = dt.datetime.strptime(start_date, self.tables_to_analyse[0].date_format).date()
+        self.end_date = dt.datetime.strptime(end_date, self.tables_to_analyse[0].date_format).date()
 
     @staticmethod
-    def check_types(table_to_analyse, table_to_store, analysis_type, start_date, end_date):
-        if not isinstance(table_to_analyse, Table):
-            raise TypeError('table_to_analyse must be a Table.')
+    def check_types(tables_to_analyse, table_to_store, analysis_type, start_date, end_date):
+        if not isinstance(tables_to_analyse, list):
+            raise TypeError('table_to_analyse must be a list of Tables.')
         if not (isinstance(table_to_store, Table) or table_to_store is None):
             raise TypeError('table_to_store must be a Table or None.')
         if not isinstance(analysis_type, str):
@@ -62,7 +63,9 @@ class Analyser:
             raise TypeError('end_date must be a string.')
 
     def analyse(self):
-        self.table_to_analyse_repository.load(self.start_date, self.end_date)
+        for repository in self.tables_to_analyse_repositories:
+            repository.load(self.start_date, self.end_date)
+
         self.analysis = self.analyses[self.analysis_type]()
 
         if self.analysis_type not in self.analyses_excluded_from_storage:
@@ -83,14 +86,14 @@ class Analyser:
 
         for category in self.all_categories:
             conditions = (
-                (self.table_to_analyse.data['category'] == category)
-                & (self.table_to_analyse.data[self.table_to_analyse.date_columns[0]] >= start_date)
-                & (self.table_to_analyse.data[self.table_to_analyse.date_columns[0]] <= end_date)
+                (self.tables_to_analyse.data['category'] == category)
+                & (self.tables_to_analyse.data[self.tables_to_analyse.date_columns[0]] >= start_date)
+                & (self.tables_to_analyse.data[self.tables_to_analyse.date_columns[0]] <= end_date)
             )
 
             category_total = (
-                self.table_to_analyse.data[conditions][self.table_to_analyse.monetary_columns[0]].sum()
-                - self.table_to_analyse.data[conditions][self.table_to_analyse.monetary_columns[1]].sum()
+                self.tables_to_analyse.data[conditions][self.tables_to_analyse.monetary_columns[0]].sum()
+                - self.tables_to_analyse.data[conditions][self.tables_to_analyse.monetary_columns[1]].sum()
             )
 
             if positive_expenses:
@@ -101,22 +104,21 @@ class Analyser:
 
         return totals
 
-    def _calculate_category_totals_across_accounts(self, start_date=None, end_date=None,
-                                                   positive_expenses=True):
+    def _calculate_category_totals_across_accounts(self, start_date=None, end_date=None, positive_expenses=True):
         self.export_type = 'csv'
-
-        tables = [Table.get_table(table_name) for table_name in conf.TRANSACTION_TABLES]
 
         start_date = start_date or self.start_date
         end_date = end_date or self.end_date
 
-        totals = pd.DataFrame(columns=(list(self.table.schema.keys())))
+        columns = (self.table_to_store.date_columns + ['tables_analysed'] + self.all_categories)
+        columns.remove('credit_card')
+        totals = pd.DataFrame(columns=columns)
 
         for category in self.all_categories:
 
             category_total = 0
 
-            for table in tables:
+            for table in self.tables_to_analyse:
 
                 conditions = (
                     (table.data['category'] == category)
@@ -171,8 +173,8 @@ class Analyser:
     def _plot_balance(self):
         self.export_type = 'image'
 
-        dates = self.table_to_analyse.data[self.table_to_analyse.date_columns[0]]
-        balance = self.table_to_analyse.data['balance']
+        dates = self.tables_to_analyse.data[self.tables_to_analyse.date_columns[0]]
+        balance = self.tables_to_analyse.data['balance']
 
         dates_sorted, balance_sorted = zip(*sorted(zip(dates, balance)))
 
@@ -182,7 +184,7 @@ class Analyser:
         plt.ylabel('Balance / £', fontsize=16)
         plt.title(
             'Balance of {} between {} and {}'.format(
-                self.table_to_analyse.name, self.start_date, self.end_date
+                self.tables_to_analyse.name, self.start_date, self.end_date
             ),
             fontsize=20
         )
@@ -205,7 +207,7 @@ class Analyser:
                 format=self.table_to_store.date_format
             )
 
-        self.analysis['tables_analysed'] = self.table_to_analyse.name
+        self.analysis['tables_analysed'] = ';'.join([table.name for table in self.tables_to_analyse])
         self.analysis['start_date'] = self.start_date
         self.analysis['end_date'] = self.end_date
         self.analysis['analysis_datetime'] = dt.datetime.now()
@@ -220,8 +222,11 @@ class Analyser:
             os.makedirs(path)
 
         if self.export_type == 'csv':
-            filename = '_'.join([self.table_to_analyse.name, str(dt.datetime.now()), '.csv'])
+            filename = '_'.join(
+                [';'.join([table.name for table in self.tables_to_analyse]), str(dt.datetime.now()), '.csv']
+            )
             self.analysis.to_csv(os.path.join(path, filename), index=False, encoding='utf-8')
+
         elif self.export_type == 'image':
-            filename = '_'.join([self.table_to_analyse.name, str(dt.datetime.now()), '.png'])
+            filename = '_'.join([self.tables_to_analyse.name, str(dt.datetime.now()), '.png'])
             self.analysis.savefig(os.path.join(path, filename), format='png')

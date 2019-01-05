@@ -43,7 +43,7 @@ class BaseRepository:
         :param pandas.DataFrame data:
         """
         self.db.insert_into(
-            table=self.table.name,
+            table=self.table,
             columns=tuple(data.columns),
             values_group=data.itertuples(index=False)
         )
