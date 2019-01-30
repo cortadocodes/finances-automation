@@ -6,6 +6,7 @@ import subprocess
 import psycopg2
 
 from finances_automation.entities.table import Table
+from finances_automation.validation import database_validator
 
 
 class Database:
@@ -19,6 +20,7 @@ class Database:
 
     creation_script = os.path.join(repository_root, 'finances_automation', 'scripts', 'create_database.sh')
 
+    @database_validator
     def __init__(self, name, data_location, user):
         """ Initialise a Database object for an existing or to-be-created PostgreSQL database.
 
@@ -33,7 +35,6 @@ class Database:
         :var psycopg2.extensions.connection connection: connection to database
         :var psycopg2.extensions.cursor cursor: cursor for executing SQL queries
         """
-        self.check_types(name, data_location, user)
 
         # Database properties
         self.name = name
@@ -53,24 +54,6 @@ class Database:
     def __repr__(self):
         repr = '{} database at {}: server_started = {}'.format(self.name, self.data_location, self.server_started)
         return repr
-
-    @staticmethod
-    def check_types(name, data_location, user):
-        """
-        Check initialisation inputs are of correct type.
-
-        :param any name: database name
-        :param any data_location: path to database cluster
-        :param any user: name of database user
-
-        :raise TypeError: if any of the arguments are of the wrong type
-        """
-        if not isinstance(name, str):
-            raise TypeError('name must be a string.')
-        if not isinstance(data_location, str):
-            raise TypeError('data_location must be a string.')
-        if not isinstance(user, str):
-            raise TypeError('user must be a string.')
 
     def create(self, overwrite=False):
         """

@@ -6,38 +6,24 @@ import pandas as pd
 from finances_automation import configuration as conf
 from finances_automation.entities.table import Table
 from finances_automation.repositories import BaseRepository
+from finances_automation.validation import base_parser_validator
 
 
 class BaseParser:
 
+    @base_parser_validator
     def __init__(self, table, file):
         """ Initialise a BaseParser that reads a .csv file, cleans it and stores the result in a database.
 
         :param Table table: table to store data in
         :param str file: path to file to read in
         """
-        self.check_types(table, file)
-
         self.table = table
         self.table_repository = BaseRepository(self.table)
 
         self.file = file
 
         self.data = None
-
-    @staticmethod
-    def check_types(table, file):
-        """ Check the variables passed in are of the correct type for BaseParser initialisation.
-
-        :param any file: variable passed in as file argument
-        :param Table table: table to store data in
-
-        :raise: TypeError if any of the arguments are of the wrong type
-        """
-        if not isinstance(table, Table):
-            raise TypeError('table must be a Table.')
-        if not isinstance(file, str):
-            raise TypeError('file should be a string.')
 
     def _read(self, *args, **kwargs):
         """ Read a statement at self.file, perform some operations and store it in self.data.

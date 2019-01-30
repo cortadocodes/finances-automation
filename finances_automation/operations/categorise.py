@@ -4,15 +4,14 @@ import numpy as np
 import pandas as pd
 
 from finances_automation import configuration as conf
-from finances_automation.entities.table import Table
 from finances_automation.repositories import TransactionsRepository
+from finances_automation.validation import categoriser_validator
 
 
 class Categoriser:
 
+    @categoriser_validator
     def __init__(self, table, start_date, end_date, recategorise=False):
-
-        self.check_types(table, start_date, end_date, recategorise)
 
         self.table = table
         self.table_repository = TransactionsRepository(self.table)
@@ -26,15 +25,6 @@ class Categoriser:
 
         pd.set_option('max_colwidth', 200)
         pd.set_option('display.width', 1000)
-
-    @staticmethod
-    def check_types(table, start_date, end_date, recategorise):
-        if not isinstance(table, Table):
-            raise TypeError('table must be a Table.')
-        if not isinstance(start_date, str) or not isinstance(end_date, str):
-            raise TypeError('dates should be of type str.')
-        if not isinstance(recategorise, bool):
-            raise TypeError('recategorise should be boolean.')
 
     def select_categories(self):
         self.table_repository.load(self.start_date, self.end_date)

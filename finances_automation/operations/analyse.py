@@ -8,14 +8,15 @@ import numpy as np
 import pandas as pd
 
 from finances_automation import configuration as conf
-from finances_automation.entities.table import Table
 from finances_automation.repositories import BaseRepository
+from finances_automation.validation import analyser_validator
 
 
 class Analyser:
 
     analyses_excluded_from_storage = 'plot_balance',
 
+    @analyser_validator
     def __init__(self, tables_to_analyse, table_to_store, analysis_type, start_date, end_date):
         """
         :param list(finances_automation.entities.table.Table) tables_to_analyse: tables to analyse
@@ -24,8 +25,6 @@ class Analyser:
         :param str start_date: date to start analysis at
         :param str end_date: date to end analysis at
         """
-        self.check_types(tables_to_analyse, table_to_store, analysis_type, start_date, end_date)
-
         self.analyses = {
             'category_totals': self._calculate_category_totals,
             'monthly_averages': self._calculate_averages,
@@ -48,19 +47,6 @@ class Analyser:
 
         self.start_date = dt.datetime.strptime(start_date, self.tables_to_analyse[0].date_format).date()
         self.end_date = dt.datetime.strptime(end_date, self.tables_to_analyse[0].date_format).date()
-
-    @staticmethod
-    def check_types(tables_to_analyse, table_to_store, analysis_type, start_date, end_date):
-        if not isinstance(tables_to_analyse, list):
-            raise TypeError('table_to_analyse must be a list of Tables.')
-        if not (isinstance(table_to_store, Table) or table_to_store is None):
-            raise TypeError('table_to_store must be a Table or None.')
-        if not isinstance(analysis_type, str):
-            raise TypeError('analysis_type must be a string.')
-        if not isinstance(start_date, str):
-            raise TypeError('start_date must be a string.')
-        if not isinstance(end_date, str):
-            raise TypeError('end_date must be a string.')
 
     def analyse(self):
         for repository in self.tables_to_analyse_repositories:
