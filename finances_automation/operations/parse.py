@@ -6,7 +6,7 @@ import pandas as pd
 from finances_automation import configuration as conf
 from finances_automation.entities.table import Table
 from finances_automation.repositories import BaseRepository
-from finances_automation.validation import base_parser_validator
+from finances_automation.validation.parse import base_parser_validator
 
 
 class BaseParser:

@@ -6,7 +6,7 @@ import subprocess
 import psycopg2
 
 from finances_automation.entities.table import Table
-from finances_automation.validation import database_validator
+from finances_automation.validation.database import database_validator
 
 
 class Database:

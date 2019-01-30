@@ -5,7 +5,7 @@ import pandas as pd
 
 from finances_automation import configuration as conf
 from finances_automation.repositories import TransactionsRepository
-from finances_automation.validation import categoriser_validator
+from finances_automation.validation.categorise import categoriser_validator
 
 
 class Categoriser:

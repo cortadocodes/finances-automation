@@ -9,7 +9,7 @@ import pandas as pd
 
 from finances_automation import configuration as conf
 from finances_automation.repositories import BaseRepository
-from finances_automation.validation import analyser_validator
+from finances_automation.validation.analyse import analyser_validator
 
 
 class Analyser:

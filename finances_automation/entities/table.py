@@ -1,7 +1,7 @@
 import pandas as pd
 
 from finances_automation import configuration as conf
-from finances_automation.validation import table_validator
+from finances_automation.validation.table import table_validator
 
 
 class Table:
