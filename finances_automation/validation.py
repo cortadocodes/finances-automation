@@ -3,13 +3,9 @@ from finances_automation.entities.table import Table
 
 def database_validator(func):
     def database_validator(self, name, data_location, user):
-        """ Check Databse initialisation inputs are of correct type.
+        """ Check if Database initialisation parameters are of correct type.
 
-        :param any name: database name
-        :param any data_location: path to database cluster
-        :param any user: name of database user
-
-        :raise TypeError: if any of the arguments are of the wrong type
+        :raise TypeError: if any of the parameters are of the wrong type
         """
         if not isinstance(name, str):
             raise TypeError('name must be a string.')
@@ -25,7 +21,7 @@ def database_validator(func):
 
 def table_validator(func):
     def table_validator(self, name, type, schema, monetary_columns, date_columns, date_format, category_columns):
-        """ Check if the initialisation parameters for the Table are of the correct type.
+        """ Check if Table initialisation parameters are of the correct type.
 
         :raise TypeError: if any of the parameters are of the wrong type
         """
@@ -44,20 +40,16 @@ def table_validator(func):
         if not isinstance(category_columns, list):
             raise TypeError('category_columns should be a list of strings.')
 
-        return func(name, type, schema, monetary_columns, date_columns, date_format,
-                    category_columns)
+        return func(name, type, schema, monetary_columns, date_columns, date_format, category_columns)
 
     return table_validator
 
 
 def base_parser_validator(func):
     def base_parser_validator(self, table, file):
-        """ Check the variables passed in are of the correct type for BaseParser initialisation.
+        """ Check if BaseParser initialisation parameters are of the correct type.
 
-        :param any file: variable passed in as file argument
-        :param Table table: table to store data in
-
-        :raise: TypeError if any of the arguments are of the wrong type
+        :raise TypeError: if any of the parameters are of the wrong type
         """
         if not isinstance(table, Table):
             raise TypeError('table must be a Table.')
@@ -71,6 +63,10 @@ def base_parser_validator(func):
 
 def categoriser_validator(func):
     def categoriser_validator(self, table, start_date, end_date, recategorise):
+        """ Check if Categoriser initialisation parameters are of the correct type.
+
+        :raise TypeError: if any of the parameters are of the wrong type
+        """
         if not isinstance(table, Table):
             raise TypeError('table must be a Table.')
         if not isinstance(start_date, str) or not isinstance(end_date, str):
@@ -85,6 +81,10 @@ def categoriser_validator(func):
 
 def analyser_validator(func):
     def analyser_validator(self, tables_to_analyse, table_to_store, analysis_type, start_date, end_date):
+        """ Check if Analyser initialisation parameters are of the correct type.
+
+        :raise TypeError: if any of the parameters are of the wrong type
+        """
         if not isinstance(tables_to_analyse, list):
             raise TypeError('table_to_analyse must be a list of Tables.')
         if not (isinstance(table_to_store, Table) or table_to_store is None):
