@@ -19,6 +19,6 @@ def table_validator(func):
         if not isinstance(category_columns, list):
             raise TypeError('category_columns should be a list of strings.')
 
-        return func(name, type, schema, monetary_columns, date_columns, date_format, category_columns)
+        return func(self, name, type, schema, monetary_columns, date_columns, date_format, category_columns)
 
     return table_validator

@@ -11,6 +11,6 @@ def database_validator(func):
         if not isinstance(user, str):
             raise TypeError('user must be a string.')
 
-        return func(name, data_location, user)
+        return func(self, name, data_location, user)
 
     return database_validator

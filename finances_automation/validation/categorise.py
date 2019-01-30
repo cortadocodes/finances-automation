@@ -14,6 +14,6 @@ def categoriser_validator(func):
         if not isinstance(recategorise, bool):
             raise TypeError('recategorise should be boolean.')
 
-        return func(table, start_date, end_date, recategorise)
+        return func(self, table, start_date, end_date, recategorise)
 
     return categoriser_validator

@@ -12,6 +12,6 @@ def base_parser_validator(func):
         if not isinstance(file, str):
             raise TypeError('file should be a string.')
 
-        return func(table, file)
+        return func(self, table, file)
 
     return base_parser_validator

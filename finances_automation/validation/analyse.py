@@ -18,6 +18,6 @@ def analyser_validator(func):
         if not isinstance(end_date, str):
             raise TypeError('end_date must be a string.')
 
-        return func(tables_to_analyse, table_to_store, analysis_type, start_date, end_date)
+        return func(self, tables_to_analyse, table_to_store, analysis_type, start_date, end_date)
 
     return analyser_validator
