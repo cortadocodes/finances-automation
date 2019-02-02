@@ -16,7 +16,7 @@ class Analyser:
 
     analyses_excluded_from_storage = 'plot_balance',
 
-    def __init__(self, tables_to_analyse, table_to_store, analysis_type, start_date, end_date):
+    def __init__(self, analysis_type, tables_to_analyse, table_to_store, start_date, end_date):
         """
         :param list(finances_automation.entities.table.Table) tables_to_analyse: tables to analyse
         :param finances_automation.entities.table.Table table_to_store: table to store analysis in
@@ -27,7 +27,7 @@ class Analyser:
         self.check_types(tables_to_analyse, table_to_store, analysis_type, start_date, end_date)
 
         self.analyses = {
-            'category_totals': self._calculate_category_totals,
+            'totals': self._calculate_category_totals,
             'monthly_averages': self._calculate_averages,
             'totals_across_all_accounts': self._calculate_category_totals_across_accounts,
             'plot_balance': self._plot_balance
@@ -36,7 +36,19 @@ class Analyser:
         self.tables_to_analyse = tables_to_analyse
         self.table_to_store = table_to_store
 
-        self.tables_to_analyse_repositories = [BaseRepository(table) for table in self.tables_to_analyse]
+        if isinstance(self.tables_to_analyse, list):
+            self.tables_to_analyse_repositories = [BaseRepository(table) for table in self.tables_to_analyse]
+            self.start_date = dt.datetime.strptime(start_date, self.tables_to_analyse[0].date_format).date()
+            self.end_date = dt.datetime.strptime(end_date, self.tables_to_analyse[0].date_format).date()
+
+            for repository in self.tables_to_analyse_repositories:
+                repository.load(self.start_date, self.end_date)
+        else:
+            self.tables_to_analyse_repositories = BaseRepository(self.tables_to_analyse)
+            self.start_date = dt.datetime.strptime(start_date, self.tables_to_analyse.date_format).date()
+            self.end_date = dt.datetime.strptime(end_date, self.tables_to_analyse.date_format).date()
+            self.tables_to_analyse_repositories.load(self.start_date, self.end_date)
+
         self.table_to_store_repository = BaseRepository(self.table_to_store)
 
         self.analysis_type = analysis_type
@@ -46,12 +58,9 @@ class Analyser:
         self.categories = conf.categories
         self.all_categories = self.categories['income'] + self.categories['expense']
 
-        self.start_date = dt.datetime.strptime(start_date, self.tables_to_analyse[0].date_format).date()
-        self.end_date = dt.datetime.strptime(end_date, self.tables_to_analyse[0].date_format).date()
-
     @staticmethod
     def check_types(tables_to_analyse, table_to_store, analysis_type, start_date, end_date):
-        if not isinstance(tables_to_analyse, list):
+        if not (isinstance(tables_to_analyse, list) or isinstance(tables_to_analyse, Table)):
             raise TypeError('table_to_analyse must be a list of Tables.')
         if not (isinstance(table_to_store, Table) or table_to_store is None):
             raise TypeError('table_to_store must be a Table or None.')
@@ -63,9 +72,6 @@ class Analyser:
             raise TypeError('end_date must be a string.')
 
     def analyse(self):
-        for repository in self.tables_to_analyse_repositories:
-            repository.load(self.start_date, self.end_date)
-
         self.analysis = self.analyses[self.analysis_type]()
 
         if self.analysis_type not in self.analyses_excluded_from_storage:
@@ -207,7 +213,11 @@ class Analyser:
                 format=self.table_to_store.date_format
             )
 
-        self.analysis['tables_analysed'] = ';'.join([table.name for table in self.tables_to_analyse])
+        if isinstance(self.tables_to_analyse, list):
+            self.analysis['tables_analysed'] = ';'.join([table.name for table in self.tables_to_analyse])
+        else:
+            self.analysis['tables_analysed'] = self.tables_to_analyse.name
+
         self.analysis['start_date'] = self.start_date
         self.analysis['end_date'] = self.end_date
         self.analysis['analysis_datetime'] = dt.datetime.now()
@@ -222,9 +232,15 @@ class Analyser:
             os.makedirs(path)
 
         if self.export_type == 'csv':
-            filename = '_'.join(
-                [';'.join([table.name for table in self.tables_to_analyse]), str(dt.datetime.now()), '.csv']
-            )
+            if isinstance(self.tables_to_analyse, list):
+                filename = '_'.join(
+                    [';'.join([table.name for table in self.tables_to_analyse]), str(dt.datetime.now()), '.csv']
+                )
+            else:
+                filename = '_'.join(
+                    [self.tables_to_analyse.name, str(dt.datetime.now()), '.csv']
+                )
+
             self.analysis.to_csv(os.path.join(path, filename), index=False, encoding='utf-8')
 
         elif self.export_type == 'image':
