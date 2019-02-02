@@ -19,7 +19,7 @@ def analyse_transactions(analysis_type, tables_to_analyse, table_to_store, start
     :param str start_date:
     :param str end_date:
     """
-    analyser = Analyser(tables_to_analyse, table_to_store, analysis_type, start_date, end_date)
+    analyser = Analyser(analysis_type, tables_to_analyse, table_to_store, start_date, end_date)
     analyser.analyse()
     analyser.export_analysis(OUTPUT_PATH)
 
@@ -29,6 +29,9 @@ if __name__ == '__main__':
     tables_to_analyse = [Table.get_table(table_name) for table_name in sys.argv[2].split(';')]
     start_date = sys.argv[3]
     end_date = sys.argv[4]
+
+    if len(tables_to_analyse) == 1:
+        tables_to_analyse = tables_to_analyse[0]
 
     if analysis_type in EXCLUDED_FROM_STORAGE:
         table_to_store = None
