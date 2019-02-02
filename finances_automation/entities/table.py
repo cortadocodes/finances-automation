@@ -7,14 +7,13 @@ from finances_automation.validation.table import table_validator
 class Table:
 
     @table_validator
-    def __init__(self, name, schema, type, monetary_columns=None, date_columns=None,
+    def __init__(self, name, type, schema, monetary_columns=None, date_columns=None,
                  date_format=None, category_columns=None):
         """ Initialise a python representation of a database table in memory.
 
         :param str name: name of table
         :param str type: type of table
-        :param dict schema: schema of table as a dictionary mapping column name to PostgreSQL type
-            as a string
+        :param dict(str, str) schema: schema of table as a dictionary mapping column name to PostgreSQL type as a string
         :param list(str) monetary_columns: names of columns containing monetary amounts
         :param list(str) date_columns: names of columns containing dates
         :param str date_format: format of dates in table
