@@ -31,8 +31,8 @@ class Table:
 
         self.data = pd.DataFrame()
 
-    @staticmethod
-    def get_table(table_name):
+    @classmethod
+    def get_table(cls, table_name):
         """ Get a Table object for table_name if its configuration exists in the configuration file.
 
         :param str table_name: possible name of a table
@@ -42,7 +42,7 @@ class Table:
         """
         try:
             table_conf = conf.table_configurations[table_name]
-            return Table(**table_conf)
+            return cls(**table_conf)
 
         except KeyError:
             raise ValueError(
