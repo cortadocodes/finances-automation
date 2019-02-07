@@ -97,7 +97,8 @@ table_configurations = {
         },
         'monetary_columns': [*categories['income'], *categories['expense']],
         'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
-        'date_format': '%d/%m/%Y'
+        'date_format': '%d/%m/%Y',
+        'category_columns': None
     },
 
     'totals_across_all_accounts': {
@@ -113,7 +114,8 @@ table_configurations = {
         },
         'monetary_columns': [*categories['income'], *categories['expense']],
         'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
-        'date_format': '%d/%m/%Y'
+        'date_format': '%d/%m/%Y',
+        'category_columns': None
     },
 
     'monthly_averages': {
@@ -129,7 +131,8 @@ table_configurations = {
         },
         'monetary_columns': [*categories['income'], *categories['expense']],
         'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
-        'date_format': '%d/%m/%Y'
+        'date_format': '%d/%m/%Y',
+        'category_columns': None
     }
 }
 
