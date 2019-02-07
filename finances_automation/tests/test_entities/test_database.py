@@ -6,75 +6,72 @@ import psycopg2
 from finances_automation.entities.database import Database
 
 
-DATABASE_NAME = 'test_database'
-DATABASE_CLUSTER = os.path.join('..', '..', 'data', 'test_database_cluster')
-USER = 'Marcus1'
+class TestDatabase:
 
+    DATABASE_NAME = 'test_database'
+    DATABASE_CLUSTER = os.path.join('..', '..', 'data', 'test_database_cluster')
+    USER = 'Marcus1'
 
-def test_start():
-    if os.path.isdir(DATABASE_CLUSTER):
-        shutil.rmtree(DATABASE_CLUSTER)
+    def test_start(self):
+        if os.path.isdir(self.DATABASE_CLUSTER):
+            shutil.rmtree(self.DATABASE_CLUSTER)
 
-    db = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
-    db.create()
-    db.start()
+        db = Database(self.DATABASE_NAME, self.DATABASE_CLUSTER, self.USER)
+        db.create()
+        db.start()
 
-    assert db.server_started
+        assert db.server_started
 
-    db.stop()
+        db.stop()
 
+    def test_stop(self):
+        if os.path.isdir(self.DATABASE_CLUSTER):
+            shutil.rmtree(self.DATABASE_CLUSTER)
 
-def test_stop():
-    if os.path.isdir(DATABASE_CLUSTER):
-        shutil.rmtree(DATABASE_CLUSTER)
+        db = Database(self.DATABASE_NAME, self.DATABASE_CLUSTER, self.USER)
+        db.create()
+        db.start()
+        db.stop()
 
-    db = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
-    db.create()
-    db.start()
-    db.stop()
+        assert not db.server_started
 
-    assert not db.server_started
+    def test_connect(self):
+        if os.path.isdir(self.DATABASE_CLUSTER):
+            shutil.rmtree(self.DATABASE_CLUSTER)
 
+        db = Database(self.DATABASE_NAME, self.DATABASE_CLUSTER, self.USER)
+        db.create()
+        db.start()
 
-def test_connect():
-    if os.path.isdir(DATABASE_CLUSTER):
-        shutil.rmtree(DATABASE_CLUSTER)
+        assert isinstance(db.connection, psycopg2.extensions.connection)
+        assert db.connection.closed == 0
+        assert isinstance(db.cursor, psycopg2.extensions.cursor)
+        assert not db.cursor.closed
 
-    db = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
-    db.create()
-    db.start()
+        db.stop()
 
-    assert isinstance(db.connection, psycopg2.extensions.connection)
-    assert db.connection.closed == 0
-    assert isinstance(db.cursor, psycopg2.extensions.cursor)
-    assert not db.cursor.closed
+    def test_disconnect(self):
+        if os.path.isdir(self.DATABASE_CLUSTER):
+            shutil.rmtree(self.DATABASE_CLUSTER)
 
-    db.stop()
+        db = Database(self.DATABASE_NAME, self.DATABASE_CLUSTER, self.USER)
+        db.create()
+        db.start()
+        db.disconnect()
 
+        assert db.connection.closed != 0
+        assert db.cursor.closed
 
-def test_disconnect():
-    if os.path.isdir(DATABASE_CLUSTER):
-        shutil.rmtree(DATABASE_CLUSTER)
+        db.stop()
 
-    db = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
-    db.create()
-    db.start()
-    db.disconnect()
+    def test_create(self):
+        if os.path.isdir(self.DATABASE_CLUSTER):
+            shutil.rmtree(self.DATABASE_CLUSTER)
 
-    assert db.connection.closed != 0
-    assert db.cursor.closed
+        db = Database(self.DATABASE_NAME, self.DATABASE_CLUSTER, self.USER)
+        db.create()
+        db.verify_existence()
 
-    db.stop()
+        assert db.verified
 
-
-def test_create():
-    if os.path.isdir(DATABASE_CLUSTER):
-        shutil.rmtree(DATABASE_CLUSTER)
-
-    db = Database(DATABASE_NAME, DATABASE_CLUSTER, USER)
-    db.create()
-    db.verify_existence()
-
-    assert db.verified
-
-    db.stop()
+        db.stop()
