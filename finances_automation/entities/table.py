@@ -32,7 +32,7 @@ class Table:
         self.data = pd.DataFrame()
 
     @classmethod
-    def get_table(cls, table_name):
+    def get_from_config(cls, table_name):
         """ Get a Table object for table_name if its configuration exists in the configuration file.
 
         :param str table_name: possible name of a table

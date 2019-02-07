@@ -17,5 +17,5 @@ def parse_statement(statement_location, table):
 
 if __name__ == '__main__':
     statement_location = os.path.abspath(sys.argv[1])
-    table = Table.get_table(sys.argv[2])
+    table = Table.get_from_config(sys.argv[2])
     parse_statement(statement_location, table)

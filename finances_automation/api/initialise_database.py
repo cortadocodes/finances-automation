@@ -12,7 +12,7 @@ def initialise_database(overwrite):
     database.create(overwrite=overwrite)
 
     for table_name in conf.table_names:
-        database.create_table(Table.get_table(table_name))
+        database.create_table(Table.get_from_config(table_name))
 
 
 if __name__ == '__main__':

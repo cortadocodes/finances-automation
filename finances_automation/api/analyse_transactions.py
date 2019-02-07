@@ -26,7 +26,7 @@ def analyse_transactions(analysis_type, tables_to_analyse, table_to_store, start
 
 if __name__ == '__main__':
     analysis_type = sys.argv[1].lower()
-    tables_to_analyse = [Table.get_table(table_name) for table_name in sys.argv[2].split(';')]
+    tables_to_analyse = [Table.get_from_config(table_name) for table_name in sys.argv[2].split(';')]
     start_date = sys.argv[3]
     end_date = sys.argv[4]
 
@@ -36,6 +36,6 @@ if __name__ == '__main__':
     if analysis_type in EXCLUDED_FROM_STORAGE:
         table_to_store = None
     else:
-        table_to_store = Table.get_table(analysis_type)
+        table_to_store = Table.get_from_config(analysis_type)
 
     analyse_transactions(analysis_type, tables_to_analyse, table_to_store, start_date, end_date)

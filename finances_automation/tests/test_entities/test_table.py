@@ -45,7 +45,7 @@ class TestTable:
         :raise AssertionError:
         :return None:
         """
-        table = Table.get_table(table_name)
+        table = Table.get_from_config(table_name)
 
         expected_config = conf.table_configurations[table_name]
 

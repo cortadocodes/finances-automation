@@ -23,6 +23,6 @@ def create_app(current_transactions_table):
 
 
 if __name__ == '__main__':
-    current_transactions_table = Table.get_table('current_transactions')
+    current_transactions_table = Table.get_from_config('current_transactions')
     app = create_app(current_transactions_table)
     app.run_server(debug=True)

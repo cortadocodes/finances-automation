@@ -30,7 +30,7 @@ def view_table(table, columns):
 
 
 if __name__ == '__main__':
-    table = Table.get_table(sys.argv[1])
+    table = Table.get_from_config(sys.argv[1])
     columns = sys.argv[2:] or list(table.schema.keys())
 
     df = view_table(table, columns)

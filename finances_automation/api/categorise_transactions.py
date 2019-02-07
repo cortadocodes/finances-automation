@@ -16,7 +16,7 @@ def categorise_transactions(table, start_date, end_date):
 
 
 if __name__ == '__main__':
-    table = Table.get_table(sys.argv[1])
+    table = Table.get_from_config(sys.argv[1])
     start_date = sys.argv[2]
     end_date = sys.argv[3]
     categorise_transactions(table, start_date, end_date)
