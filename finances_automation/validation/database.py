@@ -4,12 +4,21 @@ def database_validator(func):
 
         :raise TypeError: if any of the parameters are of the wrong type
         """
-        if not isinstance(name, str):
-            raise TypeError('name must be a string.')
-        if not isinstance(data_location, str):
-            raise TypeError('data_location must be a string.')
-        if not isinstance(user, str):
-            raise TypeError('user must be a string.')
+        types = {
+            'name': str,
+            'data_location': str,
+            'user':str
+        }
+        error_message = '{} parameter should be of type {}; received {}.'
+
+        if not isinstance(name, types['name']):
+            raise TypeError(error_message.format('name', types['name'], name))
+
+        if not isinstance(data_location, types['data_location']):
+            raise TypeError(error_message.format('data_location', types['data_location'], data_location))
+
+        if not isinstance(user, types['user']):
+            raise TypeError(error_message.format('user', types['user'], user))
 
         return func(self, name, data_location, user)
 
