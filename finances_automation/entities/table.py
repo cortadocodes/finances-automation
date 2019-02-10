@@ -22,7 +22,7 @@ class Table:
         :var pd.DataFrame data: data loaded from the database table (modified or unmodified)
         """
         self.name = name
-        self.type = type_
+        self.type_ = type_
         self.schema = schema
         self.monetary_columns = monetary_columns
         self.date_columns = date_columns

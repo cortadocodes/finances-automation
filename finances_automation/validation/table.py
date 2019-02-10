@@ -1,5 +1,5 @@
 def table_validator(func):
-    def table_validator(self, name, type, schema, monetary_columns=None, date_columns=None, date_format=None,
+    def table_validator(self, name, type_, schema, monetary_columns=None, date_columns=None, date_format=None,
                         category_columns=None):
         """ Check if Table initialisation parameters are of the correct type.
 
@@ -7,7 +7,7 @@ def table_validator(func):
         """
         types = {
             'name': str,
-            'type': str,
+            'type_': str,
             'schema': dict,
             'monetary_columns': list,
             'date_columns': list,
@@ -18,8 +18,8 @@ def table_validator(func):
 
         if not isinstance(name, str):
             raise TypeError(error_message.format('name', types['name'], name))
-        if not isinstance(type, str):
-            raise TypeError(error_message.format('type', types['type'], type))
+        if not isinstance(type_, str):
+            raise TypeError(error_message.format('type_', types['type_'], type_))
         if not isinstance(schema, dict):
             raise TypeError(error_message.format('schema', types['schema'], schema))
         if monetary_columns and not isinstance(monetary_columns, list):
@@ -31,6 +31,6 @@ def table_validator(func):
         if category_columns and not isinstance(category_columns, list):
             raise TypeError(error_message.format('category_columns', types['category_columns'], category_columns))
 
-        return func(self, name, type, schema, monetary_columns, date_columns, date_format, category_columns)
+        return func(self, name, type_, schema, monetary_columns, date_columns, date_format, category_columns)
 
     return table_validator

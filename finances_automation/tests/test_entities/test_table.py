@@ -18,7 +18,7 @@ class TestTable:
         assert not table.date_format
         assert not table.category_columns
 
-    @pytest.mark.parametrize('name, type, schema, monetary_columns, date_columns, date_format, category_columns',[
+    @pytest.mark.parametrize('name, type_, schema, monetary_columns, date_columns, date_format, category_columns',[
         [None for _ in range(7)],
         [1, '', {}] + [None for _ in range(4)],
         ['', 1, {}] + [None for _ in range(4)],
@@ -28,7 +28,7 @@ class TestTable:
         ['', '', {}, [], [], 1, []],
         ['', '', {}, [], [], '', 1],
     ])
-    def test_invalid_table_instantiation(self, name, type, schema, monetary_columns, date_columns, date_format,
+    def test_invalid_table_instantiation(self, name, type_, schema, monetary_columns, date_columns, date_format,
                                          category_columns):
         """ Test Table's validator raises the correct errors when instantiated with incorrect arguments.
 
@@ -36,7 +36,7 @@ class TestTable:
         :return None:
         """
         with pytest.raises(TypeError):
-            Table(name, type, schema, monetary_columns, date_columns, date_format, category_columns)
+            Table(name, type_, schema, monetary_columns, date_columns, date_format, category_columns)
 
     @pytest.mark.parametrize('table_name', [name for name in conf.table_names])
     def test_get_table(self, table_name):

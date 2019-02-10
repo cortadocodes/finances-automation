@@ -46,7 +46,7 @@ categories = {
 table_configurations = {
     'current_transactions': {
         'name': 'current_transactions',
-        'type': 'transactions',
+        'type_': 'transactions',
         'schema': {
             'id': 'serial PRIMARY KEY',
             'date': 'DATE NOT NULL',
@@ -66,7 +66,7 @@ table_configurations = {
 
     'credit_transactions': {
         'name': 'credit_transactions',
-        'type': 'transactions',
+        'type_': 'transactions',
         'schema': {
             'id': 'serial PRIMARY KEY',
             'date': 'DATE NOT NULL',
@@ -86,7 +86,7 @@ table_configurations = {
 
     'totals': {
         'name': 'totals',
-        'type': 'analysis',
+        'type_': 'analysis',
         'schema': {
             'id': 'serial PRIMARY KEY',
             'tables_analysed': 'VARCHAR',
@@ -103,7 +103,7 @@ table_configurations = {
 
     'totals_across_all_accounts': {
         'name': 'totals_across_all_accounts',
-        'type': 'analysis',
+        'type_': 'analysis',
         'schema': {
             'id': 'serial PRIMARY KEY',
             'tables_analysed': 'VARCHAR',
@@ -120,7 +120,7 @@ table_configurations = {
 
     'monthly_averages': {
         'name': 'monthly_averages',
-        'type': 'analysis',
+        'type_': 'analysis',
         'schema': {
             'id': 'serial PRIMARY KEY',
             'tables_analysed': 'VARCHAR',
@@ -139,11 +139,11 @@ table_configurations = {
 table_names = (table_name for table_name in table_configurations)
 
 transaction_table_names = (
-    table['name'] for table in list(table_configurations.values()) if table['type'] == 'transactions'
+    table['name'] for table in list(table_configurations.values()) if table['type_'] == 'transactions'
 )
 
 analysis_table_names = (
-    table['name'] for table in list(table_configurations.values()) if table['type'] == 'analysis'
+    table['name'] for table in list(table_configurations.values()) if table['type_'] == 'analysis'
 )
 
 parser = {
