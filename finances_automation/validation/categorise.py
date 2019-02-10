@@ -1,19 +1,24 @@
 from finances_automation.entities.table import Table
+from finances_automation.validation.base import validate_variables
 
 
 def categoriser_validator(func):
-    def categoriser_validator(self, table, start_date, end_date, recategorise):
+    def categoriser_validator(instance, table, start_date, end_date, recategorise):
         """ Check if Categoriser initialisation parameters are of the correct type.
 
         :raise TypeError: if any of the parameters are of the wrong type
         """
-        if not isinstance(table, Table):
-            raise TypeError('table must be a Table.')
-        if not isinstance(start_date, str) or not isinstance(end_date, str):
-            raise TypeError('dates should be of type str.')
-        if not isinstance(recategorise, bool):
-            raise TypeError('recategorise should be boolean.')
+        allowed_parameter_types = {
+            'table': [Table],
+            'start_date': [str],
+            'end_date': [str],
+            'recategorise': [bool]
+        }
 
-        return func(self, table, start_date, end_date, recategorise)
+        locals_ = locals()
+        parameters = {parameter_name: locals_[parameter_name] for parameter_name in allowed_parameter_types}
+        validate_variables(parameters, allowed_parameter_types)
+
+        return func(instance, table, start_date, end_date, recategorise)
 
     return categoriser_validator
