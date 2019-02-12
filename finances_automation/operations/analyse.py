@@ -1,13 +1,10 @@
 import datetime as dt
-import math
 import os
 
-from matplotlib import pyplot as plt
-from matplotlib import dates as mdates
-import numpy as np
 import pandas as pd
 
 from finances_automation import configuration as conf
+from finances_automation.operations import analyses
 from finances_automation.repositories import BaseRepository
 from finances_automation.validation.analyse import analyser_validator
 
@@ -26,10 +23,10 @@ class Analyser:
         :param str end_date: date to end analysis at
         """
         self.analyses = {
-            'totals': self._calculate_category_totals,
-            'monthly_averages': self._calculate_averages,
-            'totals_across_all_accounts': self._calculate_category_totals_across_accounts,
-            'plot_balance': self._plot_balance
+            'totals': analyses.calculate_category_totals,
+            'monthly_averages': analyses.calculate_category_averages,
+            'totals_across_all_accounts': analyses.calculate_category_totals_across_accounts,
+            'plot_balance': analyses.plot_balance
         }
 
         self.tables_to_analyse = tables_to_analyse
@@ -63,134 +60,6 @@ class Analyser:
         if self.analysis_type not in self.analyses_excluded_from_storage:
             self._set_metadata()
             self.table_to_store_repository.insert(self.analysis)
-
-    def _calculate_category_totals(self, start_date=None, end_date=None, positive_expenses=True):
-        self.export_type = 'csv'
-
-        start_date = start_date or self.start_date
-        end_date = end_date or self.end_date
-
-        totals = pd.DataFrame(columns=(
-            ['tables_analysed', 'analysis_type']
-            + self.table_to_store.date_columns
-            + self.all_categories
-        ))
-
-        for category in self.all_categories:
-            conditions = (
-                (self.tables_to_analyse.data['category'] == category)
-                & (self.tables_to_analyse.data[self.tables_to_analyse.date_columns[0]] >= start_date)
-                & (self.tables_to_analyse.data[self.tables_to_analyse.date_columns[0]] <= end_date)
-            )
-
-            category_total = (
-                self.tables_to_analyse.data[conditions][self.tables_to_analyse.monetary_columns[0]].sum()
-                - self.tables_to_analyse.data[conditions][self.tables_to_analyse.monetary_columns[1]].sum()
-            )
-
-            if positive_expenses:
-                if category in self.categories['expense']:
-                    category_total = - category_total
-
-            totals.loc[0, category] = round(category_total, 2)
-
-        return totals
-
-    def _calculate_category_totals_across_accounts(self, start_date=None, end_date=None, positive_expenses=True):
-        self.export_type = 'csv'
-
-        start_date = start_date or self.start_date
-        end_date = end_date or self.end_date
-
-        columns = (self.table_to_store.date_columns + ['tables_analysed'] + self.all_categories)
-        columns.remove('credit_card')
-        totals = pd.DataFrame(columns=columns)
-
-        for category in self.all_categories:
-
-            category_total = 0
-
-            for table in self.tables_to_analyse:
-
-                conditions = (
-                    (table.data['category'] == category)
-                    & (table.data[table.date_columns[0]] >= start_date)
-                    & (table.data[table.date_columns[0]] <= end_date)
-                )
-
-                table_category_total = (
-                    table.data[conditions][table.monetary_columns[0]].sum()
-                    - table.data[conditions][table.monetary_columns[1]].sum()
-                )
-
-                if positive_expenses:
-                    if category in self.categories['expense']:
-                        table_category_total = - table_category_total
-
-                category_total += table_category_total
-
-            totals.loc[0, category] = round(category_total, 2)
-
-        return totals
-
-    def _calculate_averages(self, time_window=30):
-        self.export_type = 'csv'
-
-        time_window = dt.timedelta(days=time_window)
-        total_duration_available = self.end_date - self.start_date + dt.timedelta(1)
-        number_of_windows = math.floor(total_duration_available / time_window)
-
-        if time_window > total_duration_available:
-            raise ValueError('time_window should be <= self.end_date - self.start_date')
-
-        period_totals = pd.DataFrame(columns=self.all_categories)
-        averages = pd.DataFrame(columns=(
-            ['tables_analysed', 'analysis_type']
-            + self.table_to_store.date_columns
-            + self.all_categories
-        ))
-
-        start_dates = np.array([self.start_date + i * time_window for i in range(number_of_windows)])
-
-        for i, start_date in enumerate(start_dates):
-            end_date = start_date + time_window
-            totals = self._calculate_category_totals(start_date, end_date)[self.all_categories]
-            period_totals = period_totals.append(totals)
-
-        for column in self.all_categories:
-            averages.loc[0, column] = period_totals[column].mean().round(2)
-
-        return averages
-
-    def _plot_balance(self):
-        self.export_type = 'image'
-
-        dates = self.tables_to_analyse.data[self.tables_to_analyse.date_columns[0]]
-        balance = self.tables_to_analyse.data['balance']
-
-        dates_sorted, balance_sorted = zip(*sorted(zip(dates, balance)))
-
-        figure = plt.figure(figsize=(12, 8))
-        plt.plot(dates_sorted, balance_sorted)
-        plt.xlabel('Date', fontsize=16)
-        plt.ylabel('Balance / £', fontsize=16)
-        plt.title(
-            'Balance of {} between {} and {}'.format(
-                self.tables_to_analyse.name, self.start_date, self.end_date
-            ),
-            fontsize=20
-        )
-
-        ax = plt.gca()
-        ax.xaxis.set_major_locator(mdates.MonthLocator())
-        ax.xaxis.set_minor_locator(mdates.DayLocator(bymonthday=range(0, 30, 5)))
-        ax.xaxis.set_major_formatter(mdates.DateFormatter('%d/%m/%Y'))
-        ax.xaxis.set_minor_formatter(mdates.DateFormatter('%d'))
-        ax.tick_params(axis='both', which='both', labelsize=14)
-
-        plt.show()
-
-        return figure
 
     def _set_metadata(self):
         for date_column in self.table_to_store.date_columns:
