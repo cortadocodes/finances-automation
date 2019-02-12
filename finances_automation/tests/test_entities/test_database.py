@@ -6,6 +6,7 @@ import pytest
 
 from finances_automation.entities.database import Database
 
+
 @pytest.mark.skip(reason='Slow to run.')
 class TestDatabase:
 
