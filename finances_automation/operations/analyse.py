@@ -11,7 +11,7 @@ from finances_automation.validation.analyse import analyser_validator
 
 class Analyser:
 
-    analyses_excluded_from_storage = 'plot_balance',
+    analyses_excluded_from_storage = 'plot_balance'
 
     @analyser_validator
     def __init__(self, analysis_type, tables_to_analyse, table_to_store, start_date, end_date):
@@ -22,12 +22,7 @@ class Analyser:
         :param str start_date: date to start analysis at
         :param str end_date: date to end analysis at
         """
-        self.analyses = {
-            'totals': analyses.calculate_category_totals,
-            'monthly_averages': analyses.calculate_category_averages,
-            'totals_across_all_accounts': analyses.calculate_category_totals_across_accounts,
-            'plot_balance': analyses.plot_balance
-        }
+        self.analyses = analyses.get_available_analyses()
 
         self.tables_to_analyse = tables_to_analyse
         self.table_to_store = table_to_store
