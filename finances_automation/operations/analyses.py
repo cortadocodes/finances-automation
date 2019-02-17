@@ -12,6 +12,10 @@ THIS_MODULE = sys.modules[__name__]
 
 
 def get_available_analyses():
+    """ Get available analyses as a dictionary.
+
+    :return dict:
+    """
     analysis_names = {
         'calculate_category_totals',
         'calculate_category_averages',
@@ -26,7 +30,7 @@ def get_available_analyses():
 
 
 def calculate_category_totals(table, categories, start_date, end_date, positive_expenses=True):
-    """ Calculate the total flow of money in a table for a set of categories between two dates.
+    """ Calculate the total flow of money in a table for a set of categories between two dates (inclusive).
 
     :param finances_automation.entities.Table table:
     :param dict(str, list) categories:
@@ -35,9 +39,11 @@ def calculate_category_totals(table, categories, start_date, end_date, positive_
     :param bool positive_expenses:
     :return pd.DataFrame:
     """
-    totals = pd.DataFrame(columns=('start_date', 'end_date', categories))
-
     all_categories = categories['income'] + categories['expense']
+    totals = pd.DataFrame(columns=all_categories)
+
+    if positive_expenses:
+        table.data[table.monetary_columns[1]] = - table.data[table.monetary_columns[1]]
 
     for category in all_categories:
         conditions = (
@@ -48,12 +54,8 @@ def calculate_category_totals(table, categories, start_date, end_date, positive_
 
         category_total = (
             table.data[conditions][table.monetary_columns[0]].sum()
-            - table.data[conditions][table.monetary_columns[1]].sum()
+            + table.data[conditions][table.monetary_columns[1]].sum()
         )
-
-        if positive_expenses:
-            if category in categories['expense']:
-                category_total = - category_total
 
         totals.loc[0, category] = round(category_total, 2)
 
