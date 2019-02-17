@@ -29,7 +29,7 @@ def get_available_analyses():
     }
 
 
-def calculate_category_totals(table, categories, start_date, end_date, positive_expenses=True):
+def calculate_category_totals(table, categories, start_date, end_date):
     """ Calculate the total flow of money in a table for a set of categories between two dates (inclusive).
 
     :param finances_automation.entities.Table table:
@@ -41,9 +41,6 @@ def calculate_category_totals(table, categories, start_date, end_date, positive_
     """
     all_categories = categories['income'] + categories['expense']
     totals = pd.DataFrame(columns=all_categories)
-
-    if positive_expenses:
-        table.data[table.monetary_columns[1]] = - table.data[table.monetary_columns[1]]
 
     for category in all_categories:
         conditions = (
