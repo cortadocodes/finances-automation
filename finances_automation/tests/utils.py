@@ -13,8 +13,8 @@ def generate_random_dates_in_range(start, end, number=10):
 
     :return list(datetime.date):
     """
-    dates = list(date.date() for date in pd.date_range(start, end))
-    return [random.choice(dates) for _ in range(number)]
+    dates = list(timestamp.date() for timestamp in pd.date_range(start, end))
+    return random.choices(dates, k=number)
 
 
 def generate_random_dates_out_of_range(start, end, number=10, day_window=30):
@@ -28,15 +28,16 @@ def generate_random_dates_out_of_range(start, end, number=10, day_window=30):
     :return list(datetime.date):
     """
     dates_less_than_range = [
-        date.date()
-        for date in pd.date_range(start - dt.timedelta(day_window), start - dt.timedelta(1))
+        timestamp.date()
+        for timestamp in pd.date_range(start - dt.timedelta(day_window), start - dt.timedelta(1))
     ]
+
     dates_more_than_range = [
         date.date()
         for date in pd.date_range(end + dt.timedelta(1), end + dt.timedelta(day_window))
     ]
 
-    return [random.choice(dates_less_than_range + dates_more_than_range) for _ in range(number)]
+    return random.choices(dates_less_than_range + dates_more_than_range, k=number)
 
 
 def generate_random_edge_dates_in_range(start, end, number=10):
@@ -49,20 +50,20 @@ def generate_random_edge_dates_in_range(start, end, number=10):
     :return list(datetime.date):
     """
     edge_date_day_numbers = {
-        1: 31,
-        2: 28,
-        3: 31,
-        4: 30,
-        5: 31,
-        6: 30,
-        7: 31,
-        8: 31,
-        9: 30,
-        10: 31,
-        11: 30,
-        12: 31
+        1: (1, 31),
+        2: (1, 28),
+        3: (1, 31),
+        4: (1, 30),
+        5: (1, 31),
+        6: (1, 30),
+        7: (1, 31),
+        8: (1, 31),
+        9: (1, 30),
+        10: (1, 31),
+        11: (1, 30),
+        12: (1, 31)
     }
 
-    dates = list(date.date() for date in pd.date_range(start, end))
-    edge_dates = [date for date in dates if date.day == edge_date_day_numbers[date.month]]
-    return [random.choice(edge_dates) for _ in range(number)]
+    dates = [timestamp.date() for timestamp in pd.date_range(start, end)]
+    edge_dates = [date for date in dates if date.day in edge_date_day_numbers[date.month]]
+    return random.choices(edge_dates, k=number)
