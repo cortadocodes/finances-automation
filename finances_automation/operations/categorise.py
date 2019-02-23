@@ -12,7 +12,14 @@ class Categoriser:
 
     @categoriser_validator
     def __init__(self, table, start_date, end_date, recategorise=False):
+        """ Intialise a Categoriser.
 
+        :param finances_automation.entities.table.Table table:
+        :param dt.date start_date:
+        :param dt.date end_date:
+        :param bool recategorise:
+        :return None:
+        """
         self.table = table
         self.table_repository = TransactionsRepository(self.table)
 
@@ -27,6 +34,10 @@ class Categoriser:
         pd.set_option('display.width', 1000)
 
     def select_categories(self):
+        """ Select categories for the transactions in the table.
+
+        :return None:
+        """
         self.table_repository.load(self.start_date, self.end_date)
 
         self.table.data['category_code'] = self.table.data.apply(self._select_category, axis=1)
@@ -35,6 +46,11 @@ class Categoriser:
         self.table_repository.update_categories()
 
     def _select_category(self, row):
+        """ Set the category code for a table row.
+
+        :param pd.Series row:
+        :return int:
+        """
         if not self.recategorise:
             if not np.isnan(row['category_code']):
                 return row['category_code']
@@ -50,6 +66,10 @@ class Categoriser:
         return category_code
 
     def _print_categories(self):
+        """ Print the available categories.
+
+        :return None:
+        """
         i, j, k = 0, 0, 0
 
         print('=' * 45, end='\n\n')
@@ -69,6 +89,11 @@ class Categoriser:
         print('\n')
 
     def _convert_category_code(self, row):
+        """ Convert the category code of a table row to the human-readable category.
+
+        :param pd.Series row:
+        :return str:
+        """
         category = None
         code = int(row['category_code'])
 
