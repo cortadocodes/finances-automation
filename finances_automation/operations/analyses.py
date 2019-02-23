@@ -8,11 +8,11 @@ import pandas as pd
 THIS_MODULE = sys.modules[__name__]
 
 ANALYSIS_NAMES_AND_EXPORT_TYPES = {
-    THIS_MODULE.calculate_category_totals.__name__: '.csv',
-    THIS_MODULE.plot_balance.__name__: '.png'
+    'calculate_category_totals': '.csv',
+    'plot_balance': '.png'
 }
 
-ANALYSES_EXCLUDED_FROM_STORAGE = THIS_MODULE.plot_balance.__name__,
+ANALYSES_EXCLUDED_FROM_STORAGE = 'plot_balance',
 
 
 def get_available_analyses():
@@ -24,6 +24,7 @@ def get_available_analyses():
         analysis_name: getattr(THIS_MODULE, analysis_name)
         for analysis_name in ANALYSIS_NAMES_AND_EXPORT_TYPES.keys()
     }
+
 
 def get_analysis(analysis_type):
     """ Get the chosen analysis method, raising an error message if it is invalid.
@@ -41,6 +42,7 @@ def get_analysis(analysis_type):
         'Invalid analysis chosen; available analyses are: {}'
         .format(', '.join(available_analyses.keys()))
     )
+
 
 def calculate_category_totals(table, categories, start_date, end_date, *args, **kwargs):
     """ Calculate the total flow of money in a transaction table for a set of categories between two dates (inclusive).
