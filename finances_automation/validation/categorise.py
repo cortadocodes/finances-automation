@@ -3,7 +3,7 @@ from finances_automation.validation.base import validate_variables
 
 
 def categoriser_validator(func):
-    def categoriser_validator(instance, table, start_date, end_date, recategorise):
+    def categoriser_validator(instance, table, start_date, end_date, recategorise=False):
         """ Check if Categoriser initialisation parameters are of the correct type.
 
         :raise TypeError: if any of the parameters are of the wrong type
