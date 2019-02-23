@@ -47,7 +47,7 @@ class TestCalculateCategoryTotals:
             data={
                 'date': dates,
                 'money_in': [round(random.uniform(0, 1000), 2) for _ in range(number_of_transactions)],
-                'money_out': [round(random.uniform(-500, 0), 2) for _ in range(number_of_transactions)],
+                'money_out': [round(random.uniform(0, 500), 2) for _ in range(number_of_transactions)],
                 'balance': [0 for _ in range(number_of_transactions)],
                 'category': random.choices(categories['income'] + categories['expense'], k=number_of_transactions)
             }
@@ -77,7 +77,7 @@ class TestCalculateCategoryTotals:
             money_in = test_table.data[test_table.data['category'] == category]['money_in'].sum()
             money_out = test_table.data[test_table.data['category'] == category]['money_out'].sum()
 
-            expected_total = round(money_in + money_out, 2)
+            expected_total = round(money_in - money_out, 2)
             calculated_total = totals[category].iloc[0]
 
             assert calculated_total == expected_total
@@ -104,7 +104,7 @@ class TestCalculateCategoryTotals:
             money_in = test_table.data[test_table.data['category'] == category]['money_in'].sum()
             money_out = test_table.data[test_table.data['category'] == category]['money_out'].sum()
 
-            expected_total = round(money_in + money_out, 2)
+            expected_total = round(money_in - money_out, 2)
             calculated_total = totals[category].iloc[0]
 
             assert calculated_total == expected_total
@@ -131,7 +131,7 @@ class TestCalculateCategoryTotals:
             money_in = test_table.data[test_table.data['category'] == category]['money_in'].sum()
             money_out = test_table.data[test_table.data['category'] == category]['money_out'].sum()
 
-            expected_total = round(money_in + money_out, 2)
+            expected_total = round(money_in - money_out, 2)
             calculated_total = totals[category].iloc[0]
 
             assert calculated_total == expected_total
@@ -184,7 +184,7 @@ class TestCalculateCategoryTotals:
             money_in = test_table.data[test_table.data['category'] == category]['money_in'].sum()
             money_out = test_table.data[test_table.data['category'] == category]['money_out'].sum()
 
-            expected_total = round(money_in + money_out, 2)
+            expected_total = round(money_in - money_out, 2)
             calculated_total = totals[category].iloc[0]
 
             assert calculated_total == expected_total
@@ -224,7 +224,7 @@ class TestCalculateCategoryTotals:
                 & (test_table.data['date'].isin(dates_in_range))
             ]['money_out'].sum()
 
-            expected_total = round(money_in + money_out, 2)
+            expected_total = round(money_in - money_out, 2)
             calculated_total = totals[category].iloc[0]
 
             assert calculated_total == expected_total

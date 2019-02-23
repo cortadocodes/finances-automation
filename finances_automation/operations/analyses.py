@@ -66,7 +66,7 @@ def calculate_category_totals(table, categories, start_date, end_date, *args, **
 
         category_total = (
             table.data[conditions][table.monetary_columns['money_in']].sum()
-            + table.data[conditions][table.monetary_columns['money_out']].sum()
+            - table.data[conditions][table.monetary_columns['money_out']].sum()
         )
 
         totals.loc[0, category] = round(category_total, 2)
