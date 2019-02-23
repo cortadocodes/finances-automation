@@ -136,15 +136,15 @@ table_configurations = {
     }
 }
 
-table_names = (table_name for table_name in table_configurations)
+table_names = [table_name for table_name in table_configurations]
 
-transaction_table_names = (
+transaction_table_names = [
     table['name'] for table in list(table_configurations.values()) if table['type_'] == 'transactions'
-)
+]
 
-analysis_table_names = (
+analysis_table_names = [
     table['name'] for table in list(table_configurations.values()) if table['type_'] == 'analysis'
-)
+]
 
 parser = {
     'delimiter': ',',
