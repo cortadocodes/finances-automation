@@ -24,9 +24,9 @@ class TestTable:
         ['', 1, {}] + [None for _ in range(4)],
         ['', '', set()] + [None for _ in range(4)],
         ['', '', {}, 1, [], '', []],
-        ['', '', {}, [], 1, '', []],
-        ['', '', {}, [], [], 1, []],
-        ['', '', {}, [], [], '', 1],
+        ['', '', {}, {}, 1, '', []],
+        ['', '', {}, {}, [], 1, []],
+        ['', '', {}, {}, [], '', 1],
     ])
     def test_invalid_table_instantiation(self, name, type_, schema, monetary_columns, date_columns, date_format,
                                          category_columns):

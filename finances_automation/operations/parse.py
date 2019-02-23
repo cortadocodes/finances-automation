@@ -107,7 +107,7 @@ class CSVParser(BaseParser):
     def _remove_unwanted_characters(self):
         """ Removing unwanted characters from monetary_columns.
         """
-        for column in self.table.monetary_columns:
+        for column in self.table.monetary_columns.values():
             self.data[column] = (
                 self.data[column].astype(str).str.replace('£', '').str.replace(',', '')
             )
@@ -118,7 +118,7 @@ class CSVParser(BaseParser):
         negatives_values = r'\((\d*\.*\d*)\)'
         replacement = r'-\1'
 
-        for column in self.table.monetary_columns:
+        for column in self.table.monetary_columns.values():
             self.data[column] = self.data[column].str.replace(negatives_values, replacement)
 
     def _enforce_column_types(self):
@@ -131,5 +131,5 @@ class CSVParser(BaseParser):
             )
 
         self.data = self.data.astype(
-            dtype={column: float for column in self.table.monetary_columns}
+            dtype={column: float for column in self.table.monetary_columns.values()}
         )

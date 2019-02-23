@@ -14,7 +14,7 @@ class Table:
         :param str name: name of table
         :param str type_: type of table
         :param dict(str, str) schema: schema of table as a dictionary mapping column name to PostgreSQL type as a string
-        :param list(str) monetary_columns: names of columns containing monetary amounts
+        :param dict(str, str) monetary_columns: names of columns containing monetary amounts
         :param list(str) date_columns: names of columns containing dates
         :param str date_format: format of dates in table
         :param list(str) category_columns: names of columns containing category information

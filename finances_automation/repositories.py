@@ -32,7 +32,7 @@ class BaseRepository:
         )
 
         self.table.data = self.table.data.astype(
-            dtype={column: float for column in self.table.monetary_columns}
+            dtype={column: float for column in self.table.monetary_columns.values()}
         )
 
         self.table.data = self.table.data.astype({'category_code': float})

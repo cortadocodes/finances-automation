@@ -43,6 +43,8 @@ categories = {
     ]
 }
 
+income_and_expense_categories = [*categories['income'], *categories['expense']]
+
 table_configurations = {
     'current_transactions': {
         'name': 'current_transactions',
@@ -58,7 +60,11 @@ table_configurations = {
             'category_code': 'DECIMAL',
             'category': 'VARCHAR'
         },
-        'monetary_columns': ['money_in', 'money_out', 'balance'],
+        'monetary_columns': {
+            'money_in': 'money_in',
+            'money_out': 'money_out',
+            'balance': 'balance'
+        },
         'date_columns': ['date'],
         'date_format': '%d/%m/%Y',
         'category_columns': ['category_code', 'category']
@@ -78,7 +84,11 @@ table_configurations = {
             'category_code': 'DECIMAL',
             'category': 'VARCHAR'
         },
-        'monetary_columns': ['money_in', 'money_out', 'balance'],
+        'monetary_columns': {
+            'money_in': 'money_in',
+            'money_out': 'money_out',
+            'balance': 'balance'
+        },
         'date_columns': ['date'],
         'date_format': '%d/%m/%Y',
         'category_columns': ['category_code', 'category']
@@ -93,9 +103,11 @@ table_configurations = {
             'start_date': 'DATE NOT NULL',
             'end_date': 'DATE NOT NULL',
             'analysis_datetime': 'TIMESTAMPTZ NOT NULL',
-            **{category: 'DECIMAL' for category in [*categories['income'], *categories['expense']]}
+            **{category: 'DECIMAL' for category in income_and_expense_categories}
         },
-        'monetary_columns': [*categories['income'], *categories['expense']],
+        'monetary_columns': {
+            category: category for category in income_and_expense_categories
+        },
         'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
         'date_format': '%d/%m/%Y',
         'category_columns': None
@@ -110,9 +122,11 @@ table_configurations = {
             'start_date': 'DATE NOT NULL',
             'end_date': 'DATE NOT NULL',
             'analysis_datetime': 'TIMESTAMPTZ NOT NULL',
-            **{category: 'DECIMAL' for category in [*categories['income'], *categories['expense']]}
+            **{category: 'DECIMAL' for category in income_and_expense_categories}
         },
-        'monetary_columns': [*categories['income'], *categories['expense']],
+        'monetary_columns': {
+            category: category for category in income_and_expense_categories
+        },
         'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
         'date_format': '%d/%m/%Y',
         'category_columns': None
@@ -127,9 +141,11 @@ table_configurations = {
             'start_date': 'DATE NOT NULL',
             'end_date': 'DATE NOT NULL',
             'analysis_datetime': 'TIMESTAMPTZ NOT NULL',
-            **{category: 'DECIMAL' for category in [*categories['income'], *categories['expense']]}
+            **{category: 'DECIMAL' for category in income_and_expense_categories}
         },
-        'monetary_columns': [*categories['income'], *categories['expense']],
+        'monetary_columns': {
+            category: category for category in income_and_expense_categories
+        },
         'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
         'date_format': '%d/%m/%Y',
         'category_columns': None

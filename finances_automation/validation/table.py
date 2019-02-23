@@ -12,7 +12,7 @@ def table_validator(func):
             'name': [str],
             'type_': [str],
             'schema': [dict],
-            'monetary_columns': [list, type(None)],
+            'monetary_columns': [dict, type(None)],
             'date_columns': [list, type(None)],
             'date_format': [str, type(None)],
             'category_columns': [list, type(None)]

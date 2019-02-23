@@ -57,7 +57,7 @@ class Categoriser:
 
         self._print_categories()
 
-        relevant_columns = self.table.date_columns + ['description'] + self.table.monetary_columns
+        relevant_columns = self.table.date_columns + ['description'] + list(self.table.monetary_columns.values())
         print(row[relevant_columns], end='\n\n')
 
         category_code = int(input('Category code: '))

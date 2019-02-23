@@ -31,7 +31,11 @@ class TestCalculateCategoryTotals:
                 'category_code': 'DECIMAL',
                 'category': 'VARCHAR'
             },
-            monetary_columns=['money_in', 'money_out', 'balance'],
+            monetary_columns={
+                'money_in': 'money_in',
+                'money_out': 'money_out',
+                'balance': 'balance'
+            },
             date_columns=['date'],
             date_format='%d/%m/%Y',
             category_columns=['category_code', 'category']
