@@ -10,7 +10,7 @@ from finances_automation.validation.analyse import analyser_validator
 class Analyser:
 
     @analyser_validator
-    def __init__(self, analysis_type, table_to_analyse, table_to_store, start_date, end_date):
+    def __init__(self, analysis_type, table_to_analyse, start_date, end_date, table_to_store=None):
         """ Initialise an Analyser.
 
         :param str analysis_type: name of analysis_result to carry out
@@ -28,15 +28,15 @@ class Analyser:
         self.table_to_analyse = table_to_analyse
         self.table_to_store = table_to_store
 
+        self.repositories = {'table_to_analyse': BaseRepository(self.table_to_analyse)}
+
+        if self.table_to_store:
+            self.repositories['table_to_store'] = BaseRepository(self.table_to_store)
+
         self.start_date, self.end_date = (
             dt.datetime.strptime(date, self.table_to_analyse.date_format).date()
             for date in (start_date, end_date)
         )
-
-        self.repositories = {
-            'table_to_analyse': BaseRepository(self.table_to_analyse),
-            'table_to_store': BaseRepository(self.table_to_store)
-        }
 
     def analyse(self):
         """Perform an analysis on a table between two dates, storing it in the database.
