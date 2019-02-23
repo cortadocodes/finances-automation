@@ -41,7 +41,7 @@ class BaseParser:
         raise NotImplementedError
 
 
-class CSVCleaner(BaseParser):
+class CSVParser(BaseParser):
     """ A parser that loads a .csv statement and cleans the data before storing it in the database.
     """
     def parse(self):

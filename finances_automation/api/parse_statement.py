@@ -2,7 +2,7 @@ import os
 import sys
 
 from finances_automation.entities.table import Table
-from finances_automation.operations.parse import CSVCleaner
+from finances_automation.operations.parse import CSVParser
 
 
 def parse_statement(statement_location, table):
@@ -11,7 +11,7 @@ def parse_statement(statement_location, table):
     :param str statement_location:
     :param Table table:
     """
-    parser = CSVCleaner(table, statement_location)
+    parser = CSVParser(table, statement_location)
     parser.parse()
 
 
