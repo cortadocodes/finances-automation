@@ -31,6 +31,6 @@ if __name__ == '__main__':
     table_to_store = sys.argv[5]
 
     if table_to_store:
-        table_to_store = Table.get_from_config(analysis_type)
+        table_to_store = Table.get_from_config(table_to_store)
 
     analyse_transactions(analysis_type, table_to_analyse, start_date, end_date, table_to_store)
