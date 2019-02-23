@@ -88,7 +88,7 @@ class Analyser:
         if not os.path.exists(path):
             os.makedirs(path)
 
-        filename = self.table_to_analyse.name + '_' + str(self.analysis_result['analysis_datetime']) + export_type
+        filename = self.table_to_analyse.name + '_' + str(self.analysis_result['analysis_datetime'][0]) + export_type
 
         if export_type == '.csv':
             self.analysis_result.to_csv(os.path.join(path, filename), index=False, encoding='utf-8')
