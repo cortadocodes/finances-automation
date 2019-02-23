@@ -39,8 +39,8 @@ def get_analysis(analysis_type):
         return available_analyses[analysis_type]
 
     raise ValueError(
-        'Invalid analysis chosen; available analyses are: {}'
-        .format(', '.join(available_analyses.keys()))
+        'Invalid analysis chosen: {}. Available analyses are: {}'
+        .format(analysis_type, ', '.join(available_analyses.keys()))
     )
 
 
