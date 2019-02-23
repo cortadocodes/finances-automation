@@ -10,7 +10,7 @@ def analyser_validator(func):
         """
         allowed_parameter_types = {
             'analysis_type': [str],
-            'tables_to_analyse': [list],
+            'table_to_analyse': [Table],
             'table_to_store': [Table, type(None)],
             'start_date': [str],
             'end_date': [str]
