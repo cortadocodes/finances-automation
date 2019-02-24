@@ -12,19 +12,25 @@ pd.set_option('max_colwidth', 40)
 pd.set_option('display.width', 1000)
 
 
-def view_table(cli_args):
-    """ View data from the specified columns of a table from the database.
+def view_latest(cli_args):
+    """ View the latest data from the specified columns of a table from the database.
 
     :param Table table:
     :param list(str) columns:
     """
     table = Table.get_from_config(cli_args.table_name)
     columns = cli_args.columns or list(table.schema.keys())
+    limit = cli_args.n
 
     db = Database(conf.db_name, conf.db_cluster, conf.user)
-    data = db.select_from(table, columns)
 
     if columns == ['*']:
         columns = db.get_table_column_names(table)
+        columns.remove('id')
 
-    print(pd.DataFrame(data=data, columns=columns).to_string(index=False))
+    data = db.select_from(table, columns)
+
+    df = pd.DataFrame(data=data, columns=columns).sort_values(by=table.date_columns[0], ascending=False).head(limit)
+
+    print('\n')
+    print(df.to_string(index=False))
