@@ -1,5 +1,23 @@
 # Finances automation
 
+## Usage
+```
+usage: finances-automation [-h] {parse,categorise,analyse,view_latest} ...
+
+Automate your finances analysis.
+
+optional arguments:
+  -h, --help            show this help message and exit
+
+Subcommands:
+  {parse,categorise,analyse,view_latest}
+    parse               Parse a UTF-8 .csv financial statement.
+    categorise          Categorise transactions from a transactions table.
+    analyse             Analyse transactions from a transactions table.
+    view_latest         View the latest entries to a table.
+```
+
+## Aims
 The aim of this project is to automate the manual review of my finances I carry out each month in Excel. The 
 project will involve:
 * Automating the ingestion of financial statements in `.csv` or `.xlsx` format
