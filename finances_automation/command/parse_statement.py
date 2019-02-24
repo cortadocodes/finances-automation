@@ -1,21 +1,17 @@
 import os
-import sys
 
 from finances_automation.entities.table import Table
 from finances_automation.operations.parse import CSVParser
 
 
-def parse_statement(statement_location, table):
+def parse_statement(cli_args):
     """ Read in a statement, clean it up and store it in the database.
 
     :param str statement_location:
-    :param Table table:
+    :param str table_name:
     """
-    parser = CSVParser(table, statement_location)
+    statement_location = os.path.abspath(cli_args.file)
+    table_name = Table.get_from_config(cli_args.table_name)
+
+    parser = CSVParser(table_name, statement_location)
     parser.parse()
-
-
-if __name__ == '__main__':
-    statement_location = os.path.abspath(sys.argv[1])
-    table = Table.get_from_config(sys.argv[2])
-    parse_statement(statement_location, table)

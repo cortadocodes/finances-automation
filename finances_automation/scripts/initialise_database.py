@@ -3,7 +3,7 @@ from finances_automation.entities.database import Database
 from finances_automation.entities.table import Table
 
 
-def initialise_database(overwrite):
+def initialise_database(overwrite=False):
     """ Create and initialise the database with an empty table.
 
     :param bool overwrite: True if existing database should be overwritten
@@ -16,5 +16,4 @@ def initialise_database(overwrite):
 
 
 if __name__ == '__main__':
-    require_overwrite = False
-    initialise_database(require_overwrite)
+    initialise_database()
