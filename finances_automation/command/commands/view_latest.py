@@ -25,6 +25,8 @@ def view_latest(cli_args):
     if columns == ['*']:
         columns = db.get_table_column_names(table)
         columns.remove('id')
+    elif 'date' not in columns:
+        columns = ['date'] + columns
 
     data = db.select_from(table, columns)
 

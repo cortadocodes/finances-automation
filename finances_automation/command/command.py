@@ -2,6 +2,7 @@ import argparse
 
 from finances_automation.command import command_parsers
 
+
 main_parser = argparse.ArgumentParser(prog='finances-automation', description='Automate your finances analysis.')
 subparsers = main_parser.add_subparsers(title='Subcommands')
 
@@ -11,7 +12,6 @@ subparsers, analyse = command_parsers.set_up_analyse(subparsers)
 subparsers, view_latest = command_parsers.set_up_view_latest(subparsers)
 
 cli_args = main_parser.parse_args()
-
 
 # Only import command functions if functionality is requested; this keeps the CLI's response quick for help requests.
 from finances_automation.command import commands

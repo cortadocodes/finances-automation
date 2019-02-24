@@ -19,6 +19,7 @@ def set_up_view_latest(subparsers):
         '-c',
         '--columns',
         default=['*'],
+        nargs='*',
         help='List of columns to view.'
     )
 
