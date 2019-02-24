@@ -11,9 +11,9 @@ def set_up_analyse(subparsers):
         help='Name of analysis to carry out.'
     )
     analyse.add_argument(
-        'table_to_analyse',
-        choices=conf.analysis_table_names,
-        help='Name of table containing transactions to analyse.'
+        'table_to_analyse_name',
+        choices=conf.transaction_table_names,
+        help='Name of transactions table to analyse.'
     )
     analyse.add_argument(
         'start_date',
@@ -25,7 +25,8 @@ def set_up_analyse(subparsers):
     )
     analyse.add_argument(
         '-s',
-        '--table_to_store',
+        '--table_to_store_name',
+        choices=conf.analysis_table_names,
         help='Name of table to store the analysis in.'
     )
     analyse.add_argument(
