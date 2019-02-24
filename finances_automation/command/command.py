@@ -17,7 +17,8 @@ def start():
     subparsers, analyse = command_parsers.set_up_analyse(subparsers)
     subparsers, view_latest = command_parsers.set_up_view_latest(subparsers)
 
-    cli_args = main_parser.parse_args()
+    # Exit here after if help option is selected (after printing help message).
+    main_parser.parse_args()
 
     # Only import command functions if functionality is requested; this keeps the CLI's response quick for help requests.
     from finances_automation.command import commands
@@ -30,8 +31,8 @@ def start():
         view_latest: commands.view_latest
     }
 
-    for parser, function in parser_functions.items():
-        parser.set_defaults(func=function)
+    for parser, parser_function in parser_functions.items():
+        parser.set_defaults(func=parser_function)
 
     # Get the arguments again to allow access to the newly-imported functions.
     cli_args = main_parser.parse_args()
