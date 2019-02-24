@@ -5,8 +5,6 @@ from finances_automation.entities.database import Database
 from finances_automation.entities.table import Table
 
 
-MAX_ROWS = 500
-pd.set_option('display.max_rows', MAX_ROWS)
 pd.set_option('display.max_columns', 500)
 pd.set_option('max_colwidth', 40)
 pd.set_option('display.width', 1000)
