@@ -28,4 +28,6 @@ def analyse_transactions(cli_args):
 
     analyser = Analyser(analysis_type, table_to_analyse, start_date, end_date, table_to_store)
     analyser.analyse()
-    analyser.export(OUTPUT_PATH)
+
+    if cli_args.export:
+        analyser.export(OUTPUT_PATH)
