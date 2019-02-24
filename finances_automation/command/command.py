@@ -5,6 +5,10 @@ from finances_automation.command import command_parsers
 
 
 def start():
+    """ Start the package's command line interface.
+
+    :return None:
+    """
     main_parser = argparse.ArgumentParser(prog='finances-automation', description=__DESCRIPTION__)
     subparsers = main_parser.add_subparsers(title='Subcommands')
 
@@ -33,3 +37,7 @@ def start():
     cli_args = main_parser.parse_args()
 
     cli_args.func(cli_args)
+
+
+if __name__ == '__main__':
+    start()
