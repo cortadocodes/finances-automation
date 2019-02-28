@@ -53,7 +53,8 @@ class Analyser:
             show_plot=True
         )
 
-        self._store()
+        if self.table_to_store is not None:
+            self._store()
 
     def _store(self):
         """ Store the analysis result in the database.
