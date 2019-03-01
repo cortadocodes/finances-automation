@@ -13,6 +13,12 @@ setup(
             'finances-automation = finances_automation.command.command:start'
         ]
     },
+    extras_require={
+        'develop': [
+            'flake8',
+            'pytest'
+        ]
+    },
     install_requires=[
         'dash==0.34.0',
         'dash-core-components==0.42.0',
