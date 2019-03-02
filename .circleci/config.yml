@@ -29,8 +29,8 @@ jobs:
       - checkout
       - restore_cache:
           keys:
-           - dependencies{{ checksum "setup.py" }}
-           - dependencies
+           - dependencies-{{ .Branch }}-{{ checksum "setup.py" }}
+           - dependencies-
       - run:
           name: Install package
           command: |
@@ -40,7 +40,7 @@ jobs:
       - save_cache:
           paths:
            - ./venv
-          key: dependencies{{ checksum "setup.py" }}
+          key: dependencies-{{ .Branch }}-{{ checksum "setup.py" }}
       - run:
           name: Run tests
           command: |
