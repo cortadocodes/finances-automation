@@ -1,10 +1,13 @@
-version: 2
+version: 2.1
+executors:
+  docker-python:
+    docker:
+      - image: circleci/python:3.7
 
 jobs:
 
   linting:
-    docker:
-      - image: circleci/python:3.7
+    executor: docker-python
     steps:
       - checkout
       - run:
@@ -21,8 +24,7 @@ jobs:
           path: lint_reports
 
   testing:
-    docker:
-      - image: circleci/python:3.7
+    executor: docker-python
     steps:
       - checkout
       - restore_cache:
