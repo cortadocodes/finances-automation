@@ -2,14 +2,11 @@ version: 2
 
 jobs:
 
-  build:
-
+  linting:
     docker:
       - image: circleci/python:3.7
-
     steps:
       - checkout
-
       - run:
           name: Run code linting
           command: |
@@ -18,40 +15,46 @@ jobs:
             pip install flake8
             mkdir lint_reports
             flake8 --output-file lint_reports/flake8 --count
-
       - store_test_results:
           path: lint_reports
-
       - store_artifacts:
           path: lint_reports
 
+  testing:
+    docker:
+      - image: circleci/python:3.7
+    steps:
+      - checkout
       - restore_cache:
           keys:
            - dependencies{{ checksum "setup.py" }}
            - dependencies
-
       - run:
           name: Install package
           command: |
             python3 -m venv venv
             . venv/bin/activate
             pip install .[develop] | cat && test ${PIPESTATUS} -eq 0
-
       - save_cache:
           paths:
            - ./venv
           key: dependencies{{ checksum "setup.py" }}
-
       - run:
           name: Run tests
           command: |
             . venv/bin/activate
             mkdir test-reports
             pytest
-
       - store_test_results:
           path: test-reports
-
       - store_artifacts:
           path: test-reports
 
+workflows:
+  version: 2
+  linting:
+    jobs:
+      - linting
+  testing:
+    jobs:
+      - testing
