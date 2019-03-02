@@ -44,7 +44,11 @@ jobs:
           command: |
             . venv/bin/activate
             mkdir test-reports
-            pytest --cov=finances-automation --junitxml=test-reports/junit.xml
+            pytest \
+              finances_automation/tests/ \
+              --cov=finances_automation \
+              --cov-report html:test-reports/coverage_html \
+              --junitxml=test-reports/junit.xml
       - store_test_results:
           path: test-reports
       - store_artifacts:
