@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 
 from finances_automation import configuration as conf
-from finances_automation.entities.table import Table
 from finances_automation.repositories import BaseRepository
 from finances_automation.validation.parse import base_parser_validator
 
@@ -15,7 +14,7 @@ class BaseParser:
     def __init__(self, table, file):
         """ Initialise a BaseParser that reads a .csv file, cleans it and stores the result in a database.
 
-        :param Table table: table to store data in
+        :param finances_automation.entities.table.Table table: table to store data in
         :param str file: path to file to read in
         """
         self.table = table

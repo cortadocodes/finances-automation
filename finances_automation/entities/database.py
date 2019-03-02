@@ -15,7 +15,7 @@ class Database:
     """
 
     # Location of bash script for creating psql database to connect to with Database object
-    raw_repository_root = subprocess.run( ['git', 'rev-parse', '--show-toplevel'], stdout=subprocess.PIPE).stdout
+    raw_repository_root = subprocess.run(['git', 'rev-parse', '--show-toplevel'], stdout=subprocess.PIPE).stdout
     repository_root = raw_repository_root.decode('ascii').strip()
 
     creation_script = os.path.join(repository_root, 'finances_automation', 'scripts', 'create_database.sh')

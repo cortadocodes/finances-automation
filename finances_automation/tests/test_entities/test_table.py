@@ -18,7 +18,7 @@ class TestTable:
         assert not table.date_format
         assert not table.category_columns
 
-    @pytest.mark.parametrize('name, type_, schema, monetary_columns, date_columns, date_format, category_columns',[
+    @pytest.mark.parametrize('name, type_, schema, monetary_columns, date_columns, date_format, category_columns', [
         [None for _ in range(7)],
         [1, '', {}] + [None for _ in range(4)],
         ['', 1, {}] + [None for _ in range(4)],

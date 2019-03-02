@@ -20,7 +20,7 @@ def start():
     # Exit here after if help option is selected (after printing help message).
     main_parser.parse_args()
 
-    # Only import command functions if functionality is requested; this keeps the CLI's response quick for help requests.
+    # Only import command functions if functionality is requested; this keeps CLI response quick for help requests.
     from finances_automation.command import commands
 
     parser_functions = {

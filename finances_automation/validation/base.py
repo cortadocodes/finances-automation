@@ -1,6 +1,6 @@
 def validate_variables(variables, allowed_variable_types):
     """ Validate that each variable in a dictionary is of the allowed types.
-    
+
     :param dict(str, any) variables: variable name and variable
     :param dict(str, list(type)) allowed_variable_types: variable_name and list of allowed types
     :return None:
