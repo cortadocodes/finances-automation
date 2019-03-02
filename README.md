@@ -1,5 +1,7 @@
 # Finances automation
 
+[![CircleCI](https://circleci.com/gh/cortadocodes/finances-automation.svg?style=svg)](https://circleci.com/gh/cortadocodes/finances-automation)
+
 ## Usage
 ```
 usage: finances-automation [-h] {parse,categorise,analyse,view_latest} ...
