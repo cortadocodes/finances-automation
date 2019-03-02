@@ -18,8 +18,6 @@ jobs:
             pip install flake8
             mkdir lint_reports
             flake8 --output-file lint_reports/flake8 --count
-      - store_test_results:
-          path: lint_reports
       - store_artifacts:
           path: lint_reports
 
@@ -46,7 +44,7 @@ jobs:
           command: |
             . venv/bin/activate
             mkdir test-reports
-            pytest
+            pytest --cov=finances-automation --junitxml=test-reports/junit.xml
       - store_test_results:
           path: test-reports
       - store_artifacts:

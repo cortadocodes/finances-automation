@@ -16,7 +16,8 @@ setup(
     extras_require={
         'develop': [
             'flake8',
-            'pytest'
+            'pytest',
+            'pytest-cov'
         ]
     },
     install_requires=[
