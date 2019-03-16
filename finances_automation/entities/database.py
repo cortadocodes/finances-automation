@@ -58,8 +58,7 @@ class Database:
         return repr
 
     def create(self, overwrite=False):
-        """
-        Create a PostgreSQL database at self.data_location for self.user.
+        """ Create a PostgreSQL database at self.data_location for self.user.
 
         :param bool overwrite: overwrite existing data in pre-existing data_location if True
         """
@@ -78,8 +77,7 @@ class Database:
             raise FileNotFoundError("Database creation not verified.")
 
     def start(self):
-        """
-        Start PostgreSQL server.
+        """ Start PostgreSQL server.
         """
         subprocess.run(['pg_ctl', '-D', self.data_location, 'start', '--silent', '-l', conf.psql_log_location])
         if not self.is_started():
@@ -96,8 +94,7 @@ class Database:
             raise ConnectionError('Failed to stop PostgreSQL server.')
 
     def connect(self):
-        """
-        Connect to the database.
+        """ Connect to the database.
         """
         if not self.is_connected():
             self.connection = psycopg2.connect(dbname=self.name)
@@ -110,8 +107,7 @@ class Database:
                 raise ConnectionError("Cursor connection unsuccessful.")
 
     def disconnect(self):
-        """
-        Disconnect from the database; if already disconnected, do nothing.
+        """ Disconnect from the database; if already disconnected, do nothing.
         """
         if self.is_cursor_connected():
             self.cursor.close()
@@ -184,7 +180,7 @@ class Database:
             return self.execute_statement(statement, values=condition_values, output_required=True)
 
     def insert_into(self, table, columns, values_group):
-        """Insert values into columns of a table.
+        """ Insert values into columns of a table.
 
         :param Table table: database table to insert into
         :param tuple(str) columns: columns to insert into
@@ -205,8 +201,7 @@ class Database:
                 self.execute_statement(statement, values)
 
     def execute_statement(self, statement, values=None, output_required=False):
-        """
-        Execute a SQL statement.
+        """ Execute a SQL statement.
 
         :param str statement: valid SQL statement, command or query
         :param tuple values: values to pass to SQL statement or database
@@ -230,8 +225,7 @@ class Database:
         return output
 
     def is_started(self):
-        """
-        Check database has been started.
+        """ Check database has been started.
 
         :return bool: True if started
         """
@@ -245,8 +239,7 @@ class Database:
         return self.server_started
 
     def is_connected(self):
-        """
-        Check database is connected to Database object.
+        """ Check database is connected to Database object.
 
         :return bool: True if connected
         """
@@ -261,8 +254,7 @@ class Database:
         return self.connected
 
     def is_cursor_connected(self):
-        """
-        Check cursor is connected to database.
+        """ Check cursor is connected to database.
 
         :return bool: True if connected.
         """
@@ -277,8 +269,7 @@ class Database:
         return self.cursor_connected
 
     def verify_existence(self):
-        """
-        Verify the database has actually been created.
+        """ Verify the database has actually been created.
 
         :return list: table names and metadata
         """
