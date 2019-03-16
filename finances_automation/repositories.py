@@ -53,6 +53,55 @@ class TransactionsRepository(BaseRepository):
     """ A repository that provides updating of the category columns of a transactions database
     table, in addition to the methods of the base repository.
     """
+    def get_latest_balance(self):
+        self.db.start()
+
+        query = (
+            """
+            SELECT balance FROM {}
+            ORDER BY date DESC
+            LIMIT 1
+            """
+            .format(self.table.name)
+        )
+
+        latest_balance = self.db.execute_statement(query, output_required=True)[0]
+        self.db.stop()
+        return latest_balance
+
+    def get_latest_parsed_transaction_date(self):
+        self.db.start()
+
+        query = (
+            """
+            SELECT date FROM {}
+            ORDER BY date DESC
+            LIMIT 1
+            """
+            .format(self.table.name)
+        )
+
+        latest_parsed_date = self.db.execute_statement(query, output_required=True)[0]
+        self.db.stop()
+        return latest_parsed_date
+
+    def get_latest_categorised_transaction_date(self):
+        self.db.start()
+
+        query = (
+            """
+            SELECT date FROM {}
+            WHERE {} is not NULL
+            AND {} is not NULL
+            ORDER BY date DESC
+            LIMIT 1
+            """
+            .format(self.table.name, *self.table.category_columns)
+        )
+
+        latest_categorised_date = self.db.execute_statement(query, output_required=True)[0]
+        self.db.stop()
+        return latest_categorised_date
 
     def update_categories(self):
         """ Update the table's category columns.
