@@ -5,6 +5,7 @@ import subprocess
 
 import psycopg2
 
+from finances_automation import configuration as conf
 from finances_automation.entities.table import Table
 from finances_automation.validation.database import database_validator
 
@@ -13,12 +14,7 @@ class Database:
     """ Create a PostgreSQL database wrapper object, allowing queries and commands to be passed in
     and data to be passed out.
     """
-
-    # Location of bash script for creating psql database to connect to with Database object
-    raw_repository_root = subprocess.run(['git', 'rev-parse', '--show-toplevel'], stdout=subprocess.PIPE).stdout
-    repository_root = raw_repository_root.decode('ascii').strip()
-
-    creation_script = os.path.join(repository_root, 'finances_automation', 'scripts', 'create_database.sh')
+    creation_script_location = os.path.join(conf.package_root, 'finances_automation', 'scripts', 'create_database.sh')
 
     @database_validator
     def __init__(self, name, data_location, user):
@@ -69,7 +65,7 @@ class Database:
             raise TypeError("overwrite should be boolean")
 
         # Run database creation bash script
-        subprocess.run(['bash', Database.creation_script, self.name, self.data_location, self.user, overwrite])
+        subprocess.run(['bash', Database.creation_script_location, self.name, self.data_location, self.user, overwrite])
 
         self.verify_existence()
         if not self.verified:
@@ -79,7 +75,7 @@ class Database:
         """
         Start PostgreSQL server.
         """
-        subprocess.run(['pg_ctl', '-D', self.data_location, 'start'])
+        subprocess.run(['pg_ctl', '-D', self.data_location, 'start', '--silent', '-l', conf.psql_log_location])
         if not self.is_started():
             raise ConnectionError('Failed to start PostgreSQL server.')
         self.connect()
@@ -89,7 +85,7 @@ class Database:
         Stop PostgreSQL server.
         """
         self.disconnect()
-        subprocess.run(['pg_ctl', '-D', self.data_location, 'stop'])
+        subprocess.run(['pg_ctl', '-D', self.data_location, 'stop', '--silent', '-l', conf.psql_log_location])
         if self.is_started():
             raise ConnectionError('Failed to stop PostgreSQL server.')
 

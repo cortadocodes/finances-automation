@@ -9,6 +9,7 @@ package_root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 db_name = 'finances'
 db_cluster = os.path.join(package_root, 'data', 'database_cluster')
 user = 'Marcus1'
+psql_log_location = os.path.join(package_root, 'psql.log')
 
 categories = {
     'income': [
