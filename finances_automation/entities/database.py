@@ -47,6 +47,12 @@ class Database:
         self.connection = None
         self.cursor = None
 
+    def __enter__(self):
+        self.start()
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.stop()
+
     def __repr__(self):
         repr = '{} database at {}: server_started = {}'.format(self.name, self.data_location, self.server_started)
         return repr
@@ -136,9 +142,8 @@ class Database:
 
         table_creation_statement = 'CREATE TABLE {} ({});'.format(table.name, schema)
 
-        self.start()
-        self.execute_statement(table_creation_statement)
-        self.stop()
+        with self:
+            self.execute_statement(table_creation_statement)
 
     def get_table_column_names(self, table):
         """ Get the column names of a table.
@@ -175,11 +180,8 @@ class Database:
             statement = 'SELECT {} FROM {};'.format(','.join(columns), table.name)
             condition_values = None
 
-        self.start()
-        data = self.execute_statement(statement, values=condition_values, output_required=True)
-        self.stop()
-
-        return data
+        with self:
+            return self.execute_statement(statement, values=condition_values, output_required=True)
 
     def insert_into(self, table, columns, values_group):
         """Insert values into columns of a table.
@@ -188,22 +190,19 @@ class Database:
         :param tuple(str) columns: columns to insert into
         :param list(tuple) values_group: tuple of values for each row
         """
-        self.start()
+        with self:
+            for values in values_group:
 
-        for values in values_group:
-
-            statement = (
-                'INSERT INTO {} ({}) VALUES ({});'.format(
-                    table.name,
-                    ', '.join(['{}'] * len(columns)),
-                    ', '.join(['%s'] * len(columns))
+                statement = (
+                    'INSERT INTO {} ({}) VALUES ({});'.format(
+                        table.name,
+                        ', '.join(['{}'] * len(columns)),
+                        ', '.join(['%s'] * len(columns))
+                    )
+                    .format(*columns)
                 )
-                .format(*columns)
-            )
 
-            self.execute_statement(statement, values)
-
-        self.stop()
+                self.execute_statement(statement, values)
 
     def execute_statement(self, statement, values=None, output_required=False):
         """

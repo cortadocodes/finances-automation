@@ -54,83 +54,75 @@ class TransactionsRepository(BaseRepository):
     table, in addition to the methods of the base repository.
     """
     def get_latest_balance(self):
-        self.db.start()
+        with self.db:
 
-        query = (
-            """
-            SELECT balance FROM {}
-            ORDER BY date DESC
-            LIMIT 1
-            """
-            .format(self.table.name)
-        )
+            query = (
+                """
+                SELECT balance FROM {}
+                ORDER BY date DESC
+                LIMIT 1
+                """
+                .format(self.table.name)
+            )
 
-        latest_balance = self.db.execute_statement(query, output_required=True)[0]
-        self.db.stop()
-        return latest_balance
+            return self.db.execute_statement(query, output_required=True)[0]
 
     def get_latest_parsed_transaction_date(self):
-        self.db.start()
+        with self.db:
 
-        query = (
-            """
-            SELECT date FROM {}
-            ORDER BY date DESC
-            LIMIT 1
-            """
-            .format(self.table.name)
-        )
+            query = (
+                """
+                SELECT date FROM {}
+                ORDER BY date DESC
+                LIMIT 1
+                """
+                .format(self.table.name)
+            )
 
-        latest_parsed_date = self.db.execute_statement(query, output_required=True)[0]
-        self.db.stop()
-        return latest_parsed_date
+            return self.db.execute_statement(query, output_required=True)[0]
 
     def get_latest_categorised_transaction_date(self):
-        self.db.start()
+        with self.db:
 
-        query = (
-            """
-            SELECT date FROM {}
-            WHERE {} is not NULL
-            AND {} is not NULL
-            ORDER BY date DESC
-            LIMIT 1
-            """
-            .format(self.table.name, *self.table.category_columns)
-        )
+            query = (
+                """
+                SELECT date FROM {}
+                WHERE {} is not NULL
+                AND {} is not NULL
+                ORDER BY date DESC
+                LIMIT 1
+                """
+                .format(self.table.name, *self.table.category_columns)
+            )
 
-        latest_categorised_date = self.db.execute_statement(query, output_required=True)[0]
-        self.db.stop()
-        return latest_categorised_date
+            return self.db.execute_statement(query, output_required=True)[0]
 
     def update_categories(self):
         """ Update the table's category columns.
         """
-        self.db.start()
+        with self.db:
 
-        for i in range(len(self.table.data)):
-            id_ = int(self.table.data.iloc[i, 0])
-            row = self.table.data.iloc[i]
+            for i in range(len(self.table.data)):
+                id_ = int(self.table.data.iloc[i, 0])
+                row = self.table.data.iloc[i]
 
-            data = tuple([
-                int(row[self.table.category_columns[0]]),
-                row[self.table.category_columns[1]]
-            ])
+                data = tuple([
+                    int(row[self.table.category_columns[0]]),
+                    row[self.table.category_columns[1]]
+                ])
 
-            operation = (
-                """
-                UPDATE {0}
-                SET {1} = %s, {2} = %s
-                WHERE {0}.id = {3}
-                """
-                .format(
-                    self.table.name,
-                    self.table.category_columns[0],
-                    self.table.category_columns[1],
-                    id_
+                operation = (
+                    """
+                    UPDATE {0}
+                    SET {1} = %s, {2} = %s
+                    WHERE {0}.id = {3}
+                    """
+                    .format(
+                        self.table.name,
+                        self.table.category_columns[0],
+                        self.table.category_columns[1],
+                        id_
+                    )
                 )
-            )
 
-            self.db.execute_statement(operation, data)
-
-        self.db.stop()
+                self.db.execute_statement(operation, data)
