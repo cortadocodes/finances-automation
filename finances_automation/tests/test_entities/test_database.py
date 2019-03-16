@@ -23,7 +23,7 @@ class TestDatabase:
         db.create()
 
         with db:
-            assert db.server_started
+            assert db.is_started()
 
         self.teardown()
 
@@ -33,7 +33,7 @@ class TestDatabase:
         db.start()
         db.stop()
 
-        assert not db.server_started
+        assert not db.is_started()
 
         self.teardown()
 
