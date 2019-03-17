@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Create a new PostgreSQL database storage cluster, start up a server for it and create a database there.
+# Create a new PostgreSQL storage cluster and database.
 
 
 database="$1"
@@ -10,11 +10,12 @@ overwrite="$4"
 
 
 check_overwrite() {
-    # If the cluster exists already, ask the user if they want to overwrite it
+    # Check if the user wishes for an existing database cluster to be overwritten.
     if [[ -d "$database_storage_area" ]] ; then
         case "$overwrite" in
             [Yy]* )
-                overwrite_cluster;;
+                # If they do, remove the existing cluster.
+                remove_cluster;;
             [Nn]* )
                 exit;;
         esac
@@ -23,32 +24,29 @@ check_overwrite() {
 
 
 database_exists() {
+    # Check if a psql database with a given name exists.
     check_database_exists="$(psql -l -t | grep "$1" | wc -l)"
 }
 
 
-overwrite_cluster() {
+remove_cluster() {
+    # Stop and remove a database cluster.
     pg_ctl -D "$database_storage_area" stop
     rm -r "$database_storage_area"
 }
 
 
 create_database() {
-    # Create database cluster
+    # Create a database cluster and database, also creating a database for the username if required so that future
+    # psql commands can be executed by them.
     initdb -D "$database_storage_area"
-
-    # Start database server
     pg_ctl -D "$database_storage_area" start
 
-    # If necessary, create user database so future psql commands can be executed by them
     if [[ ! $(database_exists $user) ]] ; then
         createdb "$user"
     fi
 
-    # Create the required database
     createdb "$database"
-
-    # Stop server
     pg_ctl -D "$database_storage_area" stop
 }
 
