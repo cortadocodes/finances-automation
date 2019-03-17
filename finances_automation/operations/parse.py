@@ -12,21 +12,20 @@ class BaseParser:
 
     @base_parser_validator
     def __init__(self, table, file):
-        """ Initialise a BaseParser that reads a .csv file, cleans it and stores the result in a database.
+        """ Initialise a BaseParser.
 
         :param finances_automation.entities.table.Table table: table to store data in
         :param str file: path to file to read in
         """
         self.table = table
-        self.table_repository = BaseRepository(self.table)
-
         self.file = file
 
+        self.table_repository = BaseRepository(self.table)
         self.data = None
 
     def _read(self, *args, **kwargs):
-        """ Read a statement at self.file, perform some operations and store it in self.data.
-        This method should be overridden in inheriting classes.
+        """ Read in a statment, perform some operations and store it in memory. This method should be overridden in
+        inheriting classes.
 
         :raise NotImplementedError: if method not overridden by inheriting class
         """
@@ -41,10 +40,10 @@ class BaseParser:
 
 
 class CSVParser(BaseParser):
-    """ A parser that loads a .csv statement and cleans the data before storing it in the database.
+    """ A parser that loads and cleans CSV statements, before storing them in the database.
     """
     def parse(self):
-        """ Clean and store the statement.
+        """ Clean and store a statement.
 
         :param str delimiter: column delimiter in self.file
         :param int header: row number that headers are on
@@ -56,7 +55,7 @@ class CSVParser(BaseParser):
         self.table_repository.insert(self.data)
 
     def _read(self, delimiter, header, usecols, dtype):
-        """ Read the .csv statement at self.file into a pd.DataFrame object, and store it in self.data.
+        """ Read a CSV statement into a dataframe, storing it in memory.
 
         :param str delimiter: column delimiter in self.file
         :param int header: row number that headers are on
@@ -92,7 +91,7 @@ class CSVParser(BaseParser):
         self._enforce_column_types()
 
     def _convert_column_names(self):
-        """ Convert column names to snake_case.
+        """ Convert column names to snake case.
         """
         self.data.columns = self.data.columns.str.lower().str.replace(' ', '_')
 
@@ -104,7 +103,7 @@ class CSVParser(BaseParser):
                 self.data[column] = np.nan
 
     def _remove_unwanted_characters(self):
-        """ Removing unwanted characters from monetary_columns.
+        """ Remove unwanted characters from monetary columns.
         """
         for column in self.table.monetary_columns.values():
             self.data[column] = (
@@ -112,7 +111,7 @@ class CSVParser(BaseParser):
             )
 
     def _convert_negative_values(self):
-        """ Convert (numbers) to standard negative notation.
+        """ Convert bracket-denoted negative numbers to standard negative notation.
         """
         negatives_values = r'\((\d*\.*\d*)\)'
         replacement = r'-\1'
