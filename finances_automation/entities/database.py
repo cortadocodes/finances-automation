@@ -179,7 +179,7 @@ class Database:
         with self:
             return self.execute_statement(statement, values=condition_values, output_required=True)
 
-    def insert_into(self, table, columns, values_group):
+    def insert_into(self, table, columns, values_group, ignore_duplicates=True):
         """ Insert values into columns of a table.
 
         :param Table table: database table to insert into
@@ -189,13 +189,14 @@ class Database:
         with self:
             for values in values_group:
 
+                column_names = ', '.join(columns)
+                value_placeholders = ', '.join('%s' for _ in columns)
+
+                do_nothing_clause = 'ON CONFLICT DO NOTHING' if ignore_duplicates else ''
+
                 statement = (
-                    'INSERT INTO {} ({}) VALUES ({});'.format(
-                        table.name,
-                        ', '.join(['{}'] * len(columns)),
-                        ', '.join(['%s'] * len(columns))
-                    )
-                    .format(*columns)
+                    'INSERT INTO {} ({}) VALUES ({}) {};'
+                    .format(table.name, column_names, value_placeholders, do_nothing_clause)
                 )
 
                 self.execute_statement(statement, values)

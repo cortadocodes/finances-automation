@@ -45,7 +45,8 @@ class BaseRepository:
         self.db.insert_into(
             table=self.table,
             columns=tuple(data.columns),
-            values_group=data.itertuples(index=False)
+            values_group=data.itertuples(index=False),
+            ignore_duplicates=True
         )
 
 
