@@ -1,13 +1,13 @@
 from setuptools import setup, find_packages
 
-from finances_automation import __DESCRIPTION__
-from finances_automation import __VERSION__
+
+__VERSION__ = '1.0.0'
 
 
 setup(
     author='Marcus Lugg',
     author_email='marcuslugg@googlemail.com',
-    description=__DESCRIPTION__,
+    description='Automate your finances analysis.',
     entry_points={
         'console_scripts': [
             'finances-automation = finances_automation.command.command:start'
