@@ -1,8 +1,9 @@
-FROM python:3.6.5
+FROM python:3.6.5-slim
 
 WORKDIR /usr/src/app
 
-RUN apt update && apt install -y build-essential && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y --no-install-recommends build-essential \
+    && rm -rf /var/lib/apt/lists/*
 
 COPY setup.py .
 
@@ -12,4 +13,4 @@ COPY . .
 
 VOLUME /data
 
-CMD finances-automation
+CMD /bin/bash
