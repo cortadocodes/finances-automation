@@ -15,11 +15,8 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install flake8
-            mkdir lint_reports
-            flake8 --output-file lint_reports/flake8 --count
-      - store_artifacts:
-          path: lint_reports
+            pip install flake8 | cat && test ${PIPESTATUS} -eq 0
+            flake8 --count
 
   testing:
     executor: docker-python
