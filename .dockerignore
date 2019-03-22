@@ -1,24 +1,21 @@
 api-docs/
 data/
+htmlcov/
 venv/
 
-.circleci
-.git
-.gitignore
-
-htmlcov/
-.coverage
-.DS_Store
 .idea/
 .ipynb_checkpoints/
 
-*.log
+.circleci
+.coverage
+.DS_Store
+.env
+.git
+.gitignore
+
+**/__pycache__/
 
 **/*.egg-info
-**/*.pyc
-**/__pycache__/
-**/*.pyi
-**/*.pyo
 **/.pytest_cache/
 
-
+*.log
