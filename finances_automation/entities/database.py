@@ -93,8 +93,7 @@ class Database:
         self.connect()
 
     def stop(self):
-        """
-        Stop PostgreSQL server.
+        """ Stop PostgreSQL server.
         """
         self.disconnect()
         subprocess.run(['pg_ctl', '-D', self.data_location, 'stop', '--silent', '-l', conf.psql_log_location])

@@ -3,10 +3,10 @@ which columns are relevant in statements, how dates are parsed, and which catego
 """
 import os
 
-from dotenv import load_dotenv
+import dotenv
 
 
-load_dotenv()
+dotenv.load_dotenv()
 
 package_root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
