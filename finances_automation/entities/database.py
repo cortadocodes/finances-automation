@@ -17,12 +17,16 @@ class Database:
     creation_script_location = os.path.join(conf.package_root, 'finances_automation', 'scripts', 'create_database.sh')
 
     @database_validator
-    def __init__(self, name, data_location, user):
+    def __init__(self, host, port, name, cluster, user, password=None, log_location=None):
         """ Initialise a Database object for an existing or to-be-created PostgreSQL database.
 
-        :param str name: database name
-        :param str data_location: path to database cluster
-        :param str user: name of database user
+        :param str host:
+        :param str port:
+        :param str name:
+        :param str cluster: path to database cluster
+        :param str user:
+        :param str password:
+        :param str loc_location:
 
         :var bool server_started: indicates if psql server has been started
         :var bool verified: indicates that psql database does, in fact, exist
@@ -33,9 +37,13 @@ class Database:
         """
 
         # Database properties
+        self.host = host
+        self.port = port
         self.name = name
-        self.data_location = data_location
+        self.data_location = cluster
         self.user = user
+        self.password = password
+        self.log_location = log_location
 
         # Database status indicators (relating to actual psql database and the connection to it)
         self.server_started = False
@@ -79,7 +87,7 @@ class Database:
     def start(self):
         """ Start PostgreSQL server.
         """
-        subprocess.run(['pg_ctl', '-D', self.data_location, 'start', '--silent', '-l', conf.psql_log_location])
+        subprocess.run(['pg_ctl', '-D', self.data_location, 'start', '--silent', '-l', self.log_location])
         if not self.is_started():
             raise ConnectionError('Failed to start PostgreSQL server.')
         self.connect()
@@ -97,7 +105,13 @@ class Database:
         """ Connect to the database.
         """
         if not self.is_connected():
-            self.connection = psycopg2.connect(dbname=self.name)
+            self.connection = psycopg2.connect(
+                host=self.host,
+                port=self.port,
+                dbname=self.name,
+                user=self.user,
+                password=self.password
+            )
             if not self.is_connected():
                 raise ConnectionError("Database connection unsuccessful.")
 

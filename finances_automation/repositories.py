@@ -14,7 +14,7 @@ class BaseRepository:
         :param finances_automation.entities.table.Table table:
         """
         self.table = table
-        self.db = Database(conf.db_name, conf.db_cluster, conf.user)
+        self.db = Database(**conf.db_config)
 
     def load(self, start_date, end_date):
         """ Load data from the table between a start and end date (inclusive).

@@ -3,13 +3,22 @@ which columns are relevant in statements, how dates are parsed, and which catego
 """
 import os
 
+from dotenv import load_dotenv
+
+
+load_dotenv()
 
 package_root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
-db_name = 'finances'
-db_cluster = os.path.join(package_root, 'data', 'database_cluster')
-user = 'Marcus1'
-psql_log_location = os.path.join(package_root, 'psql.log')
+db_config = {
+    'host':os.getenv('DB_HOST'),
+    'port': os.getenv('DB_PORT'),
+    'name': os.getenv('DB_NAME'),
+    'cluster': os.path.join(package_root, 'data', 'database_cluster'),
+    'user': os.getenv('DB_USER'),
+    'password': os.getenv('DB_PASSWORD'),
+    'log_location': os.path.join(package_root, 'psql.log')
+}
 
 categories = {
     'income': [

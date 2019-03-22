@@ -20,7 +20,7 @@ def view_latest(cli_args):
     columns = cli_args.columns or list(table.schema.keys())
     limit = cli_args.n
 
-    db = Database(conf.db_name, conf.db_cluster, conf.user)
+    db = Database(**conf.db_config)
 
     if columns == ['*']:
         columns = db.get_table_column_names(table)
