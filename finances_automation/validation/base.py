@@ -5,11 +5,18 @@ def validate_variables(variables, allowed_variable_types):
     :param dict(str, list(type)) allowed_variable_types: variable_name and list of allowed types
     :return None:
     """
-    error_message = '{} parameter should be of type {}; received {}.'
+    error_message = '{} parameter should be of type {}; received {}, which is of type {}.'
 
     for variable_name, allowed_types in allowed_variable_types.items():
         variable = variables[variable_name]
 
         if any(isinstance(variable, allowed_type) for allowed_type in allowed_types):
             continue
-        raise TypeError(error_message.format(variable_name, ' or '.join(allowed_types), variable))
+        raise TypeError(
+            error_message.format(
+                variable_name,
+                ' or '.join(str(type_) for type_ in allowed_types),
+                variable,
+                str(type(variable))
+            )
+        )
