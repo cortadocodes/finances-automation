@@ -7,20 +7,15 @@ import pytest
 from finances_automation.entities.database import Database
 
 
-@pytest.mark.skip(reason='Slow to run.')
+# @pytest.mark.skip(reason='Slow to run.')
 class TestDatabase:
-
-    database_name = 'test_database'
-    database_cluster = os.path.join('..', '..', 'data', 'test_database_cluster')
-    database_user = 'Marcus1'
 
     db = Database(
         host='localhost',
-        port=None,
-        name=database_name,
-        cluster=database_cluster,
-        user=database_user,
-        password=None
+        name='test_database',
+        cluster=os.path.join('..', '..', 'data', 'test_database_cluster'),
+        user='Marcus1',
+        log_location='psql_test.log'
     )
 
     def teardown(self):

@@ -17,7 +17,7 @@ class Database:
     creation_script_location = os.path.join(conf.package_root, 'finances_automation', 'scripts', 'create_database.sh')
 
     @database_validator
-    def __init__(self, host, port, name, cluster, user, password=None, log_location=None):
+    def __init__(self, host, name, cluster, user, password='', port=5432, log_location=conf.package_root):
         """ Initialise a Database object for an existing or to-be-created PostgreSQL database.
 
         :param str host:
@@ -38,7 +38,7 @@ class Database:
 
         # Database properties
         self.host = host
-        self.port = port
+        self.port = int(port)
         self.name = name
         self.data_location = cluster
         self.user = user
@@ -78,7 +78,7 @@ class Database:
             raise TypeError("overwrite should be boolean")
 
         # Run database creation bash script
-        subprocess.run(['bash', Database.creation_script_location, self.name, self.data_location, self.user, overwrite])
+        subprocess.run(['bash', self.creation_script_location, self.name, self.data_location, self.user, overwrite])
 
         self.verify_existence()
         if not self.verified:
@@ -87,7 +87,7 @@ class Database:
     def start(self):
         """ Start PostgreSQL server.
         """
-        subprocess.run(['pg_ctl', '-D', self.data_location, 'start', '--silent', '-l', self.log_location])
+        subprocess.run(['pg_ctl', '-D', self.data_location, 'start', '-l', self.log_location])
         if not self.is_started():
             raise ConnectionError('Failed to start PostgreSQL server.')
         self.connect()
@@ -96,7 +96,7 @@ class Database:
         """ Stop PostgreSQL server.
         """
         self.disconnect()
-        subprocess.run(['pg_ctl', '-D', self.data_location, 'stop', '--silent', '-l', conf.psql_log_location])
+        subprocess.run(['pg_ctl', '-D', self.data_location, 'stop', '-l', self.log_location])
         if self.is_started():
             raise ConnectionError('Failed to stop PostgreSQL server.')
 

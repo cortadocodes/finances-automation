@@ -3,23 +3,20 @@ version: '3.4'
 services:
 
   app:
-    build:
-      context: .
+    image: finances-automation:latest
     restart: always
-    volumes:
-      type: bind
-      source: data
-      target: /var/lib/postgresql/data
     depends_on:
       - db
 
   db:
-    image: postgres
+    image: postgres:latest
     restart: always
-    env_file:
-      - .env
     ports:
       - ${DB_PORT}:5432
+    volumes:
+      - "./data/database_cluster:/var/lib/postgresql/data"
+    env_file:
+      - .env
     environment:
       POSTGRES_DB: ${DB_NAME}
       POSTGRES_USER: ${DB_USER}
