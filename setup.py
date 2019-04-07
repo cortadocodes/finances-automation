@@ -25,6 +25,7 @@ setup(
         'dash-core-components==0.42.0',
         'dash-html-components==0.13.4',
         'dash-table==3.1.11',
+        'python-dotenv<0.11.0',
         'matplotlib==3.0.2',
         'numpy==1.15.2',
         'pandas==0.23.4',
