@@ -1,3 +1,5 @@
+import itertools
+
 import pandas as pd
 import psycopg2
 
@@ -8,20 +10,40 @@ class BaseRepository:
     """ A base repository that provides loading of data from a database table and insertion into it.
     """
 
-    def __init__(self, table):
+    def __init__(self, table, db_config = None):
         """ Initialise a repository for the given table.
 
         :param finances_automation.entities.table.Table table:
+        :param dict|None db_config:
         """
         self.table = table
-        self.connection = psycopg2.connect(**conf.db_config)
+        self.db_config = db_config or conf.db_config
+        self.connection = psycopg2.connect(**self.db_config)
         self.cursor = self.connection.cursor()
+
+
+    def create_table(self):
+        """ Create the table in the database.
+
+        :return None:
+        """
+        columns = self.table.schema.keys()
+        column_schema_specifications = self.table.schema.values()
+        schema_list = list(itertools.chain(*list(zip(columns, column_schema_specifications))))
+        schema = ',\n'.join('{} {}' for _ in columns).format(*schema_list)
+
+        query = 'CREATE TABLE {} ({});'.format(self.table.name, schema)
+
+        with self.cursor as cursor:
+            cursor.execute(query)
+
 
     def load(self, start_date, end_date):
         """ Load data from the table between a start and end date (inclusive).
 
         :param str start_date:
         :param str end_date:
+        :return None:
         """
         query = (
             """
@@ -53,6 +75,7 @@ class BaseRepository:
         """ Insert data into the table.
 
         :param pandas.DataFrame data:
+        :return None:
         """
         columns_placeholder = ', '.join('%s' for column in data.columns)
         values_placeholder = [', '.join('%s' for column in data.columns) for row in data]
