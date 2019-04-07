@@ -13,7 +13,7 @@ package_root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 db_config = {
     'host':os.getenv('DB_HOST'),
     'port': os.getenv('DB_PORT'),
-    'name': os.getenv('DB_NAME'),
+    'dbname': os.getenv('DB_NAME'),
     'user': os.getenv('DB_USER'),
     'password': os.getenv('DB_PASSWORD'),
 }
@@ -157,8 +157,32 @@ table_configurations = {
         'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
         'date_format': '%d/%m/%Y',
         'category_columns': None
+    },
+    'table_for_tests': {
+        'name': 'test_table',
+        'type_': 'transactions',
+        'schema': {
+            'id': 'serial PRIMARY KEY',
+            'date': 'DATE NOT NULL',
+            'card': 'VARCHAR',
+            'description': 'VARCHAR',
+            'money_in': 'VARCHAR',
+            'money_out': 'VARCHAR',
+            'balance': 'DECIMAL',
+            'category_code': 'DECIMAL',
+            'category': 'VARCHAR'
+        },
+        'monetary_columns': {
+            'money_in': 'money_in',
+            'money_out': 'money_out',
+            'balance': 'balance'
+        },
+        'date_columns': ['date'],
+        'date_format': '%d/%m/%Y',
+        'category_columns': ['category_code', 'category']
     }
 }
+
 
 table_names = [table_name for table_name in table_configurations]
 
