@@ -1,7 +1,7 @@
 import pandas as pd
+import psycopg2
 
 from finances_automation import configuration as conf
-from finances_automation.entities.database import Database
 
 
 class BaseRepository:
@@ -14,7 +14,8 @@ class BaseRepository:
         :param finances_automation.entities.table.Table table:
         """
         self.table = table
-        self.db = Database(**conf.db_config)
+        self.connection = psycopg2.connect(**conf.db_config)
+        self.cursor = self.connection.cursor()
 
     def load(self, start_date, end_date):
         """ Load data from the table between a start and end date (inclusive).
@@ -22,14 +23,25 @@ class BaseRepository:
         :param str start_date:
         :param str end_date:
         """
-        self.table.data = self.db.select_from(self.table, columns=['*'], conditions=[
-            ('{} >='.format(self.table.date_columns[0]), start_date),
-            ('AND {} <='.format(self.table.date_columns[0]), end_date)
-        ])
-
-        self.table.data = pd.DataFrame(
-            self.table.data, columns=self.table.schema.keys()
+        query = (
+            """
+            SELECT *
+            FROM {}
+            WHERE date >= %s
+            AND date <= %s;
+            """
+            .format(self.table.name)
         )
+
+        with self.cursor as cursor:
+            cursor.execute(
+                query,
+                (start_date, end_date)
+            )
+
+            data = cursor.fetchall()
+
+        self.table.data = pd.DataFrame(data, columns=self.table.schema.keys())
 
         self.table.data = self.table.data.astype(
             dtype={column: float for column in self.table.monetary_columns.values()}
@@ -37,93 +49,116 @@ class BaseRepository:
 
         self.table.data = self.table.data.astype({'category_code': float})
 
-    def insert(self, data):
+    def insert(self, data, ignore_duplicates=True):
         """ Insert data into the table.
 
         :param pandas.DataFrame data:
         """
-        self.db.insert_into(
-            table=self.table,
-            columns=tuple(data.columns),
-            values_group=data.itertuples(index=False),
-            ignore_duplicates=True
+        columns_placeholder = ', '.join('%s' for column in data.columns)
+        values_placeholder = [', '.join('%s' for column in data.columns) for row in data]
+        do_nothing_clause = 'ON CONFLICT DO NOTHING' if ignore_duplicates else ''
+
+        query = (
+            """
+            INSERT INTO {}
+            ({})
+            VALUES {}
+            {};
+            """
+            .format(self.table.name, columns_placeholder, values_placeholder, do_nothing_clause)
         )
 
+        with self.cursor as cursor:
+            cursor.execute(
+                query,
+                (*tuple(data.columns), *data.itertuples(index=False))
+            )
 
 class TransactionsRepository(BaseRepository):
     """ A repository that provides updating of the category columns of a transactions database
     table, in addition to the methods of the base repository.
     """
     def get_latest_balance(self):
-        with self.db:
 
-            query = (
-                """
-                SELECT balance FROM {}
-                ORDER BY date DESC
-                LIMIT 1
-                """
-                .format(self.table.name)
-            )
+        query = (
+            """
+            SELECT balance FROM {}
+            ORDER BY date DESC
+            LIMIT 1
+            """
+            .format(self.table.name)
+        )
 
-            return self.db.execute_statement(query, output_required=True)[0]
+        with self.cursor as cursor:
+            cursor.execute(query)
+            latest_balance = cursor.fetchone()
+
+        if latest_balance:
+            return latest_balance[0]
 
     def get_latest_parsed_transaction_date(self):
-        with self.db:
 
-            query = (
-                """
-                SELECT date FROM {}
-                ORDER BY date DESC
-                LIMIT 1
-                """
-                .format(self.table.name)
-            )
+        query = (
+            """
+            SELECT date FROM {}
+            ORDER BY date DESC
+            LIMIT 1
+            """
+            .format(self.table.name)
+        )
 
-            return self.db.execute_statement(query, output_required=True)[0]
+        with self.cursor as cursor:
+            cursor.execute(query)
+            latest_date = cursor.fetchone()
+
+        if latest_date:
+            return latest_date[0]
 
     def get_latest_categorised_transaction_date(self):
-        with self.db:
 
-            query = (
-                """
-                SELECT date FROM {}
-                WHERE {} is not NULL
-                AND {} is not NULL
-                ORDER BY date DESC
-                LIMIT 1
-                """
-                .format(self.table.name, *self.table.category_columns)
-            )
+        query = (
+            """
+            SELECT date FROM {}
+            WHERE {} is not NULL
+            AND {} is not NULL
+            ORDER BY date DESC
+            LIMIT 1
+            """
+            .format(self.table.name, *self.table.category_columns)
+        )
 
-            return self.db.execute_statement(query, output_required=True)[0]
+        with self.cursor as cursor:
+            cursor.execute(query)
+            latest_date = cursor.fetchone()
+
+            if latest_date:
+                return latest_date[0]
 
     def update_categories(self):
         """ Update the table's category columns.
         """
-        with self.db:
+        for i in range(len(self.table.data)):
+            id_ = int(self.table.data.iloc[i, 0])
+            row = self.table.data.iloc[i]
 
-            for i in range(len(self.table.data)):
-                id_ = int(self.table.data.iloc[i, 0])
-                row = self.table.data.iloc[i]
+            values = tuple([
+                int(row[self.table.category_columns[0]]),
+                row[self.table.category_columns[1]]
+            ])
 
-                data = tuple([
-                    int(row[self.table.category_columns[0]]),
-                    row[self.table.category_columns[1]]
-                ])
-
-                operation = (
-                    """
-                    UPDATE {0}
-                    SET {1} = %s, {2} = %s
-                    WHERE {0}.id = {3}
-                    """
-                    .format(
-                        self.table.name,
-                        self.table.category_columns[0],
-                        self.table.category_columns[1],
-                        id_
-                    )
+            query = (
+                """
+                UPDATE {0}
+                SET {1} = %s, {2} = %s
+                WHERE {0}.id = {3}
+                """
+                .format(
+                    self.table.name,
+                    self.table.category_columns[0],
+                    self.table.category_columns[1],
+                    id_
                 )
+            )
 
-                self.db.execute_statement(operation, data)
+            with self.cursor as cursor:
+                cursor.execute(query, values)

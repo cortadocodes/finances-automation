@@ -14,10 +14,8 @@ db_config = {
     'host':os.getenv('DB_HOST'),
     'port': os.getenv('DB_PORT'),
     'name': os.getenv('DB_NAME'),
-    'cluster': os.path.join(package_root, 'data', 'database_cluster'),
     'user': os.getenv('DB_USER'),
     'password': os.getenv('DB_PASSWORD'),
-    'log_location': os.path.join(package_root, 'psql.log')
 }
 
 categories = {
