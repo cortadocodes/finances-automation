@@ -19,14 +19,18 @@ class BaseRepository:
         self.table = table
         self.db_config = db_config or conf.db_config
         self.connection = psycopg2.connect(**self.db_config)
-        self.cursor = self.connection.cursor()
 
+    def get_cursor(self):
+        return self.connection.cursor()
 
     def create_table(self):
         """ Create the table in the database.
 
         :return None:
         """
+        if self.exists():
+            return
+
         columns = self.table.schema.keys()
         column_schema_specifications = self.table.schema.values()
         schema_list = list(itertools.chain(*list(zip(columns, column_schema_specifications))))
@@ -34,9 +38,30 @@ class BaseRepository:
 
         query = 'CREATE TABLE {} ({});'.format(self.table.name, schema)
 
-        with self.cursor as cursor:
+        with self.get_cursor() as cursor:
             cursor.execute(query)
 
+    def exists(self):
+        """ Does the table exist in the database?
+
+        :return bool:
+        """
+        query = (
+            """
+            SELECT EXISTS 
+            (
+                SELECT 1
+                FROM information_schema.tables 
+                WHERE table_name = %s
+            );
+            """
+        )
+
+        with self.get_cursor() as cursor:
+            cursor.execute(query, (self.table.name,))
+            result = cursor.fetchone()
+
+        return result[0] if result else False
 
     def load(self, start_date, end_date):
         """ Load data from the table between a start and end date (inclusive).
@@ -55,7 +80,7 @@ class BaseRepository:
             .format(self.table.name)
         )
 
-        with self.cursor as cursor:
+        with self.get_cursor() as cursor:
             cursor.execute(
                 query,
                 (start_date, end_date)
@@ -77,25 +102,21 @@ class BaseRepository:
         :param pandas.DataFrame data:
         :return None:
         """
-        columns_placeholder = ', '.join('%s' for column in data.columns)
-        values_placeholder = [', '.join('%s' for column in data.columns) for row in data]
+        columns_placeholder = ', '.join(column for column in data.columns)
+        values_placeholders = ', '.join(
+            '(' + ', '.join('%s' for column in data.columns) + ')' for row in data.itertuples()
+        )
         do_nothing_clause = 'ON CONFLICT DO NOTHING' if ignore_duplicates else ''
 
         query = (
-            """
-            INSERT INTO {}
-            ({})
-            VALUES {}
-            {};
-            """
-            .format(self.table.name, columns_placeholder, values_placeholder, do_nothing_clause)
+            'INSERT INTO {} ({}) VALUES {} {};'
+            .format(self.table.name, columns_placeholder, values_placeholders, do_nothing_clause)
         )
 
-        with self.cursor as cursor:
-            cursor.execute(
-                query,
-                (*tuple(data.columns), *data.itertuples(index=False))
-            )
+        values = tuple(itertools.chain(*data.itertuples(index=False)))
+
+        with self.get_cursor() as cursor:
+            cursor.execute(query, values)
 
 class TransactionsRepository(BaseRepository):
     """ A repository that provides updating of the category columns of a transactions database
@@ -112,7 +133,7 @@ class TransactionsRepository(BaseRepository):
             .format(self.table.name)
         )
 
-        with self.cursor as cursor:
+        with self.get_cursor() as cursor:
             cursor.execute(query)
             latest_balance = cursor.fetchone()
 
@@ -130,7 +151,7 @@ class TransactionsRepository(BaseRepository):
             .format(self.table.name)
         )
 
-        with self.cursor as cursor:
+        with self.get_cursor() as cursor:
             cursor.execute(query)
             latest_date = cursor.fetchone()
 
@@ -150,7 +171,7 @@ class TransactionsRepository(BaseRepository):
             .format(self.table.name, *self.table.category_columns)
         )
 
-        with self.cursor as cursor:
+        with self.get_cursor() as cursor:
             cursor.execute(query)
             latest_date = cursor.fetchone()
 
@@ -183,5 +204,5 @@ class TransactionsRepository(BaseRepository):
                 )
             )
 
-            with self.cursor as cursor:
+            with self.get_cursor() as cursor:
                 cursor.execute(query, values)
