@@ -7,13 +7,6 @@ from finances_automation.repositories import BaseRepository
 
 class TestBaseRepository:
 
-    db_config = {
-        'host': '0.0.0.0',
-        'port': 63000,
-        'dbname': 'postgres',
-        'user': 'postgres',
-    }
-
     table_config = {
         'name': 'test_table',
         'type_': 'test',
@@ -42,7 +35,7 @@ class TestBaseRepository:
 
         :return None:
         """
-        BaseRepository(self.table, self.db_config)
+        BaseRepository(self.table)
 
     def test_create_table(self):
         """ Test that tables can be created.
@@ -50,7 +43,7 @@ class TestBaseRepository:
         :raise AssertionError:
         :return None:
         """
-        repository = BaseRepository(self.table, self.db_config)
+        repository = BaseRepository(self.table)
         repository.create_table()
         assert repository.exists()
 
@@ -60,7 +53,7 @@ class TestBaseRepository:
         :raise AssertionError:
         :return None:
         """
-        repository = BaseRepository(self.table, self.db_config)
+        repository = BaseRepository(self.table)
         repository.create_table()
 
         repository.insert(self.example_data)
@@ -71,7 +64,7 @@ class TestBaseRepository:
         :raise AssertionError:
         :return None:
         """
-        repository = BaseRepository(self.table, self.db_config)
+        repository = BaseRepository(self.table)
         repository.create_table()
 
         repository.insert(self.example_data)

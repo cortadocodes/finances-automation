@@ -11,11 +11,11 @@ dotenv.load_dotenv()
 package_root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
 db_config = {
-    'host': os.getenv('DB_HOST'),
-    'port': os.getenv('DB_PORT'),
-    'dbname': os.getenv('DB_NAME'),
-    'user': os.getenv('DB_USER'),
-    'password': os.getenv('DB_PASSWORD'),
+    'host': 'db',
+    'port': 5432,
+    'dbname': 'postgres',
+    'user': 'postgres',
+    'password': 'password'
 }
 
 categories = {

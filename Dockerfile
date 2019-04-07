@@ -13,4 +13,4 @@ COPY . .
 
 VOLUME /data
 
-CMD /bin/bash
+CMD pytest

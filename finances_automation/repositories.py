@@ -114,6 +114,7 @@ class BaseRepository:
         """ Insert data into the table.
 
         :param pandas.DataFrame data:
+        :param bool ignore_duplicates:
         :return None:
         """
         columns_placeholder = ', '.join(column for column in data.columns)
