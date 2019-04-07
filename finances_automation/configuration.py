@@ -157,29 +157,6 @@ table_configurations = {
         'date_columns': ['start_date', 'end_date', 'analysis_datetime'],
         'date_format': '%d/%m/%Y',
         'category_columns': None
-    },
-    'table_for_tests': {
-        'name': 'test_table',
-        'type_': 'transactions',
-        'schema': {
-            'id': 'serial PRIMARY KEY',
-            'date': 'DATE NOT NULL',
-            'card': 'VARCHAR',
-            'description': 'VARCHAR',
-            'money_in': 'VARCHAR',
-            'money_out': 'VARCHAR',
-            'balance': 'DECIMAL',
-            'category_code': 'DECIMAL',
-            'category': 'VARCHAR'
-        },
-        'monetary_columns': {
-            'money_in': 'money_in',
-            'money_out': 'money_out',
-            'balance': 'balance'
-        },
-        'date_columns': ['date'],
-        'date_format': '%d/%m/%Y',
-        'category_columns': ['category_code', 'category']
     }
 }
 
