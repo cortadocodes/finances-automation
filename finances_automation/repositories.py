@@ -11,7 +11,7 @@ class BaseRepository:
     """
 
     def __init__(self, table, db_config = None):
-        """ Initialise a repository for the given table.
+        """ Initialise a repository for the given table, connecting to the relevant database.
 
         :param finances_automation.entities.table.Table table:
         :param dict|None db_config:
@@ -21,7 +21,18 @@ class BaseRepository:
         self.connection = psycopg2.connect(**self.db_config)
 
     def get_cursor(self):
+        """ Get the database connection's cursor.
+
+        :return psycopg2.extensions.cursor:
+        """
         return self.connection.cursor()
+
+    def commit(self):
+        """ Commit any changes to the database.
+
+        :return None:
+        """
+        self.connection.commit()
 
     def create_table(self):
         """ Create the table in the database.
@@ -89,12 +100,15 @@ class BaseRepository:
             data = cursor.fetchall()
 
         self.table.data = pd.DataFrame(data, columns=self.table.schema.keys())
+        self.table.data.drop(['id'], axis=1, inplace=True)
 
-        self.table.data = self.table.data.astype(
-            dtype={column: float for column in self.table.monetary_columns.values()}
-        )
+        if self.table.monetary_columns:
+            self.table.data = self.table.data.astype(
+                dtype={column: float for column in self.table.monetary_columns.values()}
+            )
 
-        self.table.data = self.table.data.astype({'category_code': float})
+        if self.table.category_columns:
+            self.table.data = self.table.data.astype({'category_code': float})
 
     def insert(self, data, ignore_duplicates=True):
         """ Insert data into the table.
@@ -108,15 +122,16 @@ class BaseRepository:
         )
         do_nothing_clause = 'ON CONFLICT DO NOTHING' if ignore_duplicates else ''
 
-        query = (
-            'INSERT INTO {} ({}) VALUES {} {};'
-            .format(self.table.name, columns_placeholder, values_placeholders, do_nothing_clause)
+        query = 'INSERT INTO {} ({}) VALUES {} {};'.format(
+            self.table.name,
+            columns_placeholder,
+            values_placeholders,
+            do_nothing_clause
         )
 
-        values = tuple(itertools.chain(*data.itertuples(index=False)))
-
         with self.get_cursor() as cursor:
-            cursor.execute(query, values)
+            cursor.execute(query, tuple(itertools.chain(*data.itertuples(index=False))))
+
 
 class TransactionsRepository(BaseRepository):
     """ A repository that provides updating of the category columns of a transactions database
