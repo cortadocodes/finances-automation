@@ -29,7 +29,9 @@ class TestBaseRepository:
 
     example_data = pd.DataFrame(
         {
-            'date': [datetime.date(date) for date in (datetime(2019, 1, 1), datetime(2019, 1, 2), datetime(2020, 1, 2))],
+            'date': [
+                datetime.date(date) for date in (datetime(2019, 1, 1), datetime(2019, 1, 2), datetime(2020, 1, 2))
+            ],
             'a': ['1', '2', '3'],
             'b': ['4', '5', '6']
         }

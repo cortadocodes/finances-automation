@@ -10,9 +10,10 @@ def get_overview(cli_args):
     :param tuple cli_args:
     :return None:
     """
-    table_names =  'current_transactions', 'credit_transactions'
+    table_names = 'current_transactions', 'credit_transactions'
     print_last_recorded_balance(table_names)
     print_dates_of_most_recent_data(table_names)
+
 
 def print_last_recorded_balance(table_names):
     """ Print the latest recorded balance of the given tables.
@@ -24,7 +25,9 @@ def print_last_recorded_balance(table_names):
         repository = TransactionsRepository(Table.get_from_config(table_name))
         latest_balance = repository.get_latest_balance()
         print('Latest balance for {}: {}'.format(table_name, float(latest_balance[0])))
+
     print()
+
 
 def print_dates_of_most_recent_data(table_names):
     """ Print the dates of the most recently parsed and most recently categorised transactions for the given tables.

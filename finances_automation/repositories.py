@@ -10,7 +10,7 @@ class BaseRepository:
     """ A base repository that provides loading of data from a database table and insertion into it.
     """
 
-    def __init__(self, table, db_config = None):
+    def __init__(self, table, db_config=None):
         """ Initialise a repository for the given table, connecting to the relevant database.
 
         :param finances_automation.entities.table.Table table:
@@ -59,10 +59,10 @@ class BaseRepository:
         """
         query = (
             """
-            SELECT EXISTS 
+            SELECT EXISTS
             (
                 SELECT 1
-                FROM information_schema.tables 
+                FROM information_schema.tables
                 WHERE table_name = %s
             );
             """
