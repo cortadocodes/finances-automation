@@ -5,7 +5,7 @@ services:
   app:
     build:
       context: .
-    restart: always
+    restart: on-failure
     depends_on:
       - db
 
