@@ -19,7 +19,7 @@ jobs:
     machine: true
     steps:
       - checkout
-      - run: docker-compose up
+      - run: docker-compose up --abort-on-container-exit
       - store_test_results:
           path: test-reports
       - store_artifacts:
