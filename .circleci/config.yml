@@ -1,13 +1,10 @@
 version: 2.1
-executors:
-  docker-python:
-    docker:
-      - image: circleci/python:3.7
 
 jobs:
 
   linting:
-    executor: docker-python
+    docker:
+      - image: circleci/python:3.7
     steps:
       - checkout
       - run:
@@ -19,28 +16,17 @@ jobs:
             flake8 --count
 
   testing:
-    executor: docker-python
+    machine: true
     steps:
       - checkout
-      - restore_cache:
-          keys:
-           - dependencies-{{ .Branch }}-{{ checksum "setup.py" }}
-           - dependencies-
       - run:
-          name: Install package
+          name: Spin up docker network
           command: |
-            python3 -m venv venv
-            . venv/bin/activate
-            pip install .[develop] | cat && test ${PIPESTATUS} -eq 0
-      - save_cache:
-          paths:
-           - ./venv
-          key: dependencies-{{ .Branch }}-{{ checksum "setup.py" }}
+            docker-compose up -d
       - run:
           name: Run tests
           command: |
-            . venv/bin/activate
-            mkdir test-reports
+            docker exec -it finances_automation_app_1 \
             pytest \
               finances_automation/tests/ \
               --cov=finances_automation \
