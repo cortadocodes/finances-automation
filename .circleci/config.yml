@@ -23,7 +23,7 @@ jobs:
       - run:
           name: Run tests
           command: |
-            docker exec -it finances_automation_app_1 \
+            docker exec -it project_app_1 \
             pytest \
               finances_automation/tests/ \
               --cov=finances_automation \
