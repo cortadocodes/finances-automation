@@ -19,10 +19,7 @@ jobs:
     machine: true
     steps:
       - checkout
-      - run:
-          name: Spin up docker network
-          command: |
-            docker-compose up -d
+      - run: docker-compose up -d
       - run:
           name: Run tests
           command: |
