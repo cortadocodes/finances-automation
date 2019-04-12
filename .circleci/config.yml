@@ -22,13 +22,7 @@ jobs:
       - run: docker-compose up -d
       - run:
           name: Run tests
-          command: |
-            docker exec -it project_app_1 \
-            pytest \
-              finances_automation/tests/ \
-              --cov=finances_automation \
-              --cov-report html:test-reports/coverage_html \
-              --junitxml=test-reports/junit.xml
+          command: sudo docker exec -it project_app_1 pytest
       - store_test_results:
           path: test-reports
       - store_artifacts:
