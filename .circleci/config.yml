@@ -17,12 +17,10 @@ jobs:
 
   testing:
     machine: true
+      docker_layer_caching: true
     steps:
       - checkout
       - run: docker-compose up -d
-      - run:
-          name: Run tests
-          command: sudo docker exec -it project_app_1 pytest
       - store_test_results:
           path: test-reports
       - store_artifacts:
