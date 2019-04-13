@@ -1,6 +1,6 @@
 # Finances automation
 
-[![CircleCI](https://circleci.com/gh/cortadocodes/finances-automation.svg?style=svg)](https://circleci.com/gh/cortadocodes/finances-automation)
+[![CircleCI](https://circleci.com/gh/cortadocodes/finances-automation/tree/master.svg?style=svg)](https://circleci.com/gh/cortadocodes/finances-automation/tree/master)
 
 ## Usage
 ```
