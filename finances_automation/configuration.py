@@ -3,10 +3,6 @@ which columns are relevant in statements, how dates are parsed, and which catego
 """
 import os
 
-import dotenv
-
-
-dotenv.load_dotenv()
 
 package_root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 
@@ -15,7 +11,7 @@ db_config = {
     'port': 5432,
     'dbname': 'postgres',
     'user': 'postgres',
-    'password': 'password'
+    'password': os.environ['FINANCE_AUTOMATION_DB_PASSWORD']
 }
 
 categories = {
