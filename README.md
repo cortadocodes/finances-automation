@@ -19,6 +19,22 @@ Subcommands:
     view_latest         View the latest entries to a table.
 ```
 
+## Installation
+As `finances-automation` runs via `docker` and `docker-compose` (to ensure it works in the same way in every 
+environment), there is no installation. All that is needed is the running of the `docker-compose` command, which will
+pull the database and app images from the `docker` registry to your local machine, connect them up into a network, and 
+then run the app and database. If the images already exist locally, they won't be pulled again.
+```bash
+FINANCES_AUTOMATION_DB_PASSWORD=password docker-compose up
+```
+A secret password can be set for the database by setting the `FINANCES_AUTOMATION_DB_PASSWORD` environment variable, 
+either globally or at runtime as shown above.
+
+## Running tests
+```bash
+FINANCES_AUTOMATION_DB_PASSWORD=password docker-compose up --abort-on-container-exit
+```
+
 ## Aims
 The aim of this project is to automate the manual review of my finances I carry out each month in Excel. The 
 project will involve:
