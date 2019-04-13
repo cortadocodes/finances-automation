@@ -13,4 +13,9 @@ COPY . .
 
 VOLUME /data
 
-CMD pytest
+VOLUME /test-reports
+
+CMD pytest finances_automation/tests/ \
+    --cov=finances_automation \
+    --cov-report html:test-reports/coverage_html \
+    --junitxml=/test-reports/junit.xml

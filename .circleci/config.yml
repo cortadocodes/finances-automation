@@ -19,6 +19,7 @@ jobs:
     machine: true
     steps:
       - checkout
+      - run: mkdir test-reports
       - run: docker-compose up --abort-on-container-exit
       - store_test_results:
           path: test-reports
