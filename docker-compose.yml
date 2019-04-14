@@ -9,6 +9,8 @@ services:
       - db
     volumes:
       - "./test-reports:/test-reports"
+    environment:
+      POSTGRES_PASSWORD: ${FINANCES_AUTOMATION_DB_PASSWORD}
 
   db:
     image: postgres:latest
@@ -20,4 +22,4 @@ services:
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: ${FINANCES_AUTOMATION_DB_PASSWORD}:-"password"
+      POSTGRES_PASSWORD: ${FINANCES_AUTOMATION_DB_PASSWORD}

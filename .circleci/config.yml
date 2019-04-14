@@ -20,7 +20,7 @@ jobs:
     steps:
       - checkout
       - run: mkdir test-reports
-      - run: docker-compose up --abort-on-container-exit
+      - run: FINANCES_AUTOMATION_DB_PASSWORD=password docker-compose up --abort-on-container-exit
       - store_test_results:
           path: test-reports
       - store_artifacts:
