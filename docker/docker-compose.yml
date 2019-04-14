@@ -8,7 +8,7 @@ services:
     depends_on:
       - db
     volumes:
-      - "./test-reports:/test-reports"
+      - "../test-reports:/test-reports"
     environment:
       POSTGRES_PASSWORD: ${FINANCES_AUTOMATION_DB_PASSWORD}
 
@@ -18,7 +18,7 @@ services:
     ports:
       - 5432:5432
     volumes:
-      - "./data/database_cluster:/var/lib/postgresql/data"
+      - "../data/database_cluster:/var/lib/postgresql/data"
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
