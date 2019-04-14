@@ -9,7 +9,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends build-essential
 
 COPY setup.py .
 
-RUN pip install -e . --no-cache-dir
+RUN pip install -e .[development] --no-cache-dir
 
 COPY . .
 

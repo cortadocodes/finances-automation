@@ -14,7 +14,7 @@ setup(
         ]
     },
     extras_require={
-        'develop': [
+        'development': [
             'flake8',
             'pytest',
             'pytest-cov'
