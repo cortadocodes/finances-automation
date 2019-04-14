@@ -9,7 +9,7 @@ if [ "$1" == "app" ]; then
 elif [ "$1" == "test" ]; then
     pytest finances_automation/tests/ --junit-xml=/test-reports/junit.xml
 
-else:
+else
     exec "$@"
 
 fi

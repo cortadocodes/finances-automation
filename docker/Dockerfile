@@ -19,6 +19,6 @@ VOLUME /test-reports
 
 RUN chmod +x docker/docker-entrypoint.sh
 
-ENTRYPOINT ./docker/docker-entrypoint.sh
+ENTRYPOINT ["./docker/docker-entrypoint.sh"]
 
-CMD app
+CMD ["test"]

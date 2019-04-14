@@ -18,6 +18,7 @@ FINANCES_AUTOMATION_DB_PASSWORD=password docker-compose -f docker/docker-compose
 A secret password can be set for the database by setting the `FINANCES_AUTOMATION_DB_PASSWORD` environment variable, 
 either globally or at runtime as shown above.
 
+The CLI looks like this:
 ```
 usage: finances-automation [-h] {parse,categorise,analyse,view_latest} ...
 
