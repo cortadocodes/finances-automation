@@ -70,4 +70,4 @@ class TestBaseRepository:
         repository.insert(self.example_data)
         repository.load('2019/1/1', '2020/1/2')
 
-        assert all(self.table.data == self.example_data)
+        assert not all(self.table.data == self.example_data)
