@@ -11,7 +11,7 @@ db_config = {
     'port': 5432,
     'dbname': 'postgres',
     'user': 'postgres',
-    'password': os.environ['FINANCE_AUTOMATION_DB_PASSWORD']
+    'password': os.environ['FINANCES_AUTOMATION_DB_PASSWORD']
 }
 
 categories = {
