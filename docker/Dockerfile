@@ -1,3 +1,5 @@
+# Note: This Dockerfile is written to be run in the context of the repository root directory.
+
 FROM python:3.6.5-slim
 
 WORKDIR /usr/src/app
@@ -15,6 +17,6 @@ VOLUME /data
 
 VOLUME /test-reports
 
-ENTRYPOINT ./docker-entrypoint.sh
+ENTRYPOINT docker/docker-entrypoint.sh
 
 CMD app
