@@ -1,6 +1,7 @@
 api-docs/
 data/
 htmlcov/
+test-reports/
 venv/
 
 .idea/
@@ -14,6 +15,5 @@ venv/
 
 *.egg-info/
 *.pytest_cache/
-
 
 *.log
