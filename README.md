@@ -34,7 +34,14 @@ either globally or at runtime as shown above.
 
 ## Running tests
 ```bash
-FINANCES_AUTOMATION_DB_PASSWORD=password docker-compose up --abort-on-container-exit
+FINANCES_AUTOMATION_DB_PASSWORD=password docker-compose -f docker/docker-compose.yml up --abort-on-container-exit 
+--exit-code-from app
+```
+
+## Other
+Building the image:
+```bash
+docker build -t cortadocodes/finances-automation:<tag> -f docker/Dockerfile .
 ```
 
 ## Aims
