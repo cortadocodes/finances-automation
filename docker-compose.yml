@@ -3,7 +3,7 @@ version: '3.2'
 services:
 
   app:
-    image: finances-automation
+    image: cortadocodes/finances-automation
     restart: on-failure
     depends_on:
       - db
