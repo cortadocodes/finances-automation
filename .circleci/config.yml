@@ -23,8 +23,7 @@ jobs:
           name: Build docker network and run tests
           command: |
             mkdir test-reports
-            FINANCES_AUTOMATION_DB_PASSWORD=password docker-compose up --abort-on-container-exit \
-            && test ${PIPESTATUS} -eq 0
+            FINANCES_AUTOMATION_DB_PASSWORD=password docker-compose up --abort-on-container-exit --exit-code-from app
       - store_test_results:
           path: test-reports
       - store_artifacts:
