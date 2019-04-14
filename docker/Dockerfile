@@ -15,4 +15,6 @@ VOLUME /data
 
 VOLUME /test-reports
 
-CMD pytest finances_automation/tests/ --junit-xml=/test-reports/junit.xml
+ENTRYPOINT ./docker-entrypoint.sh
+
+CMD app

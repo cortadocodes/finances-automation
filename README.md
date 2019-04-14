@@ -4,7 +4,20 @@ Docker repository: [cortadocodes/finances-automation](https://cloud.docker.com/r
 
 [![CircleCI](https://circleci.com/gh/cortadocodes/finances-automation/tree/master.svg?style=svg)](https://circleci.com/gh/cortadocodes/finances-automation/tree/master)
 
+## Installation
+As `finances-automation` runs via `docker` and `docker-compose` (to ensure it works in the same way in every 
+environment), there is no installation. All that is needed is the running of the `docker-compose` command, which will
+pull the database and app images from the `docker` registry to your local machine, connect them up into a network, and 
+then run the app and database. If the images already exist locally, they won't be pulled again.
+
 ## Usage
+From the repository root, run
+```bash
+FINANCES_AUTOMATION_DB_PASSWORD=password docker-compose -f docker/docker-compose-app.yml up
+```
+A secret password can be set for the database by setting the `FINANCES_AUTOMATION_DB_PASSWORD` environment variable, 
+either globally or at runtime as shown above.
+
 ```
 usage: finances-automation [-h] {parse,categorise,analyse,view_latest} ...
 
@@ -21,21 +34,10 @@ Subcommands:
     view_latest         View the latest entries to a table.
 ```
 
-## Installation
-As `finances-automation` runs via `docker` and `docker-compose` (to ensure it works in the same way in every 
-environment), there is no installation. All that is needed is the running of the `docker-compose` command, which will
-pull the database and app images from the `docker` registry to your local machine, connect them up into a network, and 
-then run the app and database. If the images already exist locally, they won't be pulled again.
-```bash
-FINANCES_AUTOMATION_DB_PASSWORD=password docker-compose up
-```
-A secret password can be set for the database by setting the `FINANCES_AUTOMATION_DB_PASSWORD` environment variable, 
-either globally or at runtime as shown above.
-
 ## Running tests
 ```bash
-FINANCES_AUTOMATION_DB_PASSWORD=password docker-compose -f docker/docker-compose.yml up --abort-on-container-exit 
---exit-code-from app
+FINANCES_AUTOMATION_DB_PASSWORD=password docker-compose -f docker/docker-compose-test.yml up \
+--abort-on-container-exit --exit-code-from app
 ```
 
 ## Other

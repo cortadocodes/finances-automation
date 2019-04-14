@@ -11,6 +11,7 @@ services:
       - "../test-reports:/test-reports"
     environment:
       POSTGRES_PASSWORD: ${FINANCES_AUTOMATION_DB_PASSWORD}
+    command: test
 
   db:
     image: postgres:latest

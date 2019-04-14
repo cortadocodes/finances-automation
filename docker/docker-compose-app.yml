@@ -1,0 +1,26 @@
+version: '3.2'
+
+services:
+
+  app:
+    image: cortadocodes/finances-automation
+    restart: on-failure
+    depends_on:
+      - db
+    volumes:
+      - "../test-reports:/test-reports"
+    environment:
+      POSTGRES_PASSWORD: ${FINANCES_AUTOMATION_DB_PASSWORD}
+    command: app
+
+  db:
+    image: postgres:latest
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - "../data/database_cluster:/var/lib/postgresql/data"
+    environment:
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${FINANCES_AUTOMATION_DB_PASSWORD}

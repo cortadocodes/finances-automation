@@ -23,7 +23,7 @@ jobs:
           name: Build docker network and run tests
           command: |
             mkdir test-reports
-            FINANCES_AUTOMATION_DB_PASSWORD=password docker-compose -f docker/docker-compose.yml up \
+            FINANCES_AUTOMATION_DB_PASSWORD=password docker-compose -f docker/docker-compose-test.yml up \
             --abort-on-container-exit --exit-code-from app
       - store_test_results:
           path: test-reports
