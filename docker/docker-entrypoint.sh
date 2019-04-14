@@ -1,7 +1,7 @@
 #!/bin/bash
 set -e
 
-cd /usr/src/app/finances-automation
+cd /usr/src/app/
 
 if [ "$1" == "app" ]; then
     finances-automation
