@@ -1,5 +1,7 @@
 # Finances automation
 
+Docker repository: [cortadocodes/finances-automation](https://cloud.docker.com/repository/docker/cortadocodes/finances-automation)
+
 [![CircleCI](https://circleci.com/gh/cortadocodes/finances-automation/tree/master.svg?style=svg)](https://circleci.com/gh/cortadocodes/finances-automation/tree/master)
 
 ## Usage
