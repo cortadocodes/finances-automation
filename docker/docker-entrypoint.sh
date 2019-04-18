@@ -13,7 +13,7 @@ elif [ "$1" == "test" ]; then
     pytest $APPLICATION_ROOT/tests/ \
     --junit-xml="$TEST_REPORTS_DIRECTORY"/junit.xml \
     --cov="$APPLICATION_ROOT" \
-    --cov-report html:"$TEST_REPORTS_DIRECTORY"/coverage_html
+    --cov-report html
 
 elif [ "$1" == "initialise" ]; then
     python3 "$APPLICATION_ROOT"/scripts/initialise_database.py
