@@ -74,7 +74,7 @@ class BaseRepository:
 
         return result[0] if result else False
 
-    def load(self, start_date, end_date):
+    def load_by_date(self, start_date, end_date):
         """ Load data from the table between a start and end date (inclusive).
 
         :param str start_date:
@@ -132,6 +132,24 @@ class BaseRepository:
 
         with self.get_cursor() as cursor:
             cursor.execute(query, tuple(itertools.chain(*data.itertuples(index=False))))
+
+    def get_latest_entries(self, columns, limit):
+        """ Get the latest entries to the table.
+
+        :param list(str) columns:
+        :param int limit:
+        :return tuple:
+        """
+        query = """
+            SELECT {} 
+            FROM {} 
+            ORDER BY date DESC
+            LIMIT {}
+            """.format(', '.join(columns), self.table.name, limit)
+
+        with self.get_cursor() as cursor:
+            cursor.execute(query)
+            return cursor.fetchall()
 
 
 class TransactionsRepository(BaseRepository):

@@ -43,7 +43,7 @@ class Analyser:
 
         :return None:
         """
-        self.repositories['table_to_analyse'].load(self.start_date, self.end_date)
+        self.repositories['table_to_analyse'].load_by_date(self.start_date, self.end_date)
 
         self.analysis_result = self.chosen_analysis(
             table=self.table_to_analyse,

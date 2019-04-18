@@ -1,8 +1,7 @@
 import pandas as pd
 
-from finances_automation import configuration as conf
-from finances_automation.entities.database import Database
 from finances_automation.entities.table import Table
+from finances_automation.repositories import TransactionsRepository
 
 
 pd.set_option('display.max_columns', 500)
@@ -17,21 +16,19 @@ def view_latest(cli_args):
     :param list(str) columns:
     """
     table = Table.get_from_config(cli_args.table_name)
-    columns = cli_args.columns or list(table.schema.keys())
+    columns = cli_args.columns
     limit = cli_args.n
 
-    db = Database(**conf.db_config)
-
     if columns == ['*']:
-        columns = db.get_table_column_names(table)
+        columns = list(table.schema.keys())
         columns.remove('id')
 
     elif 'date' not in columns:
         columns = ['date'] + columns
 
-    data = db.select_from(table, columns)
+    data = TransactionsRepository(table).get_latest_entries(table.name, columns, limit)
 
-    df = pd.DataFrame(data=data, columns=columns).sort_values(by=table.date_columns[0], ascending=False).head(limit)
+    df = pd.DataFrame(data=data, columns=columns).sort_values(by=table.date_columns[0], ascending=False)
 
     print('\n')
     print(df.to_string(index=False))
