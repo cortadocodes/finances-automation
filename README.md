@@ -6,14 +6,23 @@ Docker repository: [cortadocodes/finances-automation](https://cloud.docker.com/r
 
 ## Installation
 As `finances-automation` runs via `docker` and `docker-compose` (to ensure it works in the same way in every 
-environment), there is no installation. All that is needed is the running of the `docker-compose` command, which will
-pull the database and app images from the `docker` registry to your local machine, connect them up into a network, and 
-then run the app and database. If the images already exist locally, they won't be pulled again.
+environment), there is no real installation. All that is needed is the running of the `docker-compose` command, which 
+will pull the database and app images from the `docker` registry to your local machine, connect them up into a network, 
+and then run the app and database. If the images already exist locally, they won't be pulled again.
+
+## Configuration/initialisation
+The configuration for the database, tables, categories and more is included in `finances_automation/configuration.py`.
+To initialise the database with the tables from the configuration, run
+```bash
+FINANCES_AUTOMATION_DB_PASSWORD=password docker-compose \
+-f docker/docker-compose-app.yml run app initialise
+```
 
 ## Usage
 From the repository root, run
 ```bash
-FINANCES_AUTOMATION_DB_PASSWORD=password docker-compose -f docker/docker-compose-app.yml up
+FINANCES_AUTOMATION_DB_PASSWORD=password docker-compose \
+-f docker/docker-compose-app.yml up
 ```
 A secret password can be set for the database by setting the `FINANCES_AUTOMATION_DB_PASSWORD` environment variable, 
 either globally or at runtime as shown above.
@@ -37,14 +46,15 @@ Subcommands:
 
 ## Running tests
 ```bash
-FINANCES_AUTOMATION_DB_PASSWORD=password docker-compose -f docker/docker-compose-test.yml up \
+docker-compose -f docker/docker-compose-test.yml up \
 --abort-on-container-exit --exit-code-from app
 ```
 
 ## Other
 Building the image:
 ```bash
-docker build -t cortadocodes/finances-automation:<tag> -f docker/Dockerfile .
+docker build -t cortadocodes/finances-automation:<tag> \
+-f docker/Dockerfile .
 ```
 
 ## Aims
