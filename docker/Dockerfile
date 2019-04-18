@@ -2,7 +2,7 @@
 
 FROM python:3.6.5-slim
 
-WORKDIR /usr/src/app
+WORKDIR /usr/src/finances-automation
 
 RUN apt-get update && apt-get install -y --no-install-recommends build-essential \
     && rm -rf /var/lib/apt/lists/*
