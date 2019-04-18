@@ -24,7 +24,7 @@ def print_last_recorded_balance(table_names):
     for table_name in table_names:
         repository = TransactionsRepository(Table.get_from_config(table_name))
         latest_balance = repository.get_latest_balance()
-        print('Latest balance for {}: {}'.format(table_name, float(latest_balance[0])))
+        print('Latest balance for {}: {}'.format(table_name, latest_balance))
 
     print()
 
@@ -45,14 +45,15 @@ def print_dates_of_most_recent_data(table_names):
         latest_parsed_dates,
         latest_categorised_dates
     ):
+
         print(
             'Most recent {} data:'
             '\n- Parsed: {}'
             '\n- Categorised: {}'
             .format(
                 table_name,
-                dt.datetime.strftime(latest_parsed_date[0], '%d/%m/%Y'),
-                dt.datetime.strftime(latest_categorised_date[0], '%d/%m/%Y')
+                dt.datetime.strftime(latest_parsed_date, '%d/%m/%Y') if latest_parsed_date else None,
+                dt.datetime.strftime(latest_categorised_date, '%d/%m/%Y') if latest_categorised_date else None
             ),
             end='\n\n'
         )
