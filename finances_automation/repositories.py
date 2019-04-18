@@ -10,17 +10,18 @@ class BaseRepository:
     """ A base repository that provides loading of data from a database table and insertion into it.
     """
 
-    def __init__(self, table, db_config=None):
+    def __init__(self, table, db_config=None, autocommit=True):
         """ Initialise a repository for the given table, connecting to the relevant database.
 
         :param finances_automation.entities.table.Table table:
+        :param bool autocommit:
         :param dict|None db_config:
         """
         self.table = table
         self.db_config = db_config or conf.db_config
         self.connection = psycopg2.connect(**self.db_config)
 
-        self.connection.set_session(autocommit=True)
+        self.connection.set_session(autocommit=autocommit)
 
     def get_cursor(self):
         """ Get the database connection's cursor.

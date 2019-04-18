@@ -35,7 +35,7 @@ class TestBaseRepository:
 
         :return None:
         """
-        BaseRepository(self.table)
+        BaseRepository(self.table, autocommit=False)
 
     def test_create_table(self):
         """ Test that tables can be created.
@@ -43,7 +43,7 @@ class TestBaseRepository:
         :raise AssertionError:
         :return None:
         """
-        repository = BaseRepository(self.table)
+        repository = BaseRepository(self.table, autocommit=False)
         repository.create_table()
         assert repository.exists()
 
@@ -53,7 +53,7 @@ class TestBaseRepository:
         :raise AssertionError:
         :return None:
         """
-        repository = BaseRepository(self.table)
+        repository = BaseRepository(self.table, autocommit=False)
         repository.create_table()
 
         repository.insert(self.example_data)
@@ -64,7 +64,7 @@ class TestBaseRepository:
         :raise AssertionError:
         :return None:
         """
-        repository = BaseRepository(self.table)
+        repository = BaseRepository(self.table, autocommit=False)
         repository.create_table()
 
         repository.insert(self.example_data)
