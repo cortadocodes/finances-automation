@@ -3,7 +3,10 @@ version: '3.2'
 services:
 
   app:
-    image: cortadocodes/finances-automation
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile
+    image: cortadocodes/finances-automation:latest
     restart: on-failure
     depends_on:
       - db
