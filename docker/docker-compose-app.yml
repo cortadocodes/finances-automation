@@ -10,14 +10,12 @@ services:
     restart: on-failure
     depends_on:
       - db
-    volumes:
-      - "../test-reports:/test-reports"
     environment:
       POSTGRES_PASSWORD: ${FINANCES_AUTOMATION_DB_PASSWORD}
     command: app
 
   db:
-    image: postgres:latest
+    image: postgres:11
     restart: always
     ports:
       - 5432:5432
