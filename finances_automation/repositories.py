@@ -20,6 +20,8 @@ class BaseRepository:
         self.db_config = db_config or conf.db_config
         self.connection = psycopg2.connect(**self.db_config)
 
+        self.connection.set_session(autocommit = True)
+
     def get_cursor(self):
         """ Get the database connection's cursor.
 
