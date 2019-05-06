@@ -5,27 +5,37 @@ Docker repository: [cortadocodes/finances-automation](https://cloud.docker.com/r
 [![CircleCI](https://circleci.com/gh/cortadocodes/finances-automation/tree/master.svg?style=svg)](https://circleci.com/gh/cortadocodes/finances-automation/tree/master)
 
 ## Installation
-As `finances-automation` runs via `docker` and `docker-compose` (to ensure it works in the same way in every 
-environment), there is no real installation. All that is needed is the running of the `docker-compose` command, which 
-will pull the database and app images from the `docker` registry to your local machine, connect them up into a network, 
-and then run the app and database. If the images already exist locally, they won't be pulled again.
+To pull and start the persistence `postgres` database, run
+```bash
+POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASSWORD=<password> \
+docker run -d -p 5433:5432 \
+-v <absolute_path_to_desired_data_location_on_host>:/var/lib/postgresql/data \ 
+--name postgres-finances-automation \
+postgres:11
+```
+where `<password>` is your choice of password for the database, and `absolute_path_to_desired_data_location_on_host` is
+the location in which to store the database cluster on your machine. The database password can be stored locally by 
+setting it as an environment variable, or not.
+
+After the database has been pulled and started for the first time, it can be stopped by
+```bash
+docker stop postgres-finances-automation
+```
+and started again by
+```bash
+docker start postgres-finances-automation
+```
 
 ## Configuration/initialisation
 The configuration for the database, tables, categories and more is included in `finances_automation/configuration.py`.
 To initialise the database with the tables from the configuration, run
 ```bash
-FINANCES_AUTOMATION_DB_PASSWORD=password docker-compose \
--f docker/docker-compose-app.yml run app initialise
 ```
 
 ## Usage
 From the repository root, run
 ```bash
-FINANCES_AUTOMATION_DB_PASSWORD=password docker-compose \
--f docker/docker-compose-app.yml up
 ```
-A secret password can be set for the database by setting the `FINANCES_AUTOMATION_DB_PASSWORD` environment variable, 
-either globally or at runtime as shown above.
 
 The CLI looks like this:
 ```
@@ -45,17 +55,6 @@ Subcommands:
 ```
 
 ## Running tests
-```bash
-docker-compose -f docker/docker-compose-test.yml up \
---abort-on-container-exit --exit-code-from app
-```
-
-## Other
-Building the image:
-```bash
-docker build -t cortadocodes/finances-automation:<tag> \
--f docker/Dockerfile .
-```
 
 ## Aims
 The aim of this project is to automate the manual review of my finances I carry out each month in Excel. The 
