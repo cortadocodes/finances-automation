@@ -103,7 +103,6 @@ class BaseRepository:
             data = cursor.fetchall()
 
         self.table.data = pd.DataFrame(data, columns=self.table.schema.keys())
-        self.table.data.drop(['id'], axis=1, inplace=True)
 
         if self.table.monetary_columns:
             self.table.data = self.table.data.astype(
