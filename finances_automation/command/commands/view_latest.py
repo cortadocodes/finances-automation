@@ -26,7 +26,7 @@ def view_latest(cli_args):
     elif 'date' not in columns:
         columns = ['date'] + columns
 
-    data = TransactionsRepository(table).get_latest_entries(table.name, columns, limit)
+    data = TransactionsRepository(table).get_latest_entries(columns, limit)
 
     df = pd.DataFrame(data=data, columns=columns).sort_values(by=table.date_columns[0], ascending=False)
 
