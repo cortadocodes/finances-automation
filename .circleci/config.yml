@@ -23,11 +23,12 @@ jobs:
           name: Build docker network and run tests
           command: |
             mkdir test-reports
-            FINANCES_AUTOMATION_DB_PASSWORD=password docker-compose \
-            -f docker/docker-compose-test.yml up \
-            --build \
-            --abort-on-container-exit \
-            --exit-code-from app
+            POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASSWORD=password docker run -d -p 5433:5432 \
+              --name postgres-finances-automation postgres:11
+            pytest finances_automation/tests/ \
+              --junit-xml=test-reports/junit.xml \
+              --cov=finances-automation \
+              --cov-report html
       - store_test_results:
           path: test-reports
 
