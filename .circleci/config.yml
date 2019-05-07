@@ -20,11 +20,17 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Build docker network and run tests
+          name: Pull postgres container and install app
           command: |
             mkdir test-reports
             POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASSWORD=password docker run -d -p 5433:5432 \
               --name postgres-finances-automation postgres:11
+            python -m venv venv
+            . venv/bin/activate
+            pip install -e .[development] | cat && test ${PIPESTATUS} -eq 0
+      - run:
+          name: Run tests
+          command: |
             pytest finances_automation/tests/ \
               --junit-xml=test-reports/junit.xml \
               --cov=finances-automation \
