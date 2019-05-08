@@ -20,11 +20,19 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Pull postgres container and install app
+          name: Pull and start postgres container
           command: |
             mkdir test-reports
             POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASSWORD=password docker run -d -p 5433:5432 \
               --name postgres-finances-automation postgres:11
+      - run:
+          name: Install system dependencies
+          command: |
+            sudo apt update
+            sudo apt install python-venv
+      - run:
+          name: Install app
+          command: |
             python -m venv venv
             . venv/bin/activate
             pip install -e .[development] | cat && test ${PIPESTATUS} -eq 0
