@@ -16,7 +16,8 @@ jobs:
             flake8 --count
 
   testing:
-    machine: true
+    docker:
+      - image: circleci/python:3.7
     steps:
       - checkout
       - run:
@@ -26,14 +27,9 @@ jobs:
             POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASSWORD=password docker run -d -p 5433:5432 \
               --name postgres-finances-automation postgres:11
       - run:
-          name: Install system dependencies
-          command: |
-            sudo apt update
-            sudo apt install python-venv
-      - run:
           name: Install app
           command: |
-            python -m venv venv
+            python3 -m venv venv
             . venv/bin/activate
             pip install -e .[development] | cat && test ${PIPESTATUS} -eq 0
       - run:
