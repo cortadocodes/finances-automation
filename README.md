@@ -5,17 +5,17 @@ Docker repository: [cortadocodes/finances-automation](https://cloud.docker.com/r
 [![CircleCI](https://circleci.com/gh/cortadocodes/finances-automation/tree/master.svg?style=svg)](https://circleci.com/gh/cortadocodes/finances-automation/tree/master)
 
 ## Installation
-To pull and start the persistence `postgres` database, run
+### Pull and start the database container
+To pull and start the persistent `postgres` database container, run
 ```bash
 POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASSWORD=<password> \
 docker run -d -p 5433:5432 \
 -v <absolute_path_to_desired_data_location_on_host>:/var/lib/postgresql/data \ 
---name postgres-finances-automation \
-postgres:11
+--name postgres-finances-automation postgres:11
 ```
-where `<password>` is your choice of password for the database, and `absolute_path_to_desired_data_location_on_host` is
-the location in which to store the database cluster on your machine. The database password can be stored locally by 
-setting it as an environment variable, or not.
+where `<password>` is your choice of password for the database, and `<absolute_path_to_desired_data_location_on_host>`
+is the location in which to store the database cluster on your machine. The database password can be stored locally by 
+setting it as an environment variable, or declared with each command run.
 
 After the database has been pulled and started for the first time, it can be stopped by
 ```bash
@@ -25,19 +25,32 @@ and started again by
 ```bash
 docker start postgres-finances-automation
 ```
+The database container must be running for any of the below commands to work properly.
+
+### Install the package
+```bash
+pip3 install -e .[development]
+```
+or
+```bash
+pip3 install setup.py
+```
 
 ## Configuration/initialisation
 The configuration for the database, tables, categories and more is included in `finances_automation/configuration.py`.
-To initialise the database with the tables from the configuration, run
+To initialise the database with the tables from the configuration file, run
 ```bash
+python3 finances_automation/initialise_database.py
 ```
+from the repository root.
 
 ## Usage
-From the repository root, run
+From the repository root and with the `POSTGRES_PASSWORD` set, run
 ```bash
+finances-automation --help
 ```
 
-The CLI looks like this:
+The output will look like this:
 ```
 usage: finances-automation [-h] {parse,categorise,analyse,view_latest} ...
 
@@ -55,6 +68,10 @@ Subcommands:
 ```
 
 ## Running tests
+From the repository root, run:
+```bash
+pytest
+```
 
 ## Aims
 The aim of this project is to automate the manual review of my finances I carry out each month in Excel. The 
