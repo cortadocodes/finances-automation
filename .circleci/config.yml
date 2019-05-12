@@ -36,6 +36,7 @@ jobs:
       - run:
           name: Run tests
           command: |
+            . venv/bin/activate
             pytest finances_automation/tests/ \
               --junit-xml=test-reports/junit.xml \
               --cov=finances-automation \
