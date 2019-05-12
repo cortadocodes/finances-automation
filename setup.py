@@ -17,7 +17,9 @@ setup(
         'development': [
             'flake8',
             'pytest',
-            'pytest-cov'
+            'pytest-cov',
+            'sphinx==1.4.8',
+            'sphinx_rtd_theme==0.4.2'
         ]
     },
     install_requires=[
@@ -25,9 +27,6 @@ setup(
         'numpy==1.15.2',
         'pandas==0.23.4',
         'psycopg2-binary==2.7.5',
-        'pytest==3.8.0',
-        'sphinx==1.4.8',
-        'sphinx_rtd_theme==0.4.2'
     ],
     license='',
     name='finances-automation',
