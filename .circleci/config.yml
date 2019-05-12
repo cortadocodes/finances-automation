@@ -24,8 +24,6 @@ jobs:
       - run:
           name: Pull and start postgres container
           command: |
-            mkdir test-reports
-            sleep 10
             POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASSWORD=password \
             docker run -d -p 5433:5432 --name postgres-finances-automation postgres:11
 
@@ -38,8 +36,9 @@ jobs:
       - run:
           name: Run tests
           command: |
+            mkdir test-reports
             . venv/bin/activate
-            POSTGRES_PASSWORD=password \
+            POSTGRES_PASSWORD=password POSTGRES_HOST=$DOCKER_HOST \
             pytest finances_automation/tests/ \
               --junit-xml=test-reports/junit.xml \
               --cov=finances-automation \
