@@ -1,6 +1,5 @@
 import argparse
 
-from finances_automation import __DESCRIPTION__
 from finances_automation.command import command_parsers
 
 
@@ -9,7 +8,7 @@ def start():
 
     :return None:
     """
-    main_parser = argparse.ArgumentParser(prog='finances-automation', description=__DESCRIPTION__)
+    main_parser = argparse.ArgumentParser(prog='finances-automation', description='Automate your finances analysis.')
     subparsers = main_parser.add_subparsers(title='Subcommands')
 
     subparsers, parse_statement = command_parsers.set_up_parse(subparsers)

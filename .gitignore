@@ -1,13 +1,19 @@
 api-docs/
 data/
+htmlcov/
+test-reports/
 venv/
 
-.DS_Store
-*.egg-info/
-.idea
+.idea/
 .ipynb_checkpoints/
-*.pytest_cache/
-*__pycache__/
+
 .coverage
-htmlcov/
+.DS_Store
+.env
+
+*__pycache__/
+
+*.egg-info/
+*.pytest_cache/
+
 *.log

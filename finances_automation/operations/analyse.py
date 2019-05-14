@@ -43,7 +43,7 @@ class Analyser:
 
         :return None:
         """
-        self.repositories['table_to_analyse'].load(self.start_date, self.end_date)
+        self.repositories['table_to_analyse'].load_by_date(self.start_date, self.end_date)
 
         self.analysis_result = self.chosen_analysis(
             table=self.table_to_analyse,
@@ -52,6 +52,8 @@ class Analyser:
             end_date=self.end_date,
             show_plot=True
         )
+
+        self._set_metadata()
 
         if self.table_to_store is not None:
             self._store()
@@ -62,7 +64,6 @@ class Analyser:
         :return None:
         """
         if self.chosen_analysis.__name__ not in analyses.ANALYSES_EXCLUDED_FROM_STORAGE:
-            self._set_metadata()
             self.repositories['table_to_store'].insert(self.analysis_result)
 
     def _set_metadata(self):

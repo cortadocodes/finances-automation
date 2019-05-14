@@ -38,7 +38,7 @@ class Categoriser:
 
         :return None:
         """
-        self.table_repository.load(self.start_date, self.end_date)
+        self.table_repository.load_by_date(self.start_date, self.end_date)
 
         self.table.data['category_code'] = self.table.data.apply(self._select_category, axis=1)
         self.table.data['category'] = self.table.data.apply(self._convert_category_code, axis=1)

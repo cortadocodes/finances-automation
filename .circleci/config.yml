@@ -1,13 +1,10 @@
 version: 2.1
-executors:
-  docker-python:
-    docker:
-      - image: circleci/python:3.7
 
 jobs:
 
   linting:
-    executor: docker-python
+    docker:
+      - image: circleci/python:3.7
     steps:
       - checkout
       - run:
@@ -15,43 +12,39 @@ jobs:
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install flake8
-            mkdir lint_reports
-            flake8 --output-file lint_reports/flake8 --count
-      - store_artifacts:
-          path: lint_reports
+            pip install flake8 | cat && test ${PIPESTATUS} -eq 0
+            flake8 --count
 
   testing:
-    executor: docker-python
+    docker:
+      - image: circleci/python:3.7
     steps:
       - checkout
-      - restore_cache:
-          keys:
-           - dependencies-{{ .Branch }}-{{ checksum "setup.py" }}
-           - dependencies-
+      - setup_remote_docker
       - run:
-          name: Install package
+          name: Pull and start postgres container
+          command: |
+            POSTGRES_DB=postgres POSTGRES_USER=postgres POSTGRES_PASSWORD=password \
+            docker run -d -p 5433:5432 --name postgres-finances-automation postgres:11
+
+      - run:
+          name: Install app
           command: |
             python3 -m venv venv
             . venv/bin/activate
-            pip install .[develop] | cat && test ${PIPESTATUS} -eq 0
-      - save_cache:
-          paths:
-           - ./venv
-          key: dependencies-{{ .Branch }}-{{ checksum "setup.py" }}
+            pip3 install -e .[development] | cat && test ${PIPESTATUS} -eq 0
       - run:
           name: Run tests
           command: |
-            . venv/bin/activate
             mkdir test-reports
-            pytest \
-              finances_automation/tests/ \
-              --cov=finances_automation \
-              --cov-report html:test-reports/coverage_html \
-              --junitxml=test-reports/junit.xml
+            . venv/bin/activate
+            POSTGRES_PASSWORD=password POSTGRES_HOST=$DOCKER_HOST \
+            pytest finances_automation/tests/ \
+              --ignore=finances_automation/tests/test_repositories.py \
+              --junit-xml=test-reports/junit.xml \
+              --cov=finances-automation \
+              --cov-report html
       - store_test_results:
-          path: test-reports
-      - store_artifacts:
           path: test-reports
 
 workflows:

@@ -1,18 +1,21 @@
+import logging
+
 from finances_automation import configuration as conf
-from finances_automation.entities.database import Database
 from finances_automation.entities.table import Table
+from finances_automation.repositories import BaseRepository
 
 
-def initialise_database(overwrite=False):
-    """ Create and initialise the database with an empty table.
+logger = logging.getLogger(__name__)
 
-    :param bool overwrite: True if existing database should be overwritten
+
+def initialise_database():
+    """ Create and initialise the database with all tables in the configuration file.
+
+    :return None:
     """
-    database = Database(conf.db_name, conf.db_cluster, conf.user)
-    database.create(overwrite=overwrite)
-
     for table_name in conf.table_names:
-        database.create_table(Table.get_from_config(table_name))
+        BaseRepository(Table.get_from_config(table_name)).create_table()
+        logger.info('Created table %r', table_name)
 
 
 if __name__ == '__main__':

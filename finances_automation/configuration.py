@@ -5,11 +5,16 @@ import os
 
 
 package_root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
+db_host = os.environ['POSTGRES_HOST'] or 'localhost'
 
-db_name = 'finances'
-db_cluster = os.path.join(package_root, 'data', 'database_cluster')
-user = 'Marcus1'
-psql_log_location = os.path.join(package_root, 'psql.log')
+
+db_config = {
+    'db_host': db_host,
+    'port': 5433,
+    'dbname': 'postgres',
+    'user': 'postgres',
+    'password': os.environ['POSTGRES_PASSWORD']
+}
 
 categories = {
     'income': [
@@ -152,6 +157,7 @@ table_configurations = {
         'category_columns': None
     }
 }
+
 
 table_names = [table_name for table_name in table_configurations]
 

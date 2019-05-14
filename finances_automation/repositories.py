@@ -1,53 +1,157 @@
+import itertools
+
 import pandas as pd
+import psycopg2
 
 from finances_automation import configuration as conf
-from finances_automation.entities.database import Database
 
 
 class BaseRepository:
     """ A base repository that provides loading of data from a database table and insertion into it.
     """
 
-    def __init__(self, table):
-        """ Initialise a repository for the given table.
+    def __init__(self, table, db_config=None, autocommit=True):
+        """ Initialise a repository for the given table, connecting to the relevant database.
 
         :param finances_automation.entities.table.Table table:
+        :param bool autocommit:
+        :param dict|None db_config:
         """
         self.table = table
-        self.db = Database(conf.db_name, conf.db_cluster, conf.user)
+        self.db_config = db_config or conf.db_config
+        self.connection = psycopg2.connect(**self.db_config)
 
-    def load(self, start_date, end_date):
+        self.connection.set_session(autocommit=autocommit)
+
+    def get_cursor(self):
+        """ Get the database connection's cursor.
+
+        :return psycopg2.extensions.cursor:
+        """
+        return self.connection.cursor()
+
+    def commit(self):
+        """ Commit any changes to the database.
+
+        :return None:
+        """
+        self.connection.commit()
+
+    def create_table(self):
+        """ Create the table in the database.
+
+        :return None:
+        """
+        if self.exists():
+            return
+
+        columns = self.table.schema.keys()
+        column_schema_specifications = self.table.schema.values()
+        schema_list = list(itertools.chain(*list(zip(columns, column_schema_specifications))))
+        schema = ',\n'.join('{} {}' for _ in columns).format(*schema_list)
+
+        query = 'CREATE TABLE {} ({});'.format(self.table.name, schema)
+
+        with self.get_cursor() as cursor:
+            cursor.execute(query)
+
+    def exists(self):
+        """ Does the table exist in the database?
+
+        :return bool:
+        """
+        query = (
+            """
+            SELECT EXISTS
+            (
+                SELECT 1
+                FROM information_schema.tables
+                WHERE table_name = %s
+            );
+            """
+        )
+
+        with self.get_cursor() as cursor:
+            cursor.execute(query, (self.table.name,))
+            result = cursor.fetchone()
+
+        return result[0] if result else False
+
+    def load_by_date(self, start_date, end_date):
         """ Load data from the table between a start and end date (inclusive).
 
         :param str start_date:
         :param str end_date:
+        :return None:
         """
-        self.table.data = self.db.select_from(self.table, columns=['*'], conditions=[
-            ('{} >='.format(self.table.date_columns[0]), start_date),
-            ('AND {} <='.format(self.table.date_columns[0]), end_date)
-        ])
-
-        self.table.data = pd.DataFrame(
-            self.table.data, columns=self.table.schema.keys()
+        query = (
+            """
+            SELECT *
+            FROM {}
+            WHERE date >= %s
+            AND date <= %s;
+            """
+            .format(self.table.name)
         )
 
-        self.table.data = self.table.data.astype(
-            dtype={column: float for column in self.table.monetary_columns.values()}
-        )
+        with self.get_cursor() as cursor:
+            cursor.execute(
+                query,
+                (start_date, end_date)
+            )
 
-        self.table.data = self.table.data.astype({'category_code': float})
+            data = cursor.fetchall()
 
-    def insert(self, data):
+        self.table.data = pd.DataFrame(data, columns=self.table.schema.keys())
+
+        if self.table.monetary_columns:
+            self.table.data = self.table.data.astype(
+                dtype={column: float for column in self.table.monetary_columns.values()}
+            )
+
+        if self.table.category_columns:
+            self.table.data = self.table.data.astype({'category_code': float})
+
+    def insert(self, data, ignore_duplicates=True):
         """ Insert data into the table.
 
         :param pandas.DataFrame data:
+        :param bool ignore_duplicates:
+        :return None:
         """
-        self.db.insert_into(
-            table=self.table,
-            columns=tuple(data.columns),
-            values_group=data.itertuples(index=False),
-            ignore_duplicates=True
+        columns_placeholder = ', '.join(column for column in data.columns)
+        values_placeholders = ', '.join(
+            '(' + ', '.join('%s' for column in data.columns) + ')' for row in data.itertuples()
         )
+        do_nothing_clause = 'ON CONFLICT DO NOTHING' if ignore_duplicates else ''
+
+        query = 'INSERT INTO {} ({}) VALUES {} {};'.format(
+            self.table.name,
+            columns_placeholder,
+            values_placeholders,
+            do_nothing_clause
+        )
+
+        with self.get_cursor() as cursor:
+            cursor.execute(query, tuple(itertools.chain(*data.itertuples(index=False))))
+
+    def get_latest_entries(self, columns, limit):
+        """ Get the latest entries to the table.
+
+        :param list(str) columns:
+        :param int limit:
+        :return tuple:
+        """
+        query = """
+            SELECT {}
+            FROM {}
+            ORDER BY date DESC
+            LIMIT {}
+            """.format(', '.join(columns), self.table.name, limit)
+
+        with self.get_cursor() as cursor:
+            cursor.execute(query)
+            return cursor.fetchall()
 
 
 class TransactionsRepository(BaseRepository):
@@ -55,75 +159,86 @@ class TransactionsRepository(BaseRepository):
     table, in addition to the methods of the base repository.
     """
     def get_latest_balance(self):
-        with self.db:
 
-            query = (
-                """
-                SELECT balance FROM {}
-                ORDER BY date DESC
-                LIMIT 1
-                """
-                .format(self.table.name)
-            )
+        query = (
+            """
+            SELECT balance FROM {}
+            ORDER BY date DESC
+            LIMIT 1
+            """
+            .format(self.table.name)
+        )
 
-            return self.db.execute_statement(query, output_required=True)[0]
+        with self.get_cursor() as cursor:
+            cursor.execute(query)
+            latest_balance = cursor.fetchone()
+
+        if latest_balance:
+            return latest_balance[0]
 
     def get_latest_parsed_transaction_date(self):
-        with self.db:
 
-            query = (
-                """
-                SELECT date FROM {}
-                ORDER BY date DESC
-                LIMIT 1
-                """
-                .format(self.table.name)
-            )
+        query = (
+            """
+            SELECT date FROM {}
+            ORDER BY date DESC
+            LIMIT 1
+            """
+            .format(self.table.name)
+        )
 
-            return self.db.execute_statement(query, output_required=True)[0]
+        with self.get_cursor() as cursor:
+            cursor.execute(query)
+            latest_date = cursor.fetchone()
+
+        if latest_date:
+            return latest_date[0]
 
     def get_latest_categorised_transaction_date(self):
-        with self.db:
 
-            query = (
-                """
-                SELECT date FROM {}
-                WHERE {} is not NULL
-                AND {} is not NULL
-                ORDER BY date DESC
-                LIMIT 1
-                """
-                .format(self.table.name, *self.table.category_columns)
-            )
+        query = (
+            """
+            SELECT date FROM {}
+            WHERE {} is not NULL
+            AND {} is not NULL
+            ORDER BY date DESC
+            LIMIT 1
+            """
+            .format(self.table.name, *self.table.category_columns)
+        )
 
-            return self.db.execute_statement(query, output_required=True)[0]
+        with self.get_cursor() as cursor:
+            cursor.execute(query)
+            latest_date = cursor.fetchone()
+
+            if latest_date:
+                return latest_date[0]
 
     def update_categories(self):
         """ Update the table's category columns.
         """
-        with self.db:
+        for i in range(len(self.table.data)):
+            id_ = int(self.table.data.iloc[i, 0])
+            row = self.table.data.iloc[i]
 
-            for i in range(len(self.table.data)):
-                id_ = int(self.table.data.iloc[i, 0])
-                row = self.table.data.iloc[i]
+            values = tuple([
+                int(row[self.table.category_columns[0]]),
+                row[self.table.category_columns[1]]
+            ])
 
-                data = tuple([
-                    int(row[self.table.category_columns[0]]),
-                    row[self.table.category_columns[1]]
-                ])
-
-                operation = (
-                    """
-                    UPDATE {0}
-                    SET {1} = %s, {2} = %s
-                    WHERE {0}.id = {3}
-                    """
-                    .format(
-                        self.table.name,
-                        self.table.category_columns[0],
-                        self.table.category_columns[1],
-                        id_
-                    )
+            query = (
+                """
+                UPDATE {0}
+                SET {1} = %s, {2} = %s
+                WHERE {0}.id = {3}
+                """
+                .format(
+                    self.table.name,
+                    self.table.category_columns[0],
+                    self.table.category_columns[1],
+                    id_
                 )
+            )
 
-                self.db.execute_statement(operation, data)
+            with self.get_cursor() as cursor:
+                cursor.execute(query, values)
