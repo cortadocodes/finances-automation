@@ -5,11 +5,9 @@ import os
 
 
 package_root = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
-db_host = os.environ['POSTGRES_HOST'] or 'localhost'
-
 
 db_config = {
-    'db_host': db_host,
+    'host': 'localhost',
     'port': 5433,
     'dbname': 'postgres',
     'user': 'postgres',
