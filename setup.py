@@ -24,7 +24,7 @@ setup(
     },
     install_requires=[
         'matplotlib==3.0.2',
-        'numpy==1.15.2',
+        'numpy==1.22.0',
         'pandas==0.23.4',
         'psycopg2-binary==2.7.5',
     ],
